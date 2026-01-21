@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../../core/classes/Settings.php';
 // Get receipt settings
 $receiptSettings = Settings::getAll();
 $showLogo = ($receiptSettings['receipt_show_logo'] ?? '1') === '1';
+$logoPath = $receiptSettings['receipt_logo_path'] ?? '';
 $headerText = $receiptSettings['receipt_header_text'] ?? 'Point of Sale Receipt';
 $footerText = $receiptSettings['receipt_footer_text'] ?? 'Thank you for your business!';
 $fontSize = (int) ($receiptSettings['receipt_font_size'] ?? 12);
@@ -18,13 +19,14 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS Receipt - Order #<?php echo $order['id']; ?></title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css" rel="stylesheet">
+    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Courier New', monospace; margin: 0; padding: 0; background: #f8f9fa; }
         .receipt-wrap { padding: 20px; }
         .receipt { max-width: <?php echo $paperWidth; ?>px; margin: 0 auto; background: white; padding: 20px; border: 1px solid #ddd; font-size: <?php echo $fontSize; ?>px; line-height: 1.4; }
         .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+        .header img { display: block; margin: 0 auto 10px; }
         .header h1 { margin: 0; font-size: <?php echo $fontSize + 6; ?>px; }
         .header p { margin: 5px 0; }
         .order-info { margin-bottom: 15px; }
@@ -45,6 +47,9 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
             .btn { display: none; }
             .pos-shell, .pos-sidebar, .pos-topbar, .pos-overlay, .pos-footer { display: none !important; }
             .receipt-wrap { padding: 0; }
+            .header img { max-width: 120px !important; max-height: 60px !important; }
+            .header img[src=""] { display: none; }
+            .header img[src=""] { display: none; }
         }
     </style>
 </head>
@@ -65,8 +70,16 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
     <div class="receipt-wrap">
     <div class="receipt">
         <div class="header">
-            <?php if ($showLogo): ?>
-                <div style="font-size: <?php echo $fontSize + 4; ?>px; font-weight: bold; margin-bottom: 5px;">[LOGO]</div>
+            <?php if ($showLogo && !empty($logoPath)): ?>
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <img src="<?php echo htmlspecialchars($logoPath); ?>" 
+                         alt="Company Logo" 
+                         style="max-width: 150px; max-height: 80px; object-fit: contain;" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                    <div style="display: none; font-size: <?php echo $fontSize + 4; ?>px; font-weight: bold;">
+                        <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?>
+                    </div>
+                </div>
             <?php endif; ?>
             <h1><?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></h1>
             <p><?php echo htmlspecialchars($headerText); ?></p>

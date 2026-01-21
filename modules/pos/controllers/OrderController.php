@@ -172,8 +172,8 @@ class OrderController {
 
                     if ($status === 'completed') {
                         $stock = (int)($product['stock_quantity'] ?? 0);
-                        if ($quantity > $stock) {
-                            throw new Exception('Insufficient stock for: ' . ($product['name'] ?? 'product'));
+                        if ($quantity > $stock && Tenant::getPosLevel() >= 2) {
+                            throw new Exception('Insufficient stock for: ' . ($product['name'] ?? 'product') . '. Upgrade to Standard ($50) for inventory management.');
                         }
                     }
 
@@ -256,8 +256,8 @@ class OrderController {
 
                 if ($status === 'completed') {
                     $stock = (int)($product['stock_quantity'] ?? 0);
-                    if ($quantity > $stock) {
-                        throw new Exception('Insufficient stock for: ' . ($product['name'] ?? 'product'));
+                    if ($quantity > $stock && Tenant::getPosLevel() >= 2) {
+                        throw new Exception('Insufficient stock for: ' . ($product['name'] ?? 'product') . '. Upgrade to Standard ($50) for inventory management.');
                     }
                 }
                 $unitPrice = (float)$product['price'];

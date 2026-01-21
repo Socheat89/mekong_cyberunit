@@ -15,6 +15,7 @@ $adminEmail = trim($_POST['admin_email']);
 $adminUsername = trim($_POST['admin_username']);
 $adminPassword = $_POST['admin_password'];
 $confirmPassword = $_POST['confirm_password'];
+$paymentStatus = $_POST['payment_status'] ?? 'pending';
 $selectedSystems = $_POST['systems'] ?? [];
 
 // Validation
@@ -50,6 +51,10 @@ if ($adminPassword !== $confirmPassword) {
 
 if (empty($selectedSystems)) {
     $errors[] = 'Please select at least one system';
+}
+
+if ($paymentStatus !== 'paid') {
+    $errors[] = 'Payment is required to create an account';
 }
 
 if (!empty($errors)) {

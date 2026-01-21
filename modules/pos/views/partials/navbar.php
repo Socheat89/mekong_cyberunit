@@ -53,64 +53,107 @@ $activeClass = function (string $key) use ($activeNav): string {
 <div class="pos-shell" id="posShell">
     <div class="pos-overlay" id="posOverlay" aria-hidden="true"></div>
 
-    <aside class="pos-sidebar" aria-label="POS navigation">
-        <div class="pos-sidebar__brand">
-            <a class="pos-brand" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>">
-                <span class="pos-brand__logo"><i class="fas fa-layer-group"></i></span>
+    <aside class="pos-sidebar" style="background: #1e1b4b; border-right: 1px solid rgba(255,255,255,0.05); box-shadow: 10px 0 30px rgba(0,0,0,0.1);">
+        <div class="pos-sidebar__brand" style="margin-bottom: 20px;">
+            <a class="pos-brand" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>" style="padding: 10px;">
+                <span class="pos-brand__logo" style="background: var(--pos-gradient-indigo); border: none; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.4);"><i class="fas fa-layer-group" style="color: white; font-size: 20px;"></i></span>
                 <span class="pos-brand__text">
-                    <span class="pos-brand__title">POS Admin</span>
-                    <span class="pos-brand__sub"><?php echo htmlspecialchars($tenantName); ?></span>
+                    <span class="pos-brand__title" style="font-size: 18px; font-weight: 900; letter-spacing: -0.5px; color: white;">POS ADMIN</span>
+                    <span class="pos-brand__sub" style="color: rgba(255,255,255,0.6); font-weight: 700;"><?php echo htmlspecialchars($tenantName); ?></span>
                 </span>
             </a>
         </div>
 
         <nav class="pos-side-nav">
-            <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>">
-                <i class="fas fa-gauge"></i><span>Dashboard</span>
+            <?php
+            $posLevel = 0;
+            if (class_exists('Tenant')) {
+               $posLevel = Tenant::getPosLevel();
+            }
+            if ($isDevPos) $posLevel = 3; // Dev mode gets full access
+            ?>
+
+            <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-grid-2" style="font-size: 16px;"></i><span>Dashboard</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>">
-                <i class="fas fa-cart-shopping"></i><span>New Sale</span>
+            <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-cart-shopping" style="font-size: 16px;"></i><span>New Sale</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>">
-                <i class="fas fa-pause"></i><span>Held Orders</span>
+            <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-pause-circle" style="font-size: 16px;"></i><span>Held Orders</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>">
-                <i class="fas fa-box"></i><span>Products</span>
+            <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-receipt" style="font-size: 16px;"></i><span>Orders</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>">
-                <i class="fas fa-receipt"></i><span>Orders</span>
+            
+            <?php if ($posLevel >= 1): ?>
+            <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-box-open" style="font-size: 16px;"></i><span>Products</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>">
-                <i class="fas fa-users"></i><span>Customers</span>
+            <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-users-gear" style="font-size: 16px;"></i><span>Customers</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>">
-                <i class="fas fa-chart-column"></i><span>Reports</span>
+            <?php endif; ?>
+
+            <?php if ($posLevel >= 3): ?>
+            <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-chart-pie" style="font-size: 16px;"></i><span>Reports</span>
             </a>
+            <?php endif; ?>
+
+            <?php if ($posLevel >= 1): ?>
+            <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>" style="margin: 2px 0; border: none; font-size: 14px;">
+                <i class="fas fa-sliders" style="font-size: 16px;"></i><span>Settings</span>
+            </a>
+            <?php endif; ?>
         </nav>
 
-        <div class="pos-sidebar__footer">
-            <a class="pos-side-link" href="<?php echo htmlspecialchars($logoutUrl); ?>">
-                <i class="fas fa-right-from-bracket"></i><span>Logout</span>
+        <div class="pos-sidebar__footer" style="border-top: 1px solid rgba(255,255,255,0.08);">
+            <a class="pos-side-link" href="<?php echo htmlspecialchars($logoutUrl); ?>" style="color: rgba(255,255,255,0.6); font-size: 14px;">
+                <i class="fas fa-power-off"></i><span>Sign Out</span>
             </a>
         </div>
     </aside>
 
     <main class="pos-main">
-        <header class="pos-topbar" aria-label="Top bar">
-            <button class="pos-icon-btn pos-sidebar-toggle" type="button" aria-label="Toggle navigation" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <div class="pos-topbar__search" role="search">
-                <i class="fas fa-magnifying-glass"></i>
-                <input type="search" placeholder="Search…" aria-label="Search" />
+        <header class="pos-topbar" style="background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--pos-border);">
+            <div class="pos-header-left">
+                <button class="pos-icon-btn pos-sidebar-toggle" type="button" aria-label="Toggle navigation" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
+                    <i class="fas fa-bars-staggered"></i>
+                </button>
+                <div class="pos-breadcrumb" style="background: white; padding: 8px 16px; border-radius: 12px; border: 1px solid var(--pos-border); font-size: 13px;">
+                    <span style="opacity: 0.7; color: var(--pos-muted);"><?php echo htmlspecialchars($tenantName); ?></span>
+                    <i class="fas fa-chevron-right" style="font-size: 8px; opacity: 0.3;"></i>
+                    <span class="pos-breadcrumb-active" style="color: var(--pos-brand-a);">
+                        <?php 
+                        echo htmlspecialchars($pageTitle ?? ucfirst($activeNav === 'pos' ? 'New Sale' : ($activeNav ?: 'Dashboard'))); 
+                        ?>
+                    </span>
+                </div>
             </div>
 
-            <div class="pos-topbar__actions">
-                <a class="pos-pill" href="<?php echo htmlspecialchars($posUrl('pos')); ?>">
-                    <i class="fas fa-plus"></i> New Sale
-                </a>
+            <div class="pos-header-right">
+                <div class="pos-time-widget" style="background: #eef2ff; color: #4338ca; border: none; padding: 10px 18px; border-radius: 14px;">
+                    <i class="far fa-clock" style="color: #4338ca;"></i>
+                    <span id="posClock" style="font-weight: 800; font-variant-numeric: tabular-nums;"><?php echo date('H:i'); ?></span>
+                </div>
+
+                <div class="pos-user-profile" style="background: white; border: 1px solid var(--pos-border); padding: 6px 16px 6px 6px; border-radius: 16px;">
+                    <div class="pos-avatar" style="width: 36px; height: 36px; border-radius: 12px; background: var(--pos-gradient-indigo);">TU</div>
+                    <div class="pos-user-info" style="margin-left: 10px;">
+                        <span class="pos-user-name" style="font-weight: 800;">Administrator</span>
+                        <span class="pos-user-role" style="font-size: 11px; opacity: 0.6; font-weight: 700;">Owner Level</span>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                // Simple clock
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('posClock').textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                }, 1000);
+            </script>
         </header>
 
         <div class="pos-page">

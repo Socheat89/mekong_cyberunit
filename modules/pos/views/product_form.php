@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS - <?php echo isset($product) ? 'Edit' : 'Add'; ?> Product</title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css" rel="stylesheet">
+    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
@@ -242,59 +242,53 @@
             .nav-links li a { padding: 8px 12px; font-size: 14px; }
         }
     </style>
+    <style>
+        .form-card { background: white; border-radius: 24px; padding: 40px; border: 1px solid var(--pos-border); max-width: 900px; margin: 0 auto; }
+        .form-label { display: block; font-size: 13px; font-weight: 800; color: var(--pos-text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--pos-border); background: #f8fafc; font-size: 15px; font-weight: 600; color: var(--pos-text); transition: all 0.2s; }
+        .form-input:focus { outline: none; border-color: var(--pos-brand-a); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .required-star { color: #ef4444; margin-left: 2px; }
+        
+        .upload-zone { border: 2px dashed #cbd5e1; border-radius: 16px; padding: 40px; text-align: center; background: #f8fafc; transition: all 0.2s; cursor: pointer; position: relative; overflow: hidden; }
+        .upload-zone:hover { border-color: var(--pos-brand-a); background: #f1f5f9; }
+        .upload-zone.dragover { border-color: var(--pos-brand-a); background: #e0e7ff; }
+        .preview-img { max-width: 100%; border-radius: 12px; margin-top: 15px; box-shadow: var(--pos-shadow-sm); }
+    </style>
 </head>
 <body class="pos-app">
     <?php $activeNav = 'products'; include __DIR__ . '/partials/navbar.php'; ?>
-    <div class="container">
-        <div class="header">
-            <h1><?php echo isset($product) ? 'Edit Product' : 'Add New Product'; ?></h1>
+
+    <div class="fade-in">
+        <div class="pos-row" style="margin-bottom: 32px; justify-content: center; text-align: center;">
+            <div class="pos-title">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+                    <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products" class="pos-icon-btn" style="width: 36px; height: 36px;"><i class="fas fa-arrow-left"></i></a>
+                    <span class="pos-pill" style="font-size: 12px; background: #eef2ff; color: #4338ca;">Inventory Management</span>
+                </div>
+                <h1 class="text-gradient"><?php echo isset($product) ? 'Edit Product' : 'Catalog New Item'; ?></h1>
+                <p>Maintain your product catalog with detailed specifications.</p>
+            </div>
         </div>
 
-        <div class="form-container">
+        <div class="form-card pos-shadow-sm">
             <form method="POST" enctype="multipart/form-data">
-                <div class="form-section">
-                    <h2 class="section-title">📦 Basic Information</h2>
+                
+                <section style="margin-bottom: 40px;">
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-info-circle"></i> General Information
+                    </h3>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="name" class="required">Product Name</label>
-                            <div class="input-group name">
-                                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($product['name'] ?? ''); ?>" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="sku">SKU</label>
-                            <div class="input-group sku">
-                                <input type="text" id="sku" name="sku" value="<?php echo htmlspecialchars($product['sku'] ?? ''); ?>">
-                            </div>
+                        <div style="grid-column: span 2;">
+                            <label class="form-label">Product Name <span class="required-star">*</span></label>
+                            <input type="text" name="name" class="form-input" value="<?php echo htmlspecialchars($product['name'] ?? ''); ?>" required placeholder="e.g. Wireless Headset">
                         </div>
                     </div>
-                </div>
-
-                <div class="form-section">
-                    <h2 class="section-title">💰 Pricing & Inventory</h2>
                     <div class="form-row">
-                        <div class="form-group">
-                            <label for="price" class="required">Price</label>
-                            <div class="input-group price">
-                                <input type="number" id="price" name="price" step="0.01" value="<?php echo $product['price'] ?? ''; ?>" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="stock_quantity" class="required">Stock Quantity</label>
-                            <div class="input-group stock">
-                                <input type="number" id="stock_quantity" name="stock_quantity" value="<?php echo $product['stock_quantity'] ?? 0; ?>" required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h2 class="section-title">🏷️ Classification</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="category_id">Category</label>
-                            <select id="category_id" name="category_id">
-                                <option value="">No Category</option>
+                        <div>
+                            <label class="form-label">Category</label>
+                            <select name="category_id" class="form-input">
+                                <option value="">Uncategorized</option>
                                 <?php foreach ($categories as $category): ?>
                                     <option value="<?php echo $category['id']; ?>" <?php echo (isset($product) && $product['category_id'] == $category['id']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($category['name']); ?>
@@ -302,89 +296,112 @@
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" name="status">
+                        <div>
+                            <label class="form-label">Availability Status</label>
+                            <select name="status" class="form-input">
                                 <option value="active" <?php echo (!isset($product) || $product['status'] == 'active') ? 'selected' : ''; ?>>Active</option>
                                 <option value="inactive" <?php echo (isset($product) && $product['status'] == 'inactive') ? 'selected' : ''; ?>>Inactive</option>
                             </select>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="form-section">
-                    <h2 class="section-title">📋 Additional Details</h2>
-                    <div class="form-group">
-                        <label for="image">Product Image</label>
-                        <div class="image-upload" onclick="document.getElementById('image').click()">
-                            <div>📸 Click to upload image or drag & drop<br><small>Images will be automatically converted to WebP format</small></div>
-                            <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" style="display: none;" onchange="previewImage(event)">
-                            <?php if (isset($product) && $product['image']): ?>
-                                <div class="image-preview">
-                                    <img src="/Mekong_CyberUnit/uploads/products/<?php echo htmlspecialchars($product['image']); ?>" alt="Current image" class="current-image">
-                                </div>
-                            <?php endif; ?>
+                <section style="margin-bottom: 40px;">
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-tag"></i> Pricing & Inventory
+                    </h3>
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Selling Price ($) <span class="required-star">*</span></label>
+                            <input type="number" name="price" step="0.01" class="form-input" value="<?php echo $product['price'] ?? ''; ?>" required placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="form-label">Current Stock <span class="required-star">*</span></label>
+                            <input type="number" name="stock_quantity" class="form-input" value="<?php echo $product['stock_quantity'] ?? 0; ?>" required placeholder="0">
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="barcode">Barcode</label>
-                        <div class="input-group barcode">
-                            <input type="text" id="barcode" name="barcode" value="<?php echo htmlspecialchars($product['barcode'] ?? ''); ?>">
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">SKU / Code</label>
+                            <input type="text" name="sku" class="form-input" value="<?php echo htmlspecialchars($product['sku'] ?? ''); ?>" placeholder="PROD-001">
+                        </div>
+                        <div>
+                            <label class="form-label">Barcode (UPC/EAN)</label>
+                            <input type="text" name="barcode" class="form-input" value="<?php echo htmlspecialchars($product['barcode'] ?? ''); ?>" placeholder="Scan or type barcode">
                         </div>
                     </div>
+                </section>
 
+                <section style="margin-bottom: 40px;">
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-image"></i> Visuals & Description
+                    </h3>
                     <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" placeholder="Enter product description..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
+                        <label class="form-label">Product Image</label>
+                        <div class="upload-zone" onclick="document.getElementById('image-input').click()">
+                            <input type="file" id="image-input" name="image" accept="image/*" style="display: none;" onchange="previewImage(this)">
+                            <div id="upload-placeholder" style="<?php echo (isset($product) && $product['image']) ? 'display:none;' : ''; ?>">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: var(--pos-brand-a); margin-bottom: 15px;"></i>
+                                <div style="font-weight: 800; color: var(--pos-text);">Tap to upload or drag image here</div>
+                                <div style="font-size: 12px; color: var(--pos-muted); margin-top: 5px;">Supports: JPG, PNG, WebP (Max 2MB)</div>
+                            </div>
+                            <div id="image-preview-container" style="<?php echo (isset($product) && $product['image']) ? '' : 'display:none;'; ?>">
+                                <?php if (isset($product) && $product['image']): ?>
+                                    <img src="/Mekong_CyberUnit/uploads/products/<?php echo htmlspecialchars($product['image']); ?>" class="preview-img" style="max-height: 250px;">
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="form-label">Detailed Description</label>
+                        <textarea name="description" class="form-input" rows="4" style="resize: none;" placeholder="Provide features, notes, or raw materials..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
+                    </div>
+                </section>
 
-                <div class="btn-container">
-                    <button type="submit" class="btn"><?php echo isset($product) ? '✏️ Update Product' : '➕ Add Product'; ?></button>
-                    <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products" class="btn btn-secondary">❌ Cancel</a>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 32px; border-top: 1px solid var(--pos-border);">
+                    <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products" class="pos-pill" style="background: white; color: var(--pos-text); border: 1px solid var(--pos-border); padding: 14px 28px;">
+                        Discard
+                    </a>
+                    <button type="submit" class="pos-pill" style="padding: 14px 40px; border: none; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">
+                        <?php echo isset($product) ? 'Update Item' : 'Add to Catalog'; ?>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
+        function previewImage(input) {
+            const file = input.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const preview = document.querySelector('.image-preview') || document.createElement('div');
-                    preview.className = 'image-preview';
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="current-image">`;
+                    const placeholder = document.getElementById('upload-placeholder');
+                    const previewCont = document.getElementById('image-preview-container');
                     
-                    const uploadDiv = document.querySelector('.image-upload');
-                    if (!uploadDiv.querySelector('.image-preview')) {
-                        uploadDiv.appendChild(preview);
-                    } else {
-                        uploadDiv.querySelector('.image-preview').innerHTML = `<img src="${e.target.result}" alt="Preview" class="current-image">`;
-                    }
+                    placeholder.style.display = 'none';
+                    previewCont.style.display = 'block';
+                    previewCont.innerHTML = `<img src="${e.target.result}" class="preview-img" style="max-height: 250px;">`;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // Drag and drop functionality
-        const imageUpload = document.querySelector('.image-upload');
-        imageUpload.addEventListener('dragover', (e) => {
+        const zone = document.querySelector('.upload-zone');
+        zone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            imageUpload.classList.add('dragover');
+            zone.classList.add('dragover');
         });
-        imageUpload.addEventListener('dragleave', () => {
-            imageUpload.classList.remove('dragover');
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('dragover');
         });
-        imageUpload.addEventListener('drop', (e) => {
+        zone.addEventListener('drop', (e) => {
             e.preventDefault();
-            imageUpload.classList.remove('dragover');
+            zone.classList.remove('dragover');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                document.getElementById('image').files = files;
-                previewImage({ target: { files: files } });
+                document.getElementById('image-input').files = files;
+                previewImage({ files: files });
             }
         });
     </script>

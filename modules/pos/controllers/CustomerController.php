@@ -13,6 +13,10 @@ class CustomerController {
             die('POS system not subscribed');
         }
 
+        if (Tenant::getPosLevel() < 2) {
+             die('Upgrade to POS Standard ($50) or Premium ($100) to manage customers.');
+        }
+
         if (!Auth::hasPermission('pos', 'read')) {
             die('No permission');
         }

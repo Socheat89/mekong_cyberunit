@@ -2,6 +2,7 @@
 // modules/pos/controllers/PosController.php
 require_once __DIR__ . '/../../../core/classes/Database.php';
 require_once __DIR__ . '/../../../core/classes/Tenant.php';
+require_once __DIR__ . '/../../../core/classes/Settings.php';
 require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Product.php';
@@ -23,6 +24,31 @@ class PosController {
 
         $products = Product::getAll();
         $customers = $this->getCustomers();
+        
+        $tenantId = Tenant::getId();
+        $settings = Settings::getAll($tenantId);
+        
+        // Load config from file to ensure we use the latest values
+        $bakongConfig = require __DIR__ . '/../../../config/bakong.php';
+        
+        // Force config values to take precedence over DB settings for consistency
+        $settings['bank_account'] = $bakongConfig['bank_account'];
+        $settings['merchant_name'] = $bakongConfig['merchant_name'];
+        $settings['merchant_city'] = $bakongConfig['merchant_city'];
+        $settings['phone_number'] = $bakongConfig['phone_number'];
+        $settings['store_label'] = $bakongConfig['store_label'];
+
+        // Ensure defaults for payment methods if not in DB
+        $defaults = [
+            'pos_method_cash_enabled' => '1',
+            'pos_method_khqr_enabled' => '1',
+            'pos_method_khqr_image' => '/Mekong_CyberUnit/public/images/khqr_preview.png',
+            'pos_method_card_enabled' => '1',
+            'pos_method_transfer_enabled' => '1'
+        ];
+        foreach ($defaults as $key => $default) {
+            if (!isset($settings[$key])) $settings[$key] = $default;
+        }
 
         $resumeOrder = null;
         if (isset($_GET['resume'])) {

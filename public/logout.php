@@ -1,5 +1,8 @@
+<?php
 // public/logout.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Get tenant subdomain before destroying session
 $tenantSubdomain = $_SESSION['tenant_subdomain'] ?? null;

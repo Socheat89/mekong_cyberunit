@@ -60,6 +60,12 @@ class Tenant {
 
     public static function hasSystem($systemName) {
         if (!self::$currentTenant) return false;
+        
+        // Special case for generic "POS System" check
+        if ($systemName === 'POS System') {
+            return self::getPosLevel() > 0;
+        }
+
         $db = Database::getInstance();
         $count = $db->fetchOne(
             "SELECT COUNT(*) as count FROM tenant_systems ts 
@@ -68,6 +74,26 @@ class Tenant {
             [self::getId(), $systemName]
         );
         return $count['count'] > 0;
+    }
+
+    public static function getPosLevel() {
+        if (!self::$currentTenant) return 0;
+        
+        $db = Database::getInstance();
+        $systems = $db->fetchAll(
+            "SELECT s.name FROM tenant_systems ts 
+             JOIN systems s ON ts.system_id = s.id 
+             WHERE ts.tenant_id = ? AND ts.status = 'active' AND s.name LIKE 'POS %'",
+            [self::getId()]
+        );
+        
+        $level = 0;
+        foreach ($systems as $system) {
+            if ($system['name'] == 'POS Basic') $level = max($level, 1);
+            if ($system['name'] == 'POS Standard') $level = max($level, 2);
+            if ($system['name'] == 'POS Premium') $level = max($level, 3);
+        }
+        return $level;
     }
 
     public static function setCurrent($tenant) {

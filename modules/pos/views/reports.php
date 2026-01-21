@@ -1,328 +1,177 @@
+<?php
+$salesSummary = $salesSummary ?? [];
+$dailySales = $dailySales ?? [];
+$monthlySales = $monthlySales ?? [];
+$topProducts = $topProducts ?? [];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS - Reports</title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css" rel="stylesheet">
+    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f5f5f5;
-            min-height: 100vh;
-            color: #333;
-        }
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            background: #fff;
-            color: #333;
-            padding: 50px 40px;
-            border-radius: 8px;
-            margin-bottom: 40px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 3.5em;
-            color: #333;
-            font-weight: 800;
-        }
-        .header p {
-            margin: 15px 0 0;
-            color: #666;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 35px 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .stat-card h3 {
-            margin: 0 0 15px;
-            color: #666;
-            font-size: 1em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        .stat-card .value {
-            font-size: 3em;
-            font-weight: 800;
-            color: #007bff;
-            margin: 0;
-        }
-        .stat-card .label {
-            color: #999;
-            font-size: 0.95em;
-            margin-top: 8px;
-        }
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .chart-card {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 35px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .chart-card h3 {
-            margin: 0 0 25px;
-            color: #333;
-            font-size: 1.4em;
-            font-weight: 700;
-        }
-        .chart-container {
-            height: 320px;
-            position: relative;
-        }
-        .table-container {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 20px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background: #f8f8f8;
-            font-weight: 700;
-            color: #333;
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        tr:hover {
-            background: #f9f9f9;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            margin-bottom: 30px;
-            transition: all 0.2s ease;
-            border: 1px solid #6c757d;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .back-btn:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        }
-        .no-data {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-            font-style: italic;
-        }
-        /* Navigation Bar */
-        .navbar {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            padding: 0;
-        }
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            max-width: none;
-            margin: 0;
-        }
-        .nav-brand {
-            font-size: 1.8em;
-            font-weight: 800;
-            color: #333;
-        }
-        .nav-links {
-            display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 25px;
-        }
-        .nav-links li a {
-            color: #333;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 12px 20px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        .nav-links li a:hover {
-            background: #f8f8f8;
-            color: #007bff;
-        }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .report-section { background: white; border-radius: 20px; padding: 30px; border: 1px solid var(--pos-border); }
+        .top-prod-card { display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 12px; background: #f8fafc; margin-bottom: 12px; transition: transform 0.2s; }
+        .top-prod-card:hover { transform: translateX(5px); background: #f1f5f9; }
+        .rank-badge { width: 28px; height: 28px; border-radius: 8px; background: var(--pos-brand-a); color: white; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+    </style>
 </head>
 <body class="pos-app">
     <?php $activeNav = 'reports'; include __DIR__ . '/partials/navbar.php'; ?>
-    <div class="container">
-        <div class="header">
-            <h1>Sales Reports</h1>
-            <p>Comprehensive analytics and insights for your POS system</p>
-        </div>
 
-        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" class="back-btn">← Back to Dashboard</a>
-
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Orders</h3>
-                <div class="value"><?php echo number_format($salesSummary['total_orders'] ?? 0); ?></div>
-                <div class="label">Completed orders</div>
+    <div class="fade-in">
+        <div class="pos-row" style="margin-bottom: 32px;">
+            <div class="pos-title">
+                <h1 class="text-gradient">Analytics & Reports</h1>
+                <p>Monitor your performance, sales trends, and inventory health.</p>
             </div>
-            <div class="stat-card">
-                <h3>Total Sales</h3>
-                <div class="value">$<?php echo number_format($salesSummary['total_sales'] ?? 0, 2); ?></div>
-                <div class="label">Revenue generated</div>
-            </div>
-            <div class="stat-card">
-                <h3>Average Order</h3>
-                <div class="value">$<?php echo number_format($salesSummary['avg_order_value'] ?? 0, 2); ?></div>
-                <div class="label">Average order value</div>
-            </div>
-            <div class="stat-card">
-                <h3>Unique Customers</h3>
-                <div class="value"><?php echo number_format($salesSummary['unique_customers'] ?? 0); ?></div>
-                <div class="label">Different customers</div>
+            <div style="display:flex; gap:12px;">
+                <button class="pos-pill" style="padding: 12px 24px; background: white; color: var(--pos-text); border: 1px solid var(--pos-border);" onclick="window.print()">
+                    <i class="fas fa-download"></i> Export PDF
+                </button>
             </div>
         </div>
 
-        <!-- Charts -->
-        <div class="charts-grid">
-            <div class="chart-card">
-                <h3>Daily Sales (Last 7 Days)</h3>
-                <div class="chart-container">
+        <div class="pos-grid cols-4" style="margin-bottom: 32px; gap: 20px;">
+            <div class="pos-stat pos-shadow-sm" style="border: none;">
+                <div class="k">Total Revenue</div>
+                <div class="v">$<?php echo number_format($salesSummary['total_sales'] ?? 0, 2); ?></div>
+                <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;"><i class="fas fa-dollar-sign"></i></div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none;">
+                <div class="k">Total Orders</div>
+                <div class="v"><?php echo number_format($salesSummary['total_orders'] ?? 0); ?></div>
+                <div class="chip" style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><i class="fas fa-shopping-bag"></i></div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none;">
+                <div class="k">Distinct Customers</div>
+                <div class="v"><?php echo number_format($salesSummary['unique_customers'] ?? 0); ?></div>
+                <div class="chip" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="fas fa-users"></i></div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none;">
+                <div class="k">Avg Order Value</div>
+                <div class="v">$<?php echo number_format($salesSummary['avg_order_value'] ?? 0, 2); ?></div>
+                <div class="chip" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;"><i class="fas fa-chart-line"></i></div>
+            </div>
+        </div>
+
+        <div class="pos-grid cols-3" style="margin-bottom: 32px; gap: 24px;">
+            <div class="report-section" style="grid-column: span 2;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="font-size: 18px; font-weight: 800; color: var(--pos-text);">Sales Revenue Trend</h2>
+                    <div class="pos-pill" style="font-size: 11px; background: #f8fafc; color: var(--pos-muted);">Last 7 Days</div>
+                </div>
+                <div style="height: 350px;">
                     <canvas id="dailySalesChart"></canvas>
                 </div>
             </div>
-            <div class="chart-card">
-                <h3>Monthly Sales (Last 6 Months)</h3>
-                <div class="chart-container">
-                    <canvas id="monthlySalesChart"></canvas>
-                </div>
+
+            <div class="report-section">
+                <h2 style="font-size: 18px; font-weight: 800; color: var(--pos-text); margin-bottom: 24px;">Top Performing Products</h2>
+                <?php if(empty($topProducts)): ?>
+                    <div style="text-align: center; padding: 40px; color: var(--pos-muted);">
+                        <i class="fas fa-box-open" style="font-size: 32px; opacity: 0.2; margin-bottom: 12px;"></i>
+                        <p style="font-weight: 700;">No sales recorded yet.</p>
+                    </div>
+                <?php else: ?>
+                    <?php $rank = 1; foreach($topProducts as $prod): ?>
+                        <div class="top-prod-card">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="rank-badge"><?php echo $rank++; ?></div>
+                                <div>
+                                    <div style="font-weight: 800; font-size: 14px; color: var(--pos-text);"><?php echo htmlspecialchars($prod['name']); ?></div>
+                                    <div style="font-size: 12px; color: var(--pos-muted); font-weight: 600;"><?php echo number_format($prod['total_quantity']); ?> sold</div>
+                                </div>
+                            </div>
+                            <div style="font-weight: 900; color: var(--pos-brand-a);">$<?php echo number_format($prod['total_revenue'], 2); ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
-        <!-- Top Products Table -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Units Sold</th>
-                        <th>Total Revenue</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($topProducts)): ?>
-                        <?php foreach ($topProducts as $product): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($product['name']); ?></td>
-                                <td><?php echo number_format($product['total_quantity']); ?></td>
-                                <td>$<?php echo number_format($product['total_revenue'], 2); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="3" class="no-data">No sales data available yet</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+        <div class="report-section" style="margin-bottom: 32px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 18px; font-weight: 800; color: var(--pos-text);">Monthly Performance Overview</h2>
+                <div class="pos-pill" style="font-size: 11px; background: #f8fafc; color: var(--pos-muted);">Past 6 Months</div>
+            </div>
+             <div style="height: 300px;">
+                <canvas id="monthlySalesChart"></canvas>
+            </div>
         </div>
     </div>
 
+    <?php include __DIR__ . '/partials/footer.php'; ?>
+
     <script>
-        // Daily Sales Chart
+        // Config for common chart style
+        Chart.defaults.font.family = "'Segoe UI', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        Chart.defaults.color = '#64748b';
+        
+        // 1. Daily Sales
         const dailySalesCtx = document.getElementById('dailySalesChart').getContext('2d');
         const dailySalesData = <?php echo json_encode(array_reverse($dailySales)); ?>;
-
+        
         new Chart(dailySalesCtx, {
             type: 'line',
             data: {
                 labels: dailySalesData.map(item => {
-                    const date = new Date(item.date);
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const d = new Date(item.date);
+                    return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
                 }),
                 datasets: [{
-                    label: 'Daily Sales ($)',
+                    label: 'Sales ($)',
                     data: dailySalesData.map(item => parseFloat(item.daily_total)),
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    tension: 0.4,
-                    fill: true
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#6366f1',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    fill: true,
+                    tension: 0.4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toFixed(2);
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        cornerRadius: 8,
+                        titleFont: { size: 13 },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
                             }
                         }
                     }
                 },
-                plugins: {
-                    legend: {
-                        display: false
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [4, 4], color: '#f1f5f9' },
+                        ticks: {
+                            callback: function(value) { return '$' + value; }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
                     }
                 }
             }
         });
 
-        // Monthly Sales Chart
+        // 2. Monthly Sales
         const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
         const monthlySalesData = <?php echo json_encode(array_reverse($monthlySales)); ?>;
 
@@ -330,40 +179,49 @@
             type: 'bar',
             data: {
                 labels: monthlySalesData.map(item => {
-                    const [year, month] = item.month.split('-');
-                    const date = new Date(year, month - 1);
-                    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+                    const [y, m] = item.month.split('-');
+                    const date = new Date(y, m - 1); // Month is 0-indexed
+                    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                 }),
                 datasets: [{
-                    label: 'Monthly Sales ($)',
+                    label: 'Monthly Revenue',
                     data: monthlySalesData.map(item => parseFloat(item.monthly_total)),
-                    backgroundColor: '#764ba2',
-                    borderColor: '#764ba2',
-                    borderWidth: 1
+                    backgroundColor: '#8b5cf6',
+                    borderRadius: 8,
+                    barThickness: 40
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toFixed(2);
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
                             }
                         }
                     }
                 },
-                plugins: {
-                    legend: {
-                        display: false
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [4, 4], color: '#f1f5f9' },
+                        ticks: {
+                            callback: function(value) { return '$' + value; }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
                     }
                 }
             }
         });
     </script>
-
-    <?php include __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>
