@@ -199,7 +199,9 @@ CREATE TABLE stock_logs (
 
 -- Systems
 INSERT INTO systems (name, description, price) VALUES
-('POS System', 'Point of Sale system for retail', 50.00),
+('POS Basic', 'Basic POS features', 10.00),
+('POS Standard', 'Standard POS features', 50.00),
+('POS Premium', 'Full POS features', 100.00),
 ('Inventory System', 'Inventory management system', 30.00),
 ('HR System', 'Human Resources management', 40.00);
 

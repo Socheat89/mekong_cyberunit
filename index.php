@@ -91,6 +91,14 @@ function routePOSAction($action) {
         require_once 'modules/pos/controllers/ReportsController.php';
         $controller = new ReportsController();
         $controller->index();
+    } elseif ($action === 'settings') {
+        require_once 'modules/pos/controllers/SettingsController.php';
+        $controller = new SettingsController();
+        $controller->index();
+    } elseif ($action === 'settings/update') {
+        require_once 'modules/pos/controllers/SettingsController.php';
+        $controller = new SettingsController();
+        $controller->update();
     } else {
         echo 'POS action not found';
     }
@@ -147,6 +155,40 @@ if (preg_match('/^\/(products|orders|customers|reports)\/?.*/', $path)) {
     exit;
 }
 
+// Tenant admin routes (using session tenant)
+if (preg_match('/^\/tenant\/(.+)/', $path, $matches)) {
+    $modulePath = $matches[1];
+    // Strip .php if present
+    $modulePath = preg_replace('/\.php$/', '', $modulePath);
+
+    if (!isset($_SESSION['tenant_id'])) {
+        header('Location: /Mekong_CyberUnit/public/login.php');
+        exit;
+    }
+
+    $db = Database::getInstance();
+    $tenant = $db->fetchOne("SELECT * FROM tenants WHERE id = ? AND status = 'active'", [$_SESSION['tenant_id']]);
+    if (!$tenant) {
+        header('Location: /Mekong_CyberUnit/public/login.php');
+        exit;
+    }
+
+    Tenant::setCurrent($tenant);
+
+    if ($modulePath === 'dashboard') {
+        include 'tenant/dashboard.php';
+    } elseif ($modulePath === 'users') {
+        include 'tenant/users.php';
+    } elseif ($modulePath === 'settings') {
+        include 'tenant/settings.php';
+    } elseif ($modulePath === 'logout') {
+        include 'public/logout.php';
+    } else {
+        echo 'Page not found';
+    }
+    exit;
+}
+
 // Tenant routes
 if (preg_match('/^\/([^\/]+)\/(.+)/', $path, $matches)) {
     $tenantSlug = $matches[1];
@@ -154,6 +196,12 @@ if (preg_match('/^\/([^\/]+)\/(.+)/', $path, $matches)) {
 
     try {
         Tenant::detect($tenantSlug); // Pass the tenant slug
+
+        // Check if tenant matches session
+        if (isset($_SESSION['tenant_subdomain']) && $_SESSION['tenant_subdomain'] !== $tenantSlug) {
+            header('Location: /Mekong_CyberUnit/tenant/dashboard');
+            exit;
+        }
 
         // Dashboard
         if ($modulePath === 'dashboard') {

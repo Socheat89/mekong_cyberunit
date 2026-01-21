@@ -15,6 +15,10 @@ class ProductController {
             die('POS system not subscribed');
         }
 
+        if (Tenant::getPosLevel() < 1) {
+            die('Upgrade to POS Starter ($10) or higher to manage products.');
+        }
+
         if (!Auth::hasPermission('pos', 'read')) {
             die('No permission');
         }

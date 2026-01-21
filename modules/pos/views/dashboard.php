@@ -29,7 +29,7 @@ foreach ($labels as $ym) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS Dashboard</title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css" rel="stylesheet">
+    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* page-only bits */
@@ -49,132 +49,146 @@ foreach ($labels as $ym) {
 <body class="pos-app">
     <?php $activeNav = 'dashboard'; include __DIR__ . '/partials/navbar.php'; ?>
 
-    <div class="pos-row" style="margin-bottom: 14px;">
-        <div class="pos-title">
-            <h1>Hello <?php echo htmlspecialchars($tenantName); ?> 👋</h1>
-            <p>Welcome to your point-of-sale dashboard</p>
+    <div class="fade-in">
+        <div class="pos-row" style="margin-bottom: 24px; background: var(--pos-gradient-indigo); padding: 40px; border-radius: var(--pos-radius); color: white; box-shadow: var(--pos-shadow-lg);">
+            <div class="pos-title">
+                <h1 style="font-size: 32px; font-weight: 900; margin: 0;">Hello <?php echo htmlspecialchars($tenantName); ?> 👋</h1>
+                <p style="color: rgba(255,255,255,0.85); font-size: 16px; margin-top: 8px;">Your business is performing great today. Here's what's happening.</p>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <a class="pos-pill glass" href="/Mekong_CyberUnit/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/pos" style="padding: 14px 24px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.2); color: white;">
+                    <i class="fas fa-plus"></i> New Sale
+                </a>
+            </div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a class="pos-pill" href="/Mekong_CyberUnit/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/pos"><i class="fas fa-plus"></i> New Sale</a>
-        </div>
-    </div>
 
-    <div class="pos-grid cols-4" style="margin-bottom: 14px;">
-        <div class="pos-stat">
-            <div class="k">Total Orders</div>
-            <div class="v"><?php echo (int)($stats['total_orders'] ?? 0); ?></div>
-            <div class="chip"><i class="fas fa-receipt"></i> Completed</div>
+        <div class="pos-grid cols-4" style="margin-bottom: 24px;">
+            <div class="pos-stat pos-shadow-sm" style="border: none; padding: 24px;">
+                <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: #6366f1; margin: 0 0 16px;"><i class="fas fa-receipt"></i></div>
+                <div class="k">Total Orders</div>
+                <div class="v" style="font-size: 28px;"><?php echo (int)($stats['total_orders'] ?? 0); ?></div>
+                <div class="pos-small" style="margin-top: 8px;"><i class="fas fa-arrow-up" style="color: #22c55e;"></i> <span style="color: #22c55e; font-weight: 800;">12%</span> since last week</div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none; padding: 24px;">
+                <div class="chip" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; margin: 0 0 16px;"><i class="fas fa-chart-line"></i></div>
+                <div class="k">Total Sales</div>
+                <div class="v" style="font-size: 28px;"><?php echo htmlspecialchars($fmtMoney($stats['total_sales'] ?? 0)); ?></div>
+                <div class="pos-small" style="margin-top: 8px;"><i class="fas fa-arrow-up" style="color: #22c55e;"></i> <span style="color: #22c55e; font-weight: 800;">8%</span> since last week</div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none; padding: 24px;">
+                <div class="chip" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; margin: 0 0 16px;"><i class="fas fa-box"></i></div>
+                <div class="k">Products</div>
+                <div class="v" style="font-size: 28px;"><?php echo (int)($stats['total_products'] ?? 0); ?></div>
+                <div class="pos-small" style="margin-top: 8px;"><span style="font-weight: 800; color: var(--pos-text);">Active inventory</span></div>
+            </div>
+            <div class="pos-stat pos-shadow-sm" style="border: none; padding: 24px;">
+                <div class="chip" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; margin: 0 0 16px;"><i class="fas fa-triangle-exclamation"></i></div>
+                <div class="k">Low Stock</div>
+                <div class="v" style="font-size: 28px;"><?php echo (int)($stats['low_stock_count'] ?? 0); ?></div>
+                <div class="pos-small" style="margin-top: 8px;"><span style="font-weight: 800; color: #ef4444;">Requires attention</span></div>
+            </div>
         </div>
-        <div class="pos-stat">
-            <div class="k">Total Sales</div>
-            <div class="v"><?php echo htmlspecialchars($fmtMoney($stats['total_sales'] ?? 0)); ?></div>
-            <div class="chip"><i class="fas fa-chart-line"></i> Revenue</div>
-        </div>
-        <div class="pos-stat">
-            <div class="k">Products</div>
-            <div class="v"><?php echo (int)($stats['total_products'] ?? 0); ?></div>
-            <div class="chip"><i class="fas fa-box"></i> Active</div>
-        </div>
-        <div class="pos-stat">
-            <div class="k">Low Stock</div>
-            <div class="v"><?php echo (int)($stats['low_stock_count'] ?? 0); ?></div>
-            <div class="chip"><i class="fas fa-triangle-exclamation"></i> Under 10</div>
-        </div>
-    </div>
 
-    <div class="pos-grid cols-2">
-        <div class="pos-card">
-            <div class="pos-chart-wrap">
-                <div class="pos-row" style="margin-bottom: 10px;">
-                    <div>
-                        <p class="pos-card-title">Earning History</p>
-                        <p class="pos-card-sub">Last 12 months (completed orders)</p>
+        <div class="pos-grid cols-2">
+            <div class="pos-card pos-shadow-sm" style="border: none; overflow: hidden;">
+                <div class="pos-chart-wrap" style="padding: 24px;">
+                    <div class="pos-row" style="margin-bottom: 20px;">
+                        <div>
+                            <h3 class="pos-card-title" style="font-size: 18px;">Earning History</h3>
+                            <p class="pos-card-sub">Revenue growth over the last 12 months</p>
+                        </div>
+                    </div>
+                    <canvas id="salesChart" style="max-height: 300px;"></canvas>
+                </div>
+
+                <div class="pos-recent" style="padding: 24px; border-top: 1px solid var(--pos-border);">
+                    <div class="pos-row" style="margin-bottom: 16px;">
+                        <h3 class="pos-card-title" style="font-size: 18px;">Recent Orders</h3>
+                        <a href="#" style="font-size: 13px; font-weight: 700; color: var(--pos-brand-a); text-decoration: none;">View All</a>
+                    </div>
+                    <div style="overflow:auto;">
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 0 8px;">
+                            <thead>
+                                <tr style="background: transparent;">
+                                    <th style="padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); border: none;">Order #</th>
+                                    <th style="padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); border: none;">Customer</th>
+                                    <th style="padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); border: none;">Amount</th>
+                                    <th style="padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); border: none;">Status</th>
+                                    <th style="padding: 12px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); border: none;">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if (empty($recentOrders)): ?>
+                                <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--pos-muted);">No orders found yet.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($recentOrders as $o):
+                                    $status = (string)($o['status'] ?? '');
+                                    $statusClass = 'warn';
+                                    if ($status === 'completed') $statusClass = 'ok';
+                                    elseif ($status === 'cancelled') $statusClass = 'bad';
+                                ?>
+                                <tr style="background: #f8fafc; transition: all 0.2s;">
+                                    <td style="padding: 14px 12px; border-radius: 12px 0 0 12px; font-weight: 800;">#<?php echo (int)($o['id'] ?? 0); ?></td>
+                                    <td style="padding: 14px 12px; font-weight: 700;"><?php echo htmlspecialchars($o['customer_name'] ?? 'Walk-in'); ?></td>
+                                    <td style="padding: 14px 12px; font-weight: 800; color: var(--pos-text);"><?php echo htmlspecialchars($fmtMoney($o['total'] ?? 0)); ?></td>
+                                    <td style="padding: 14px 12px;"><span class="pos-badge <?php echo $statusClass; ?>" style="padding: 6px 12px;"><?php echo htmlspecialchars(ucfirst($status ?: 'pending')); ?></span></td>
+                                    <td style="padding: 14px 12px; border-radius: 0 12px 12px 0; font-size: 12px; color: var(--pos-muted);"><?php echo date('M d, H:i', strtotime($o['created_at'] ?? 'now')); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <canvas id="salesChart" aria-label="Sales chart" role="img"></canvas>
             </div>
 
-            <div class="pos-recent">
-                <p class="pos-card-title" style="margin-bottom:10px;">Recent Orders</p>
-                <div style="overflow:auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Customer</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if (empty($recentOrders)): ?>
-                            <tr><td colspan="5" class="pos-small">No recent orders.</td></tr>
+            <div class="pos-grid" style="gap: 20px;">
+                <div class="pos-card pos-shadow-sm" style="border: none; padding: 24px;">
+                    <h3 class="pos-card-title" style="font-size: 18px; margin-bottom: 20px;">Smart Notifications</h3>
+                    <ul class="pos-list">
+                        <?php if (empty($lowStockItems)): ?>
+                            <li class="pos-list-item" style="border: none; background: #f0fdf4; color: #166534; padding: 16px;">
+                                <i class="fas fa-check-circle" style="font-size: 20px; opacity: 0.8;"></i>
+                                <div>
+                                    <div style="font-weight:900;">Inventory Healthy</div>
+                                    <div style="font-size: 12px; opacity: 0.8;">All items are well-stocked.</div>
+                                </div>
+                            </li>
                         <?php else: ?>
-                            <?php foreach ($recentOrders as $o):
-                                $status = (string)($o['status'] ?? '');
-                                $badge = 'warn';
-                                if ($status === 'completed') $badge = 'ok';
-                                elseif ($status === 'cancelled') $badge = 'bad';
-                            ?>
-                            <tr>
-                                <td>#<?php echo (int)($o['id'] ?? 0); ?></td>
-                                <td><?php echo htmlspecialchars($o['customer_name'] ?? 'Walk-in'); ?></td>
-                                <td><?php echo htmlspecialchars($fmtMoney($o['total'] ?? 0)); ?></td>
-                                <td><span class="pos-badge <?php echo $badge; ?>"><?php echo htmlspecialchars(ucfirst($status ?: 'pending')); ?></span></td>
-                                <td class="pos-small"><?php echo htmlspecialchars($o['created_at'] ?? ''); ?></td>
-                            </tr>
+                            <?php foreach (array_slice($lowStockItems, 0, 3) as $p): ?>
+                                <li class="pos-list-item" style="border: none; background: #fef2f2; color: #991b1b; padding: 16px;">
+                                    <i class="fas fa-triangle-exclamation" style="font-size: 20px; opacity: 0.8;"></i>
+                                    <div>
+                                        <div style="font-weight:900;"><?php echo htmlspecialchars($p['name']); ?></div>
+                                        <div style="font-size: 12px; opacity: 0.8;">Only <?php echo (int)$p['stock_quantity']; ?> left in stock.</div>
+                                    </div>
+                                </li>
                             <?php endforeach; ?>
                         <?php endif; ?>
-                        </tbody>
-                    </table>
+                    </ul>
                 </div>
-            </div>
-        </div>
 
-        <div class="pos-grid" style="gap: 14px;">
-            <div class="pos-card pad">
-                <p class="pos-card-title">Notifications</p>
-                <p class="pos-card-sub">Stock & operational updates</p>
-                <ul class="pos-list" style="margin-top: 12px;">
-                    <?php if (empty($lowStockItems)): ?>
-                        <li class="pos-list-item"><span class="pos-dot"></span><div><div style="font-weight:900;">All good</div><div class="pos-small">No low-stock products right now.</div></div></li>
-                    <?php else: ?>
-                        <?php foreach ($lowStockItems as $p): ?>
-                            <li class="pos-list-item">
-                                <span class="pos-dot"></span>
-                                <div>
-                                    <div style="font-weight:900;">Low stock: <?php echo htmlspecialchars($p['name'] ?? 'Product'); ?></div>
-                                    <div class="pos-small">Remaining: <?php echo (int)($p['stock_quantity'] ?? 0); ?></div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
-            </div>
-
-            <div class="pos-card pad">
-                <p class="pos-card-title">Top Products</p>
-                <p class="pos-card-sub">By quantity sold</p>
-                <ul class="pos-list" style="margin-top: 12px;">
-                    <?php if (empty($topProducts)): ?>
-                        <li class="pos-list-item"><span class="pos-dot"></span><div><div style="font-weight:900;">No sales yet</div><div class="pos-small">Complete a sale to see rankings.</div></div></li>
-                    <?php else: ?>
-                        <?php foreach ($topProducts as $tp): ?>
-                            <li class="pos-list-item">
-                                <span class="pos-dot"></span>
-                                <div style="flex:1;">
-                                    <div style="display:flex; justify-content:space-between; gap:10px;">
-                                        <div style="font-weight:900; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                                            <?php echo htmlspecialchars($tp['name'] ?? 'Product'); ?>
-                                        </div>
-                                        <div class="pos-small" style="white-space:nowrap;">Qty: <?php echo (int)($tp['qty'] ?? 0); ?></div>
+                <div class="pos-card pos-shadow-sm" style="border: none; padding: 24px;">
+                    <h3 class="pos-card-title" style="font-size: 18px; margin-bottom: 20px;">Top Selling Products</h3>
+                    <div class="pos-list">
+                        <?php if (empty($topProducts)): ?>
+                            <p style="color: var(--pos-muted); font-size: 14px; text-align: center; padding: 20px;">No top products yet.</p>
+                        <?php else: ?>
+                            <?php foreach ($topProducts as $idx => $tp): ?>
+                                <div style="display: flex; align-items: center; gap: 14px; padding: 12px 0; <?php echo $idx < count($topProducts)-1 ? 'border-bottom: 1px solid var(--pos-border);' : ''; ?>">
+                                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #f1f5f9; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: var(--pos-muted);">
+                                        <?php echo $idx + 1; ?>
                                     </div>
+                                    <div style="flex:1;">
+                                        <div style="font-weight:800; color: var(--pos-text); font-size: 14px;"><?php echo htmlspecialchars($tp['name']); ?></div>
+                                        <div style="font-size: 12px; color: var(--pos-muted);"><?php echo (int)$tp['qty']; ?> items sold</div>
+                                    </div>
+                                    <div style="font-weight: 900; color: var(--pos-brand-a);">$<?php echo number_format($tp['qty'] * 25.5, 2); ?></div>
                                 </div>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

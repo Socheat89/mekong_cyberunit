@@ -15,6 +15,10 @@ class ReportsController {
             die('POS system not subscribed');
         }
 
+        if (Tenant::getPosLevel() < 3) {
+             die('Upgrade to POS Premium ($100) to view advanced reports.');
+        }
+
         if (!Auth::hasPermission('pos', 'read')) {
             die('No permission');
         }
