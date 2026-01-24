@@ -49,10 +49,114 @@ $activeClass = function (string $key) use ($activeNav): string {
 };
 ?>
 
-<div class="pos-shell" id="posShell">
-    <div class="pos-overlay" id="posOverlay" aria-hidden="true"></div>
+    <style>
+        :root {
+            --pos-sidebar-width: 280px;
+            --pos-topbar-height: 80px;
+            --pos-primary: #6366f1;
+            --pos-secondary: #8b5cf6;
+            --pos-bg: #f8fafc;
+            --pos-text: #1e293b;
+            --pos-text-muted: #64748b;
+            --pos-border: #e2e8f0;
+            --pos-sidebar-bg: #0f172a;
+        }
 
-    <aside class="pos-sidebar" style="background: #0f172a; border-right: 1px solid rgba(255,255,255,0.05); box-shadow: 20px 0 50px rgba(0,0,0,0.2); width: 280px; padding: 24px 16px;">
+        .pos-sidebar {
+            background: var(--pos-sidebar-bg);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.2);
+            width: var(--pos-sidebar-width);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .pos-main {
+            margin-left: var(--pos-sidebar-width);
+            min-height: 100vh;
+            background: var(--pos-bg);
+            transition: all 0.3s ease;
+        }
+
+        .pos-side-link {
+            padding: 14px 16px;
+            border-radius: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+        .pos-side-link:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .pos-side-link.active {
+            background: linear-gradient(135deg, var(--pos-primary) 0%, var(--pos-secondary) 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .pos-side-link.active i {
+            color: white;
+        }
+
+        .pos-topbar {
+            height: var(--pos-topbar-height);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--pos-border);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .pos-sidebar-toggle {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid var(--pos-border);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--pos-text);
+        }
+
+        @media (max-width: 980px) {
+            .pos-sidebar {
+                transform: translateX(-100%);
+            }
+            .pos-shell--open .pos-sidebar {
+                transform: translateX(0);
+            }
+            .pos-main {
+                margin-left: 0;
+            }
+            .pos-sidebar-toggle {
+                display: flex;
+            }
+        }
+    </style>
+
+    <aside class="pos-sidebar">
         <div class="pos-sidebar__brand" style="margin-bottom: 40px; padding: 0 8px;">
             <a class="pos-brand" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>" style="display: flex; align-items: center; gap: 14px; text-decoration: none;">
                 <div class="pos-brand__logo" style="width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 14px; display: grid; place-items: center; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);">
@@ -65,7 +169,7 @@ $activeClass = function (string $key) use ($activeNav): string {
             </a>
         </div>
 
-        <nav class="pos-side-nav" style="display: grid; gap: 6px;">
+        <nav class="pos-side-nav" style="flex: 1; overflow-y: auto;">
             <?php
             $posLevel = 0;
             if (class_exists('Tenant')) {
@@ -74,52 +178,52 @@ $activeClass = function (string $key) use ($activeNav): string {
             if ($isDevPos) $posLevel = 3; 
             ?>
 
-            <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+            <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>">
                 <i class="fas fa-chart-pie" style="width: 20px; text-align: center;"></i><span>Overview</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+            <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>">
                 <i class="fas fa-desktop" style="width: 20px; text-align: center;"></i><span>Point of Sale</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+            <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>">
                 <i class="fas fa-clock-rotate-left" style="width: 20px; text-align: center;"></i><span>On Hold</span>
             </a>
-            <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+            <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>">
                 <i class="fas fa-list-ul" style="width: 20px; text-align: center;"></i><span>Orders</span>
             </a>
             
             <?php if ($posLevel >= 1): ?>
                 <div style="margin: 20px 16px 10px; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">Management</div>
-                <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+                <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>">
                     <i class="fas fa-boxes-stacked" style="width: 20px; text-align: center;"></i><span>Inventory</span>
                 </a>
-                <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+                <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>">
                     <i class="fas fa-user-group" style="width: 20px; text-align: center;"></i><span>Customers</span>
                 </a>
                 <?php if ($posLevel >= 3): ?>
-                <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+                <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>">
                     <i class="fas fa-chart-line" style="width: 20px; text-align: center;"></i><span>Analytics</span>
                 </a>
                 <?php endif; ?>
-                <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.7); text-decoration: none;">
+                <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>">
                     <i class="fas fa-gear" style="width: 20px; text-align: center;"></i><span>Settings</span>
                 </a>
             <?php endif; ?>
         </nav>
 
         <div class="pos-sidebar__footer" style="padding-top: 24px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.05);">
-            <a class="pos-side-link" href="<?php echo htmlspecialchars($logoutUrl); ?>" style="padding: 14px 16px; border-radius: 16px; font-weight: 600; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.1); background: rgba(239, 68, 68, 0.05); text-decoration: none;">
+            <a class="pos-side-link" href="<?php echo htmlspecialchars($logoutUrl); ?>" style="color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.1); background: rgba(239, 68, 68, 0.05);">
                 <i class="fas fa-right-from-bracket" style="width: 20px; text-align: center;"></i><span>Logout</span>
             </a>
         </div>
     </aside>
 
-    <main class="pos-main" style="flex: 1; min-width: 0;">
-        <header class="pos-topbar" style="height: 80px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); border-bottom: 1px solid var(--pos-border); display: flex; align-items: center; padding: 0 40px; position: sticky; top: 0; z-index: 50;">
-            <div class="pos-header-left">
-                <button class="pos-icon-btn pos-sidebar-toggle" type="button" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
+    <main class="pos-main">
+        <header class="pos-topbar">
+            <div class="pos-header-left" style="display: flex; align-items: center; gap: 15px;">
+                <button class="pos-sidebar-toggle" type="button" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div style="display: flex; align-items: center; gap: 12px; margin-left: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);"></div>
                     <span style="font-weight: 800; font-size: 15px; color: var(--pos-text); text-transform: capitalize; letter-spacing: -0.2px;">
                         <?php echo htmlspecialchars($pageTitle ?? ucfirst($activeNav === 'pos' ? 'Terminal' : ($activeNav ?: 'Dashboard'))); ?>
