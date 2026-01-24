@@ -13,6 +13,10 @@ $db = Database::getInstance();
 $tenantId = Tenant::getId();
 $user = Auth::user();
 
+$isCleanDomain = (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
+$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+$subdomain = Tenant::getCurrent()['subdomain'];
+
 // Get subscribed systems
 $systems = $db->fetchAll(
     "SELECT s.name, ts.subscribed_at FROM tenant_systems ts 
@@ -572,10 +576,10 @@ if ($hasPOS) {
                 <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?>
             </div>
             <ul class="nav-links">
-                <li><a href="/Mekong_CyberUnit/tenant/dashboard.php" class="active"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/users.php"><i class="fas fa-users"></i><span>Users</span></a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/settings.php"><i class="fas fa-cog"></i><span>Settings</span></a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/tenant/dashboard.php" class="active"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/tenant/users.php"><i class="fas fa-users"></i><span>Users</span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/tenant/settings.php"><i class="fas fa-cog"></i><span>Settings</span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
             </ul>
         </div>
     </nav>
@@ -675,10 +679,10 @@ if ($hasPOS) {
                 </div>
                 <div class="card-body">
                     <div class="action-grid">
-                        <a href="/Mekong_CyberUnit/tenant/users.php" class="btn btn-info">
+                        <a href="<?php echo $urlPrefix; ?>/tenant/users.php" class="btn btn-info">
                             <i class="fas fa-users"></i> Manage Users
                         </a>
-                        <a href="/Mekong_CyberUnit/tenant/settings.php" class="btn btn-warning">
+                        <a href="<?php echo $urlPrefix; ?>/tenant/settings.php" class="btn btn-warning">
                             <i class="fas fa-cog"></i> Settings
                         </a>
                     </div>
@@ -694,19 +698,19 @@ if ($hasPOS) {
                 </div>
                 <div class="card-body">
                     <div class="action-grid pos-actions">
-                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" class="btn btn-success">
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/dashboard" class="btn btn-success">
                             <i class="fas fa-chart-line"></i> POS Dashboard
                         </a>
-                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/order" class="btn btn-primary">
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/order" class="btn btn-primary">
                             <i class="fas fa-cash-register"></i> New Order
                         </a>
-                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products" class="btn btn-info">
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/products" class="btn btn-info">
                             <i class="fas fa-box"></i> Products
                         </a>
-                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers" class="btn btn-warning">
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/customers" class="btn btn-warning">
                             <i class="fas fa-users"></i> Customers
                         </a>
-                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/reports" class="btn btn-info">
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/reports" class="btn btn-info">
                             <i class="fas fa-chart-bar"></i> Reports
                         </a>
                     </div>
@@ -722,7 +726,7 @@ if ($hasPOS) {
                     <?php if (empty($recentOrders)): ?>
                         <div class="empty-state">
                             <i class="fas fa-receipt"></i>
-                            <p>No orders yet. <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/order">Create your first order</a></p>
+                            <p>No orders yet. <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/order">Create your first order</a></p>
                         </div>
                     <?php else: ?>
                         <table>
