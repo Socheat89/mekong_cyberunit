@@ -13,13 +13,13 @@ class PosController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         // Viewing the POS terminal implies ability to create sales
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to access POS Terminal');
         }
 
         $products = Product::getAll();

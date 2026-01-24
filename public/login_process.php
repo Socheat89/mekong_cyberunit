@@ -4,8 +4,11 @@ session_start();
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
 
+$isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
+$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /Mekong_CyberUnit/public/login.php');
+    header("Location: $urlPrefix/public/login.php");
     exit;
 }
 
@@ -13,7 +16,11 @@ $username = trim($_POST['username']);
 $password = $_POST['password'];
 
 if (empty($username) || empty($password)) {
-    header('Location: /Mekong_CyberUnit/public/login.php?error=' . urlencode('Username and password are required'));
+    if (isset($_POST['ajax'])) {
+        echo json_encode(['success' => false, 'error' => 'Username and password are required']);
+        exit;
+    }
+    header("Location: $urlPrefix/public/login.php?error=" . urlencode('Username and password are required'));
     exit;
 }
 
@@ -38,16 +45,28 @@ if ($user && password_verify($password, $user['password_hash'])) {
     $_SESSION['tenant_subdomain'] = $user['subdomain'];
     $_SESSION['role_level'] = $user['role_level'];
 
+    $redirect = '';
     // Redirect based on role
     if ($user['role_level'] == 3) { // Super admin
-        header('Location: /Mekong_CyberUnit/admin/dashboard.php');
+        $redirect = "$urlPrefix/admin/dashboard.php";
     } else {
         // Redirect to tenant dashboard
-        header("Location: /Mekong_CyberUnit/{$user['subdomain']}/dashboard");
+        $redirect = "$urlPrefix/{$user['subdomain']}/dashboard";
     }
+
+    if (isset($_POST['ajax'])) {
+        echo json_encode(['success' => true, 'redirect' => $redirect]);
+        exit;
+    }
+
+    header('Location: ' . $redirect);
     exit;
 } else {
-    header('Location: /Mekong_CyberUnit/public/login.php?error=' . urlencode('Invalid username or password'));
+    if (isset($_POST['ajax'])) {
+        echo json_encode(['success' => false, 'error' => 'Invalid username or password']);
+        exit;
+    }
+    header("Location: $urlPrefix/public/login.php?error=" . urlencode('Invalid username or password'));
     exit;
 }
 ?>

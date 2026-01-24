@@ -8,12 +8,12 @@ class DashboardController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to access POS Dashboard');
         }
 
         $db = Database::getInstance();

@@ -1,5 +1,7 @@
 <?php
 // public/api/notify_payment.php
+error_reporting(0);
+ini_set('display_errors', 0);
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../core/classes/Database.php';
 require_once __DIR__ . '/../../core/classes/TelegramBot.php';

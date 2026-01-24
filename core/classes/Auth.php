@@ -36,6 +36,18 @@ class Auth {
 
     public static function hasPermission($module, $action) {
         if (!self::check()) return false;
+
+        // Super Admin has all permissions globally
+        if (self::isSuperAdmin()) return true;
+
+        // Tenant Admin has all permissions for any module their tenant has subscribed to
+        if (self::isTenantAdmin()) {
+            require_once __DIR__ . '/Tenant.php';
+            if (Tenant::hasModule($module)) {
+                return true;
+            }
+        }
+
         $db = Database::getInstance();
         $count = $db->fetchOne(
             "SELECT COUNT(*) as count FROM role_permissions rp 

@@ -9,16 +9,16 @@ class CustomerController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (Tenant::getPosLevel() < 2) {
-             die('Upgrade to POS Standard ($50) or Premium ($100) to manage customers.');
+             die('Upgrade to POS Standard or Premium to manage customers.');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to view customers');
         }
 
         $customers = Customer::getAll();
@@ -31,7 +31,7 @@ class CustomerController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to create customers');
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -46,7 +46,7 @@ class CustomerController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to edit customers');
         }
 
         $customer = Customer::getById($id);
@@ -66,7 +66,7 @@ class CustomerController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'delete')) {
-            die('No permission');
+            die('No permission to delete customers');
         }
 
         Customer::delete($id);

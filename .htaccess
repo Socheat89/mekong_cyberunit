@@ -1,4 +1,12 @@
+Options -Indexes
 RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Redirect root to public/
+RewriteRule ^$ public/ [L,R=301]
 
 # Handle PHP files directly
 RewriteCond %{REQUEST_FILENAME} \.php$ [NC]

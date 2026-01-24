@@ -12,12 +12,12 @@ class OrderController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to create orders');
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,12 +31,12 @@ class OrderController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to view orders');
         }
 
         $orders = Order::getAll(null, 50);
@@ -47,12 +47,12 @@ class OrderController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to view held orders');
         }
 
         $heldOrders = Order::getPending(null, 200);
@@ -64,7 +64,7 @@ class OrderController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to view order detail');
         }
 
         $order = Order::getById($id);
@@ -92,7 +92,7 @@ class OrderController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to complete orders');
         }
 
         $db = Database::getInstance();

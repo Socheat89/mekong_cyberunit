@@ -1,3 +1,6 @@
+<?php 
+require_once __DIR__ . '/../core/classes/Database.php'; 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/Mekong_CyberUnit/public/css/landing.css">
+    <link rel="stylesheet" href="css/landing.css">
     
     <style>
         /* Modal Styles */
@@ -104,8 +107,244 @@
             color: var(--primary);
             margin-bottom: 0.5rem;
         }
+
+        /* Countdown Style */
+        .countdown-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .countdown-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .countdown-circle-bg {
+            fill: none;
+            stroke: #f1f5f9;
+            stroke-width: 8;
+        }
+
+        .countdown-circle-progress {
+            fill: none;
+            stroke: #E31E26;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 351.85; /* 2 * PI * r (r=56) */
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .countdown-text {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #1e293b;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .waiting-status {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .waiting-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .waiting-desc {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .telegram-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f0f9ff;
+            color: #0369a1;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        /* Auth Modal Specific */
+        .auth-form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .auth-form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+
+        .auth-form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .auth-form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .auth-divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .auth-divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        .auth-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            border: 1px solid #fecaca;
+        }
     </style>
     
+    <!-- Payment Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 3rem 2rem; text-align: center;">
+            <div style="width: 80px; height: 80px; background: #ecfdf5; color: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1.5rem; animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+                <i class="ph-bold ph-check"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #0f172a;">Payment Successful!</h3>
+            <p style="color: #64748b; margin-bottom: 2rem;">Thank you for your payment. Your workspace setup is being initialized.</p>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--primary); font-weight: 600;">
+                <i class="ph-bold ph-spinner ph-spin"></i> Redirecting to setup...
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting for Approval Modal -->
+    <div id="waitingModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header" style="background: #0088cc; color: white; border-bottom: none;">
+                <h3 style="font-weight: 600;">
+                    <i class="ph-bold ph-telegram-logo"></i> Awaiting Approval
+                </h3>
+                <button type="button" class="modal-close" onclick="closeWaitingModal()" style="color: white;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 3rem 2rem;">
+                <div class="waiting-status">
+                    <div class="countdown-container">
+                        <svg class="countdown-svg">
+                            <circle class="countdown-circle-bg" cx="60" cy="60" r="56"></circle>
+                            <circle id="countdown-progress" class="countdown-circle-progress" cx="60" cy="60" r="56"></circle>
+                        </svg>
+                        <div id="countdown-text" class="countdown-text">120</div>
+                    </div>
+                    
+                    <div class="waiting-title">Admin Notification Sent</div>
+                    <div class="waiting-desc">
+                        We've notified our team to verify your payment. 
+                        This usually takes less than 2 minutes. 
+                        <br><strong>Please stay on this page.</strong>
+                    </div>
+                    
+                    <div class="telegram-badge">
+                        <i class="ph-bold ph-spinner ph-spin"></i>
+                        <span id="waitingBadgeText">Waiting for manual approval...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+
+    <!-- Sign In Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3 style="font-weight: 600;">
+                    <i class="ph-bold ph-user-circle"></i> Welcome Back
+                </h3>
+                <button type="button" class="modal-close" onclick="closeAuthModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 2.5rem 2rem;">
+                <div id="authError" class="auth-error"></div>
+                <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                    <div class="auth-form-group">
+                        <label for="modal-username">Username</label>
+                        <input type="text" id="modal-username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="auth-form-group">
+                        <div style="display: flex; justify-content: space-between;">
+                            <label for="modal-password">Password</label>
+                            <a href="#" style="font-size: 0.8rem; color: var(--primary);">Forgot?</a>
+                        </div>
+                        <input type="password" id="modal-password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <button type="submit" id="signInBtn" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                        Sign In <i class="ph-bold ph-sign-in" style="margin-left: 8px;"></i>
+                    </button>
+                    
+                    <div class="auth-divider">or</div>
+                    
+                    <p style="font-size: 0.9rem; margin: 0;">
+                        New here? <a href="register.php" style="color: var(--primary); font-weight: 600;">Create an account</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/khqr-1.0.2.min.js"></script>
     <!-- Icons (Phosphor Icons for a premium look) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -122,14 +361,13 @@
             </a>
             
             <nav class="nav-links">
-                <a href="#systems" class="nav-item">Solutions</a>
                 <a href="#features" class="nav-item">Features</a>
                 <a href="#pricing" class="nav-item">Pricing</a>
             </nav>
             
             <div class="flex items-center gap-4">
-                <a href="/Mekong_CyberUnit/public/login.php" class="nav-item">Sign In</a>
-                <a href="/Mekong_CyberUnit/public/register.php" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
+                <a href="javascript:void(0)" onclick="openAuthModal()" class="nav-item">Sign In</a>
+                <a href="register.php" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
             </div>
         </div>
     </header>
@@ -148,10 +386,9 @@
                 Stop juggling multiple disjointed subscriptions. Access POS, Inventory, HR, and Accounting in a single, seamless operating system designed for modern growth.
             </p>
             <div class="btn-group">
-                <a href="/Mekong_CyberUnit/public/register.php" class="btn btn-primary">
+                <a href="register.php" class="btn btn-primary">
                     Start Free Trial <i class="ph-bold ph-arrow-right" style="margin-left: 8px;"></i>
                 </a>
-                <a href="#systems" class="btn btn-outline">Explore Systems</a>
             </div>
             
             <!-- Dashboard Preview / Mockup would go here -->
@@ -184,77 +421,6 @@
         </div>
     </section>
 
-    <!-- Systems Section -->
-    <section class="systems-section" id="systems">
-        <div class="container">
-            <div class="section-header">
-                <h2>Modular Systems for Every Need</h2>
-                <p>Choose the modules you need now and add more as you grow.</p>
-            </div>
-            
-            <div class="systems-grid">
-                <!-- POS System -->
-                <div class="system-card">
-                    <div class="system-icon">
-                        <i class="ph-duotone ph-cash-register"></i>
-                    </div>
-                    <h3 class="system-title">Cloud POS</h3>
-                    <p class="system-desc">
-                        Lightning fast point of sale with offline mode, receipt printing, and barcode scanning support.
-                    </p>
-                    <div class="price-tag">
-                        <span class="price-amount">From $10</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                </div>
-
-                <!-- Inventory -->
-                <div class="system-card">
-                    <div class="system-icon">
-                        <i class="ph-duotone ph-package"></i>
-                    </div>
-                    <h3 class="system-title">Smart Inventory</h3>
-                    <p class="system-desc">
-                        Real-time stock tracking, automated reorder alerts, and supplier management.
-                    </p>
-                    <div class="price-tag">
-                        <span class="price-amount">$30</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                </div>
-
-                <!-- HR -->
-                <div class="system-card">
-                    <div class="system-icon">
-                        <i class="ph-duotone ph-users-three"></i>
-                    </div>
-                    <h3 class="system-title">HR & Payroll</h3>
-                    <p class="system-desc">
-                        Manage employee attendance, leave requests, and process payroll in one click.
-                    </p>
-                    <div class="price-tag">
-                        <span class="price-amount">$40</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                </div>
-                
-                 <!-- CRM (Future) -->
-                 <div class="system-card" style="opacity: 0.7; background: #f8fafc;">
-                    <div class="system-icon" style="background: #e2e8f0; color: #94a3b8;">
-                        <i class="ph-duotone ph-chart-line-up"></i>
-                    </div>
-                    <h3 class="system-title">Advanced CRM</h3>
-                    <p class="system-desc">
-                        Customer loyalty programs, marketing automation, and sales tracking.
-                    </p>
-                    <div class="price-tag">
-                        <span class="price-period" style="font-weight: 600; color: var(--secondary);">Coming Soon</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Cloud POS Pricing Section -->
     <section class="pricing-section" id="pricing" style="padding: 80px 0; background: #fff;">
         <div class="container">
@@ -265,93 +431,66 @@
             </div>
             
             <div class="systems-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                <!-- Starter Plan -->
-                <div class="system-card" style="border-top: 4px solid var(--border-color);">
-                    <h3 class="system-title" style="margin-bottom: 0.5rem;">Starter</h3>
-                    <p class="system-desc" style="margin-bottom: 1rem; min-height: auto;">Perfect for small businesses just getting started.</p>
-                    <div class="price-tag" style="margin-bottom: 2rem;">
-                        <span class="price-amount">$10</span>
-                        <span class="price-period">/month</span>
-                    </div>
+                <?php
+                try {
+                $db = Database::getInstance();
+                $plans = $db->fetchAll("SELECT * FROM systems WHERE status = 'active' ORDER BY price ASC");
+                if (empty($plans)) {
+                    echo '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; background: #fff5f5; border-radius: 1rem; border: 1px dashed #feb2b2; color: #c53030;">
+                            <i class="ph-bold ph-warning-circle" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                            No active pricing plans found. Please configure them in the <a href="' . (strpos($_SERVER['REQUEST_URI'], '/public/') !== false ? '../admin/plans.php' : 'admin/plans.php') . '" style="text-decoration: underline; font-weight: 700;">Admin Panel</a>.
+                          </div>';
+                } else {
+                foreach ($plans as $index => $plan):
+                    $planCode = strtolower(str_replace(' ', '_', $plan['name']));
+                    $isPopular = ($index === 1); // Mark second plan as popular for UI
                     
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-muted);">
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Basic POS features
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Single User
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Basic Reporting
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Email Support
-                        </li>
-                    </ul>
-                    
-                    <button onclick="openPaymentModal('starter', 10)" class="btn btn-outline" style="width: 100%;">Choose Starter</button>
-                </div>
-
-                <!-- Professional Plan -->
-                <div class="system-card" style="border-top: 4px solid var(--primary); transform: scale(1.05); box-shadow: var(--shadow-xl); z-index: 1;">
+                    // Fetch linked modules for this plan
+                    $modules = $db->fetchAll("SELECT module_name FROM system_modules WHERE system_id = ?", [$plan['id']]);
+                ?>
+                <div class="system-card" style="border-top: 4px solid <?php echo $isPopular ? 'var(--primary)' : 'var(--border-color)'; ?>; <?php echo $isPopular ? 'transform: scale(1.05); box-shadow: var(--shadow-xl); z-index: 1;' : ''; ?>">
+                    <?php if ($isPopular): ?>
                     <div style="position: absolute; top: 0; right: 0; background: var(--primary); color: white; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-bottom-left-radius: 0.5rem;">POPULAR</div>
-                    <h3 class="system-title" style="margin-bottom: 0.5rem;">Professional</h3>
-                    <p class="system-desc" style="margin-bottom: 1rem; min-height: auto;">Advanced features for growing businesses.</p>
+                    <?php endif; ?>
+                    
+                    <h3 class="system-title" style="margin-bottom: 0.5rem;"><?php echo htmlspecialchars($plan['name']); ?></h3>
+                    <p class="system-desc" style="margin-bottom: 1rem; min-height: auto;"><?php echo htmlspecialchars($plan['description']); ?></p>
+                    
                     <div class="price-tag" style="margin-bottom: 2rem;">
-                        <span class="price-amount">$50</span>
+                        <span class="price-amount">$<?php echo number_format($plan['price'], 2); ?></span>
                         <span class="price-period">/month</span>
                     </div>
                     
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-muted);">
+                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-muted); text-align: left;">
+                        <?php if (empty($modules)): ?>
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="ph-bold ph-info" style="color: var(--secondary);"></i> Basic Platform Access
+                            </li>
+                        <?php else: ?>
+                            <?php foreach ($modules as $mod): ?>
+                            <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="ph-bold ph-check" style="color: var(--primary);"></i> 
+                                <span style="text-transform: uppercase; font-weight: 500; font-size: 0.85rem;"><?php echo htmlspecialchars($mod['module_name']); ?></span> Module Included
+                            </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                         <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> <strong>All Starter features</strong>
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Intermediate Features
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> 5 Staff Logins
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Inventory Management
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Priority Email Support
-                        </li>
-                    </ul>
-                    
-                    <button onclick="openPaymentModal('professional', 50)" class="btn btn-primary" style="width: 100%;">Choose Professional</button>
-                </div>
-
-                <!-- Enterprise Plan -->
-                <div class="system-card" style="border-top: 4px solid var(--text-main);">
-                    <h3 class="system-title" style="margin-bottom: 0.5rem;">Enterprise</h3>
-                    <p class="system-desc" style="margin-bottom: 1rem; min-height: auto;">Full functionality for large operations.</p>
-                    <div class="price-tag" style="margin-bottom: 2rem;">
-                        <span class="price-amount">$100</span>
-                        <span class="price-period">/month</span>
-                    </div>
-                    
-                    <ul style="list-style: none; padding: 0; margin-bottom: 2rem; color: var(--text-muted);">
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> <strong>All Pro features</strong>
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Full Function Access
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Unlimited Staff
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Advanced Analytics
-                        </li>
-                        <li style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> 24/7 Phone Support
+                            <i class="ph-bold ph-check" style="color: var(--primary);"></i> Cloud Storage
                         </li>
                     </ul>
                     
-                    <button onclick="openPaymentModal('enterprise', 100)" class="btn btn-outline" style="width: 100%;">Choose Enterprise</button>
+                    <a href="register.php?plan=<?php echo $planCode; ?>" class="btn <?php echo $isPopular ? 'btn-primary' : 'btn-outline'; ?>" style="width: 100%; text-align: center; text-decoration: none; display: block;">
+                        Choose <?php echo htmlspecialchars($plan['name']); ?>
+                    </a>
                 </div>
+                <?php endforeach; ?>
+                <?php } 
+                } catch (Exception $e) {
+                    echo '<div style="grid-column: 1/-1; color: red; padding: 1rem; border: 1px solid red; border-radius: 0.5rem; background: #fff1f2;">
+                            <strong>DATABASE ERROR:</strong> ' . htmlspecialchars($e->getMessage()) . '
+                          </div>';
+                }
+                ?>
             </div>
         </div>
     </section>
@@ -363,7 +502,7 @@
                 <h2>Ready to transform your business?</h2>
                 <p>Join hundreds of businesses using Mekong CyberUnit to streamline operations.</p>
                 <div class="btn-group">
-                     <a href="/Mekong_CyberUnit/public/register.php" class="btn" style="background: white; color: var(--text-main);">
+                     <a href="register.php" class="btn" style="background: white; color: var(--text-main);">
                         Create Free Account
                     </a>
                     <a href="#" class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
@@ -455,9 +594,13 @@
 
                 <div id="pollingNotice" style="margin-top: 1rem; padding: 1rem; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 0.5rem; text-align: left;">
                     <p style="font-size: 0.85rem; color: #92400e; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-                        <i class="ph-bold ph-info"></i>
-                        Waiting for payment confirmation...
+                        <i class="ph-bold ph-spinner ph-spin"></i>
+                        កំពុងរង់ចាំការទូទាត់... (Waiting for payment)
                     </p>
+                    <div id="apiStatus" style="font-size: 11px; color: #666; margin-top: 5px; font-family: monospace;">Status: INITIALIZING...</div>
+                    <button type="button" id="manualCheckBtn" onclick="if(window.currentMd5) checkStatusManual(window.currentMd5)" style="margin-top: 8px; font-size: 0.75rem; background: #92400e; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; display: none;">
+                        <i class="ph-bold ph-arrows-clockwise"></i> ពិនិត្យឡើងវិញ (Check Now)
+                    </button>
                 </div>
                 
                 <p style="font-size: 0.9rem; color: #64748b; margin-top: 1rem;">
@@ -481,6 +624,11 @@
         const qrImage = document.getElementById('qrImage');
         const qrPlaceholder = document.getElementById('qrPlaceholder');
 
+        // Helper to handle relative paths
+        // Use origin-relative paths for API calls to avoid subfolder issues on mekongcyberunit.app
+        const isMekongDomain = window.location.hostname === 'mekongcyberunit.app';
+        const projectPath = isMekongDomain ? '' : (window.location.pathname.includes('/public/') ? '' : 'public/');
+
         async function openPaymentModal(plan, price) {
             currentPlan = plan;
             currentAmount = price;
@@ -496,12 +644,13 @@
             qrPlaceholder.style.display = 'block';
             confirmBtn.style.display = 'none';
             staticNotice.style.display = 'none';
-            pollingNotice.style.display = 'block';
+            pollingNotice.innerHTML = '<p style="font-size: 0.85rem; color: #92400e; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="ph-bold ph-spinner ph-spin"></i> កំពុងភ្ជាប់ទៅកាន់ប្រព័ន្ធទូទាត់... (Connecting...)</p>';
             
             modal.classList.add('active');
 
             try {
-                const response = await fetch(`/Mekong_CyberUnit/public/api/bakong_qr.php?plan=${plan}&method=bakong`);
+                const response = await fetch(`${projectPath}api/bakong_qr.php?plan=${plan}&method=bakong&t=${Date.now()}`);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 const result = await response.json();
 
                 if (result.success) {
@@ -510,16 +659,28 @@
                     qrPlaceholder.style.display = 'none';
                     
                     if (result.is_static) {
-                        confirmBtn.style.display = 'flex';
+                        confirmBtn.style.display = 'none'; // Auto-trigger notification
                         staticNotice.style.display = 'block';
+                        staticNotice.innerHTML = '<p style="font-size: 0.85rem; color: #065f46; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="ph-bold ph-spinner ph-spin"></i> Waiting for Admin to verify payment...</p>';
                         pollingNotice.style.display = 'none';
-                    } else {
-                        // Dynamic QR - Enable Manual Confirmation Fallback
-                        confirmBtn.style.display = 'flex'; // Enable manual confirm
-                        confirmBtn.innerHTML = '<i class="ph-bold ph-check-circle"></i> I Have Paid';
                         
-                        // Keep polling active in background
+                        // Automatically notify admin and start waiting
+                        confirmStaticPayment();
+                    } else {
+                        // Dynamic QR - Fully Automatic
+                        confirmBtn.style.display = 'none'; 
+                        staticNotice.style.display = 'none';
+                        pollingNotice.style.display = 'block';
+                        pollingNotice.innerHTML = '<p style="font-size: 0.85rem; color: #92400e; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="ph-bold ph-spinner ph-spin"></i> Detecting payment automatically...</p>';
+                        
+
+                        window.currentMd5 = result.md5;
                         startPolling(result.md5);
+                        // Show manual check button after 5 seconds
+                        setTimeout(() => {
+                            const btn = document.getElementById('manualCheckBtn');
+                            if(btn) btn.style.display = 'inline-block';
+                        }, 5000);
                     }
                 } else {
                     alert('Error generating QR: ' + result.error);
@@ -531,12 +692,8 @@
         }
 
         window.confirmStaticPayment = async function() {
-            const btn = document.getElementById('confirmBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="ph-bold ph-spinner ph-spin"></i> Sending Notification...';
-            
             try {
-                const response = await fetch('/Mekong_CyberUnit/public/api/notify_payment.php', {
+                const response = await fetch(`${projectPath}api/notify_payment.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ plan: currentPlan, amount: currentAmount })
@@ -544,18 +701,169 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    window.location.href = `/Mekong_CyberUnit/public/register.php?plan=${currentPlan}&ref=${result.ref}`;
+                    // Switch to waiting modal
+                    closeModal();
+                    document.getElementById('waitingModal').classList.add('active');
+                    
+                    startCountdown(120);
+                    startApprovalPolling(result.ref);
                 } else {
-                    alert('Error: ' + result.error);
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="ph-bold ph-check-circle"></i> I Have Paid';
+                    alert('Notification Error: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Notification Error:', error);
-                alert('Connection failed.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="ph-bold ph-check-circle"></i> I Have Paid';
+                console.error('Notification Connection Error:', error);
+                alert('Connection error. Please try again.');
             }
+        }
+
+        let countdownInterval = null;
+        function startCountdown(duration) {
+            let timeLeft = duration;
+            const textDisplay = document.getElementById('countdown-text');
+            const progressCircle = document.getElementById('countdown-progress');
+            const totalDash = 351.85; // 2 * PI * 56
+            
+            // Initial state
+            textDisplay.textContent = timeLeft;
+            progressCircle.style.strokeDashoffset = 0;
+            
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('waitingBadgeText').textContent = "Taking longer than usual, please wait...";
+                    return;
+                }
+                
+                textDisplay.textContent = timeLeft;
+                const offset = totalDash - (timeLeft / duration) * totalDash;
+                progressCircle.style.strokeDashoffset = offset;
+            }, 1000);
+        }
+
+        function startApprovalPolling(ref) {
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${projectPath}api/check_approval.php?ref=${ref}`);
+                    const result = await response.json();
+
+                    if (result.success && result.status === 'approved') {
+                        clearInterval(pollingInterval);
+                        clearInterval(countdownInterval);
+                        
+                        // Show success state in waiting modal first
+                        const waitingContent = document.querySelector('#waitingModal .modal-body');
+                        waitingContent.innerHTML = `
+                            <div style="text-align:center; color: #16a34a; padding: 15px;">
+                                <i class="ph-bold ph-check-circle" style="font-size: 5rem; margin-bottom: 20px; animation: scaleIn 0.5s ease;"></i>
+                                <h2 style="margin-bottom: 10px;">Payment Approved!</h2>
+                                <p style="color: #64748b; font-size: 1.1rem;">Redirecting to setup your workspace...</p>
+                            </div>
+                        `;
+                        
+                        setTimeout(() => {
+                            window.location.href = `setup.php?plan=${currentPlan}&paid=true&ref=${ref}`;
+                        }, 2000);
+                    } else if (result.success && result.status === 'rejected') {
+                        clearInterval(pollingInterval);
+                        clearInterval(countdownInterval);
+                        alert('Payment was rejected. Please contact support.');
+                        closeWaitingModal();
+                    }
+                } catch (error) {
+                    console.error('Approval Polling Error:', error);
+                }
+            }, 3000);
+        }
+
+        async function checkStatusManual(md5) {
+            const btn = document.getElementById('manualCheckBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner ph-spin"></i> Checking...';
+
+            try {
+                const response = await fetch(`${projectPath}api/bakong_check.php?md5=${md5}&t=${Date.now()}`);
+                if (!response.ok) throw new Error('HTTP error ' + response.status);
+                const result = await response.json();
+
+                if (result.success && ['SUCCESS', 'APPROVED', 'PAID', 'COMPLETED', 'SETTLED'].includes(result.status.toUpperCase())) {
+                     btn.innerHTML = '<i class="ph-bold ph-check"></i> Paid!';
+                     btn.style.background = '#10b981';
+                     btn.style.borderColor = '#10b981';
+                     clearInterval(pollingInterval);
+                     setTimeout(() => {
+                         closeModal();
+                         document.getElementById('successModal').classList.add('active');
+                         setTimeout(() => {
+                            window.location.href = `setup.php?plan=${currentPlan}&paid=true&md5=${md5}`;
+                         }, 1000);
+                     }, 500);
+                } else {
+                    alert('ស្ថានភាពទូទាត់: ' + (result.status || 'រង់ចាំ...') + '។ សូមព្យាយាមម្តងទៀតបន្តិចទៀតនេះ។');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Manual Check Error:', error);
+                const pollingNotice = document.getElementById('pollingNotice');
+                if(pollingNotice) {
+                    pollingNotice.innerHTML += `<div style="color:#ef4444; font-size:11px; margin-top:5px;">ការឆែកមានបញ្ហា: ${error.message}</div>`;
+                }
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function startPolling(md5) {
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${projectPath}api/bakong_check.php?md5=${md5}&t=${Date.now()}`);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    const result = await response.json();
+
+                    const statusDisplay = document.getElementById('apiStatus');
+                    if (statusDisplay) {
+                        statusDisplay.textContent = `Status: ${result.status || 'UNKNOWN'} (${new Date().toLocaleTimeString()})`;
+                    }
+
+                    if (result.success && ['SUCCESS', 'APPROVED', 'PAID', 'COMPLETED', 'SETTLED'].includes(result.status.toUpperCase())) {
+                        clearInterval(pollingInterval);
+                        
+                        // Show Success Message
+                        const pollingNotice = document.getElementById('pollingNotice');
+                        if (pollingNotice) {
+                            pollingNotice.innerHTML = '<p style="font-size: 0.85rem; color: #10b981; margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i class="ph-bold ph-check-circle"></i> ការទូទាត់ជោគជ័យ! កំពុងបញ្ជូនបន្ត...</p>';
+                        }
+
+                        setTimeout(() => {
+                            closeModal();
+                            document.getElementById('successModal').classList.add('active');
+                            setTimeout(() => {
+                                const setupPath = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1) + 'setup.php';
+                                window.location.href = `${setupPath}?plan=${currentPlan}&paid=true&md5=${md5}`;
+                            }, 1000);
+                        }, 500);
+                    } else if (result.success === false) {
+                        const pollingNotice = document.getElementById('pollingNotice');
+                        if(pollingNotice && !document.getElementById('api-err')) {
+                           pollingNotice.innerHTML += `<div id="api-err" style="color:#ef4444; font-size:10px; margin-top:5px;">API Error: ${result.error}</div>`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Polling Error:', error);
+                    const pollingNotice = document.getElementById('pollingNotice');
+                    if(pollingNotice && !document.getElementById('api-err')) {
+                        pollingNotice.innerHTML += `<div id="api-err" style="color:#ef4444; font-size:10px; margin-top:5px;">បញ្ហា API: ${error.message} (កំពុងព្យាយាមឡើងវិញ...)</div>`;
+                    }
+                }
+            }, 2000); // Check every 2 seconds
         }
 
         function closeModal() {
@@ -566,28 +874,73 @@
             }
         }
 
-        function startPolling(md5) {
-            if (pollingInterval) clearInterval(pollingInterval);
-            
-            pollingInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`/Mekong_CyberUnit/public/api/bakong_check.php?md5=${md5}`);
-                    const result = await response.json();
-
-                    if (result.success && result.status === 'SUCCESS') {
-                        clearInterval(pollingInterval);
-                        window.location.href = `/Mekong_CyberUnit/public/register.php?plan=${currentPlan}&paid=true&md5=${md5}`;
-                    }
-                } catch (error) {
-                    console.error('Polling Error:', error);
-                }
-            }, 3000); // Check every 3 seconds
+        // Auth Modal Functions
+        function openAuthModal() {
+            document.getElementById('authModal').classList.add('active');
         }
 
-        // Close on outside click
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = document.getElementById('signInBtn');
+            const errorDiv = document.getElementById('authError');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner ph-spin"></i> Signing In...';
+            errorDiv.style.display = 'none';
+            
+            const formData = new FormData(form);
+            formData.append('ajax', '1');
+            
+            try {
+                const response = await fetch(`${projectPath}login_process.php`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    btn.innerHTML = '<i class="ph-bold ph-check"></i> Success!';
+                    btn.style.background = '#10b981';
+                    btn.style.borderColor = '#10b981';
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 500);
+                } else {
+                    errorDiv.textContent = result.error || 'Login failed';
+                    errorDiv.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sign In <i class="ph-bold ph-sign-in" style="margin-left: 8px;"></i>';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = 'Sign In <i class="ph-bold ph-sign-in" style="margin-left: 8px;"></i>';
+            }
+        }
+
+        window.closeWaitingModal = function() {
+            if(confirm("Are you sure you want to cancel the waiting process? Your payment notification has already been sent.")) {
+                document.getElementById('waitingModal').classList.remove('active');
+                if (pollingInterval) clearInterval(pollingInterval);
+                if (countdownInterval) clearInterval(countdownInterval);
+            }
+        };
+
         window.onclick = function(event) {
             if (event.target == modal) {
                 closeModal();
+            }
+            if (event.target == document.getElementById('authModal')) {
+                closeAuthModal();
             }
         }
     </script>

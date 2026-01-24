@@ -76,6 +76,22 @@ class Tenant {
         return $count['count'] > 0;
     }
 
+    public static function hasModule($moduleName) {
+        if (!self::$currentTenant) return false;
+
+        $db = Database::getInstance();
+        // Check if any of the subscribed systems (plans) have this module linked
+        $count = $db->fetchOne(
+            "SELECT COUNT(*) as count FROM tenant_systems ts 
+             JOIN systems s ON ts.system_id = s.id 
+             JOIN system_modules sm ON sm.system_id = s.id
+             WHERE ts.tenant_id = ? AND sm.module_name = ? AND ts.status = 'active'",
+            [self::getId(), $moduleName]
+        );
+        
+        return $count['count'] > 0;
+    }
+
     public static function getPosLevel() {
         if (!self::$currentTenant) return 0;
         

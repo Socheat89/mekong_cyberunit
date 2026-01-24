@@ -11,16 +11,16 @@ class ReportsController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (Tenant::getPosLevel() < 3) {
-             die('Upgrade to POS Premium ($100) to view advanced reports.');
+             die('Upgrade to POS Premium to view advanced reports.');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to access POS Reports');
         }
 
         // Get report data

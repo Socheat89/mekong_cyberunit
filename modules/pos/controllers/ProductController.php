@@ -11,16 +11,16 @@ class ProductController {
         TenantMiddleware::handle();
         AuthMiddleware::handle();
 
-        if (!Tenant::hasSystem('POS System')) {
-            die('POS system not subscribed');
+        if (!Tenant::hasModule('pos')) {
+            die('POS system not subscribed for your plan');
         }
 
         if (Tenant::getPosLevel() < 1) {
-            die('Upgrade to POS Starter ($10) or higher to manage products.');
+            die('Upgrade to POS Starter or higher to manage products.');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {
-            die('No permission');
+            die('No permission to view products');
         }
 
         $products = Product::getAll();
@@ -34,7 +34,7 @@ class ProductController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to create products');
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -50,7 +50,7 @@ class ProductController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'write')) {
-            die('No permission');
+            die('No permission to edit products');
         }
 
         $product = Product::getById($id);
@@ -71,7 +71,7 @@ class ProductController {
         AuthMiddleware::handle();
 
         if (!Auth::hasPermission('pos', 'delete')) {
-            die('No permission');
+            die('No permission to delete products');
         }
 
         Product::delete($id);

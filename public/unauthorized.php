@@ -16,7 +16,7 @@
     <div class="error-container">
         <h2>Access Denied</h2>
         <p>You don't have permission to access this resource.</p>
-        <a href="/Mekong_CyberUnit/public/login.php" class="btn">Back to Login</a>
+        <a href="login.php" class="btn">Back to Login</a>
     </div>
 </body>
 </html>

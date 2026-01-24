@@ -12,6 +12,9 @@ require_once 'core/classes/Auth.php';
 
 // Define base path for the project
 $basePath = '/Mekong_CyberUnit';
+$isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
+$urlPrefix = $isCleanDomain ? '' : $basePath;
+
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
 
@@ -162,14 +165,14 @@ if (preg_match('/^\/tenant\/(.+)/', $path, $matches)) {
     $modulePath = preg_replace('/\.php$/', '', $modulePath);
 
     if (!isset($_SESSION['tenant_id'])) {
-        header('Location: /Mekong_CyberUnit/public/login.php');
+        header("Location: $urlPrefix/public/login.php");
         exit;
     }
 
     $db = Database::getInstance();
     $tenant = $db->fetchOne("SELECT * FROM tenants WHERE id = ? AND status = 'active'", [$_SESSION['tenant_id']]);
     if (!$tenant) {
-        header('Location: /Mekong_CyberUnit/public/login.php');
+        header("Location: $urlPrefix/public/login.php");
         exit;
     }
 
@@ -199,7 +202,7 @@ if (preg_match('/^\/([^\/]+)\/(.+)/', $path, $matches)) {
 
         // Check if tenant matches session
         if (isset($_SESSION['tenant_subdomain']) && $_SESSION['tenant_subdomain'] !== $tenantSlug) {
-            header('Location: /Mekong_CyberUnit/tenant/dashboard');
+            header("Location: $urlPrefix/tenant/dashboard");
             exit;
         }
 

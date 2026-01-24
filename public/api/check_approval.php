@@ -1,49 +1,33 @@
 <?php
 // public/api/check_approval.php
+// VERSION: V5_ROBUST_PATH
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../core/classes/Database.php';
+header('Access-Control-Allow-Origin: *'); 
+error_reporting(0); 
 
-$ref = $_GET['ref'] ?? '';
+$md5 = $_GET['md5'] ?? '';
 
-if (empty($ref)) {
-    echo json_encode(['success' => false, 'error' => 'Missing reference']);
+if (empty($md5)) {
+    echo json_encode(['success' => false, 'status' => 'INVALID']);
     exit;
 }
 
-try {
-    $db = Database::getInstance();
-    $config = require __DIR__ . '/../../config/telegram.php';
-    $token = $config['bot_token'];
+// HARDENED PATH LOGIC V7 (Using Class)
+require_once __DIR__ . '/TransactionLogger.php';
 
-    // 1. AUTOMATIC SYNC: Check Telegram Updates before returning status (For Localhost Support)
-    $tgUrl = "https://api.telegram.org/bot$token/getUpdates";
-    $tgResponse = @file_get_contents($tgUrl);
+$tx = TransactionLogger::get($md5);
+
+if ($tx) {
+    $status = $tx['status'];
     
-    if ($tgResponse) {
-        $updates = json_decode($tgResponse, true);
-        if ($updates['ok'] && !empty($updates['result'])) {
-            foreach ($updates['result'] as $update) {
-                if (isset($update['callback_query'])) {
-                    $callbackData = $update['callback_query']['data'];
-                    
-                    if ($callbackData === "approve_$ref") {
-                        $db->query("UPDATE payment_approvals SET status = 'approved' WHERE reference_id = ? AND status = 'pending'", [$ref]);
-                    } elseif ($callbackData === "reject_$ref") {
-                        $db->query("UPDATE payment_approvals SET status = 'rejected' WHERE reference_id = ? AND status = 'pending'", [$ref]);
-                    }
-                }
-            }
-        }
-    }
-
-    // 2. Fetch final status from Database
-    $request = $db->fetchOne("SELECT status FROM payment_approvals WHERE reference_id = ?", [$ref]);
-
-    if ($request) {
-        echo json_encode(['success' => true, 'status' => $request['status']]);
+    if ($status === 'APPROVED') {
+        echo json_encode(['success' => true, 'status' => 'SUCCESS']);
+    } elseif ($status === 'REJECTED') {
+        echo json_encode(['success' => true, 'status' => 'REJECTED']); // Handle rejection
     } else {
-        echo json_encode(['success' => false, 'error' => 'Reference not found']);
+        echo json_encode(['success' => true, 'status' => 'PENDING']);
     }
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+} else {
+    echo json_encode(['success' => false, 'status' => 'NOT_FOUND', 'debug' => TransactionLogger::getPath()]);
 }
+?>

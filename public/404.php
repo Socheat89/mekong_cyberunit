@@ -13,6 +13,6 @@
 <body>
     <h1>404 - Page Not Found</h1>
     <p>The page you're looking for doesn't exist.</p>
-    <p><a href="/Mekong_CyberUnit/public/">Go to Homepage</a></p>
+    <p><a href="/">Go to Homepage</a></p>
 </body>
 </html>

@@ -3,6 +3,9 @@
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
 
+$isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
+$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: register.php');
     exit;
@@ -59,7 +62,7 @@ if ($paymentStatus !== 'paid') {
 
 if (!empty($errors)) {
     $errorMsg = implode(', ', $errors);
-    header("Location: /Mekong_CyberUnit/public/register.php?error=" . urlencode($errorMsg));
+    header("Location: $urlPrefix/public/register.php?error=" . urlencode($errorMsg));
     exit;
 }
 
@@ -122,9 +125,8 @@ try {
     // Commit transaction
     $db->getConnection()->commit();
 
-    // Success - redirect to login with success message
-    $successMsg = 'Business registered successfully! You can now login with your admin credentials.';
-    header("Location: /Mekong_CyberUnit/public/login.php?success=" . urlencode($successMsg));
+    // Success - redirect to success page with details
+    header("Location: $urlPrefix/public/success.php?subdomain=" . urlencode($subdomain) . "&name=" . urlencode($businessName));
 
 } catch (Exception $e) {
     // Rollback on error
@@ -133,6 +135,6 @@ try {
     }
 
     error_log('Registration error: ' . $e->getMessage());
-    header("Location: /Mekong_CyberUnit/public/register.php?error=" . urlencode('Registration failed. Please try again.'));
+    header("Location: $urlPrefix/public/register.php?error=" . urlencode('Registration failed. Please try again.'));
 }
 ?>
