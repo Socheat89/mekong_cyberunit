@@ -1,56 +1,39 @@
 <?php
-/**
- * index.php - Front Controller (Safe Mode)
- * This version is designed to be compatible with older PHP versions (5.6+)
- * and catch all errors to prevent silent 500 errors.
- */
+// index.php - Front Controller (PHP 8.2 Optimized)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 try {
-    if (!isset($_SESSION)) {
+    if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
     date_default_timezone_set('Asia/Phnom_Penh');
 
-    // Define Paths & Environment
+    $baseDir = dirname(__FILE__);
     $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
     $host = str_replace('www.', '', $host);
-    // Check if on production mekongcyberunit.app or mekongcy
     $isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-    $urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
-
-    // Auto-load Core Files with absolute paths
-    $baseDir = dirname(__FILE__);
     
-    if (!file_exists($baseDir . '/core/classes/Database.php')) die('File missing: core/classes/Database.php');
+    // Auto-load Core Components
     require_once $baseDir . '/core/classes/Database.php';
-    
-    if (!file_exists($baseDir . '/core/classes/Tenant.php')) die('File missing: core/classes/Tenant.php');
     require_once $baseDir . '/core/classes/Tenant.php';
-    
-    if (!file_exists($baseDir . '/core/classes/Auth.php')) die('File missing: core/classes/Auth.php');
     require_once $baseDir . '/core/classes/Auth.php';
-    
-    if (!file_exists($baseDir . '/middleware/AuthMiddleware.php')) die('File missing: middleware/AuthMiddleware.php');
     require_once $baseDir . '/middleware/AuthMiddleware.php';
-    
-    if (!file_exists($baseDir . '/middleware/TenantMiddleware.php')) die('File missing: middleware/TenantMiddleware.php');
     require_once $baseDir . '/middleware/TenantMiddleware.php';
 
-    // Get Request URL
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Normalize path (Strip subfolder if on local)
-    if (!$isProduction && strpos($path, '/Mekong_CyberUnit') === 0) {
+    // Clean path for routing
+    if (!$isProduction && strpos($path, '/Mekong_CyberUnit/public/') === 0) {
+        // Direct file access handled by server
+    } elseif (!$isProduction && strpos($path, '/Mekong_CyberUnit') === 0) {
         $path = substr($path, strlen('/Mekong_CyberUnit'));
     }
     if (empty($path)) $path = '/';
 
-    // Routing Logic
-    // 1. Public Folder (Assets, APIs)
+    // 1. Static/Public Routing
     if (strpos($path, '/public/') === 0) {
         $file = $baseDir . $path;
         if (file_exists($file) && !is_dir($file)) {
@@ -59,14 +42,15 @@ try {
         }
     }
 
-    // 2. Tenant Routing (e.g., /socheatcofe/dashboard)
+    // 2. Tenant Routing (e.g. /socheatcofe/dashboard)
     $segments = explode('/', trim($path, '/'));
     if (count($segments) >= 2) {
         $tenantSlug = $segments[0];
         $module = $segments[1];
 
-        // Skip reserved keywords
-        if ($tenantSlug !== 'admin' && $tenantSlug !== 'public' && $tenantSlug !== 'core' && $tenantSlug !== 'middleware') {
+        // List of reserved words to skip tenant detection
+        $reserved = ['admin', 'public', 'core', 'middleware', 'config', 'modules', 'api'];
+        if (!in_array($tenantSlug, $reserved)) {
             Tenant::detect($tenantSlug);
             
             if ($module === 'dashboard') {
@@ -77,26 +61,30 @@ try {
                 include $baseDir . '/public/logout.php';
                 exit;
             }
-            // Add more module routing here if needed
+            // Add POS routing if needed
+            if ($module === 'pos' && isset($segments[2])) {
+                // Future POS routing logic
+            }
         }
     }
 
-    // 3. Root / Default Page
+    // 3. Root/Home Page
     if ($path === '/' || $path === '') {
         include $baseDir . '/public/index.php';
         exit;
     }
 
-    // 4. Fallback Diagnostics if path not routed
-    echo "<h1>Path Not Routed</h1>";
-    echo "Current Path: " . htmlspecialchars($path) . "<br>";
-    echo "Is Production: " . ($isProduction ? 'Yes' : 'No') . "<br>";
+    // 4. Default 404
+    http_response_code(404);
+    echo "<h1>404 - Page Not Found</h1>";
+    echo "Path: " . htmlspecialchars($path);
 
-} catch (Exception $e) {
-    echo "<div style='padding:20px; background:#fff1f2; color:#be123c; border:1px solid #fda4af; border-radius:8px; font-family:sans-serif; margin:20px;'>";
-    echo "<h2 style='margin-top:0'>System Error (Captured)</h2>";
+} catch (Throwable $e) {
+    echo "<div style='padding:20px; background:#fff1f2; color:#be123c; border:1px solid #fda4af; border-radius:8px; font-family:sans-serif; margin:20px; line-height:1.5;'>";
+    echo "<h2 style='margin-top:0; border-bottom:1px solid #fda4af; padding-bottom:10px;'>System Error (Captured)</h2>";
     echo "<strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "<br>";
     echo "<strong>File:</strong> " . htmlspecialchars($e->getFile()) . " (Line: " . $e->getLine() . ")<br>";
+    echo "<details style='margin-top:10px;'><summary>Click for Stack Trace</summary><pre style='font-size:12px; overflow:auto;'>" . htmlspecialchars($e->getTraceAsString()) . "</pre></details>";
     echo "</div>";
 }
 ?>
