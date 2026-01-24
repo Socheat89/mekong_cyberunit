@@ -44,6 +44,12 @@ try {
 
     // 2. Tenant Routing (e.g. /socheatcofe/dashboard)
     $segments = explode('/', trim($path, '/'));
+    
+    // If running in a subdirectory on production, the first segment might be the folder name
+    if (isset($segments[0]) && $segments[0] === 'Mekong_CyberUnit') {
+        array_shift($segments);
+    }
+
     if (count($segments) >= 2) {
         $tenantSlug = $segments[0];
         $module = $segments[1];
