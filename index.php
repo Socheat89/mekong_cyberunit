@@ -11,7 +11,8 @@ date_default_timezone_set('Asia/Phnom_Penh');
 require_once 'core/classes/Database.php';
 require_once 'core/classes/Tenant.php';
 require_once 'core/classes/Auth.php';
-require_once 'core/classes/AuthMiddleware.php'; // Added AuthMiddleware include
+require_once 'middleware/AuthMiddleware.php';
+require_once 'middleware/TenantMiddleware.php';
 
 // Define base path for the project
 $basePath = '/Mekong_CyberUnit';
