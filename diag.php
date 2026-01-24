@@ -2,44 +2,41 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-echo "<h1>Diagnostic Tool</h1>";
+echo "<h1>Diagnostic Tool v2</h1>";
 
-echo "<h2>Environment Info</h2>";
-echo "HTTP_HOST: " . ($_SERVER['HTTP_HOST'] ?? 'N/A') . "<br>";
-echo "REQUEST_URI: " . ($_SERVER['REQUEST_URI'] ?? 'N/A') . "<br>";
+// 1. Check Error Log
+echo "<h2>1. Recent Server Errors (error_log)</h2>";
+$logFile = __DIR__ . '/error_log';
+if (file_exists($logFile)) {
+    $lines = array_slice(file($logFile), -10);
+    echo "<pre style='background:#fee2e2; padding:10px; border:1px solid #ef4444;'>";
+    foreach ($lines as $line) echo htmlspecialchars($line);
+    echo "</pre>";
+} else {
+    echo "No error_log file found in " . __DIR__ . "<br>";
+}
 
-echo "<h2>Checking Database Config</h2>";
+// 2. Check DB Config
+echo "<h2>2. Database Configuration Test</h2>";
 $configPath = __DIR__ . '/config/database.php';
 if (file_exists($configPath)) {
-    $dbConfig = require $configPath;
-    echo "Config file found.<br>";
-    echo "Host: " . $dbConfig['host'] . "<br>";
-    echo "Database: " . $dbConfig['database'] . "<br>";
-    echo "Username: " . $dbConfig['username'] . "<br>";
-    // Don't echo password for security, but check if it's set
-    echo "Password set: " . (empty($dbConfig['password']) ? 'NO' : 'YES') . "<br>";
-    
-    echo "<h2>Testing PDO Connection</h2>";
     try {
+        $dbConfig = require $configPath;
+        echo "Config file loaded successfully.<br>";
+        echo "DB Name: " . $dbConfig['database'] . "<br>";
+        
         $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}";
         $pdo = new PDO($dsn, $dbConfig['username'], $dbConfig['password']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        echo "<span style='color:green'>Database Connection Success!</span><br>";
-        
-        $stmt = $pdo->query("SELECT COUNT(*) FROM tenants");
-        $count = $stmt->fetchColumn();
-        echo "Tenants count: $count<br>";
-        
-    } catch (PDOException $e) {
-        echo "<span style='color:red'>Database Connection Failed: " . $e->getMessage() . "</span><br>";
+        echo "<span style='color:green'>PDO Connection: OK</span><br>";
+    } catch (Throwable $e) {
+        echo "<span style='color:red'>DB Error: " . $e->getMessage() . "</span><br>";
     }
 } else {
-    echo "<span style='color:red'>Config file NOT found at $configPath</span><br>";
+    echo "Config missing at $configPath<br>";
 }
 
-echo "<h2>Checking File Structure</h2>";
-$files = ['core/classes/Database.php', 'core/classes/Tenant.php', 'index.php'];
-foreach ($files as $f) {
-    echo "$f: " . (file_exists(__DIR__ . '/' . $f) ? 'EXISTS' : 'MISSING') . "<br>";
-}
+// 3. Environment
+echo "<h2>3. Environment</h2>";
+echo "Host: " . $_SERVER['HTTP_HOST'] . "<br>";
+echo "PHP Version: " . phpversion() . "<br>";
 ?>
