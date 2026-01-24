@@ -11,11 +11,15 @@ date_default_timezone_set('Asia/Phnom_Penh');
 require_once 'core/classes/Database.php';
 require_once 'core/classes/Tenant.php';
 require_once 'core/classes/Auth.php';
+require_once 'core/classes/AuthMiddleware.php'; // Added AuthMiddleware include
 
 // Define base path for the project
 $basePath = '/Mekong_CyberUnit';
-$isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
-$urlPrefix = $isCleanDomain ? '' : $basePath;
+$host = $_SERVER['HTTP_HOST'] ?? '';
+// Handle www. prefix for production
+$host = str_replace('www.', '', $host);
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = $isProduction ? '' : $basePath;
 
 $requestUri = $_SERVER['REQUEST_URI'];
 $path = parse_url($requestUri, PHP_URL_PATH);
