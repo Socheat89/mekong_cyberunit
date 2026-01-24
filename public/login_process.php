@@ -5,7 +5,8 @@ require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
 
 $isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
-$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+// Force prefix because the hosting structure requires it even on the main domain
+$urlPrefix = '/Mekong_CyberUnit';
 
 $isAjax = isset($_POST['ajax']);
 
