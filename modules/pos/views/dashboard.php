@@ -8,9 +8,7 @@ $lowStockItems = $lowStockItems ?? [];
 $tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
 $tenantName = is_array($tenant) && !empty($tenant['name']) ? $tenant['name'] : 'Tenant';
 
-$host = $_SERVER['HTTP_HOST'] ?? '';
-$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
+$urlPrefix = '/Mekong_CyberUnit';
 
 $fmtMoney = function($value): string {
     return '$' . number_format((float)$value, 2);
