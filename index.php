@@ -25,11 +25,10 @@ try {
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Clean path for routing
-    if (!$isProduction && strpos($path, '/Mekong_CyberUnit/public/') === 0) {
-        // Direct file access handled by server
-    } elseif (!$isProduction && strpos($path, '/Mekong_CyberUnit') === 0) {
-        $path = substr($path, strlen('/Mekong_CyberUnit'));
+    // Normalize path: Always strip the project folder name if it's present at the start
+    $projectFolder = '/Mekong_CyberUnit';
+    if (strpos($path, $projectFolder) === 0) {
+        $path = substr($path, strlen($projectFolder));
     }
     if (empty($path)) $path = '/';
 
