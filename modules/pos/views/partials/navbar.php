@@ -19,17 +19,21 @@ if (class_exists('Tenant')) {
     }
 }
 
-// Build the correct POS base URL
-// Production: /socheatcofe/pos
-// Local: /Mekong_CyberUnit/socheatcofe/pos
-if ($tenantSlug) {
-    $posBase = $basePath . '/' . $tenantSlug . '/pos';
+// Detect if we are on the development direct POS route: /Mekong_CyberUnit/pos/...
+$devPosPrefix = $basePath . '/pos/';
+$isDevPos = (strpos($requestPath, $devPosPrefix) === 0);
+
+$posBase = $basePath;
+if ($isDevPos) {
+    $posBase .= '/pos';
+} elseif ($tenantSlug) {
+    $posBase .= '/' . $tenantSlug . '/pos';
 } else {
-    // Fallback if no tenant detected
-    $posBase = $basePath . '/pos';
+    // Fallback.
+    $posBase .= '/pos';
 }
 
-$logoutUrl = $tenantSlug
+$logoutUrl = $tenantSlug && !$isDevPos
     ? ($basePath . '/' . $tenantSlug . '/logout')
     : ($basePath . '/public/logout.php');
 
