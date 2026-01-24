@@ -1,3 +1,15 @@
+<?php
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -47,7 +59,7 @@
                 <h1 style="font-size: 32px; font-weight: 900; margin: 0; color: var(--pos-text);">Transaction History</h1>
                 <p style="color: var(--pos-text-muted); margin-top: 6px; font-weight: 500;">Review all orders, payments, and sales records.</p>
             </div>
-            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos" class="btn-pos">
+            <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos" class="btn-pos">
                 <i class="fas fa-desktop"></i> Open Point of Sale
             </a>
         </div>
@@ -126,10 +138,10 @@
                                 </td>
                                 <td class="ord-td" style="text-align: right; border-radius: 0 20px 20px 0;">
                                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/<?php echo $order['id']; ?>" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: #4f46e5; background: white;" title="Order Details">
+                                        <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/<?php echo $order['id']; ?>" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: #4f46e5; background: white;" title="Order Details">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/<?php echo $order['id']; ?>/receipt" class="pos-icon-btn" target="_blank" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: var(--pos-text); background: white;" title="Print Invoice">
+                                        <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/<?php echo $order['id']; ?>/receipt" class="pos-icon-btn" target="_blank" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: var(--pos-text); background: white;" title="Print Invoice">
                                             <i class="fas fa-print"></i>
                                         </a>
                                     </div>

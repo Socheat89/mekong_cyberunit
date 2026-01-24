@@ -8,6 +8,10 @@ $lowStockItems = $lowStockItems ?? [];
 $tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
 $tenantName = is_array($tenant) && !empty($tenant['name']) ? $tenant['name'] : 'Tenant';
 
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
+
 $fmtMoney = function($value): string {
     return '$' . number_format((float)$value, 2);
 };
@@ -160,10 +164,10 @@ foreach ($labels as $ym) {
                 <h1 style="font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -0.5px;">Welcome back, <?php echo htmlspecialchars($tenantName); ?> 👋</h1>
                 <p style="color: rgba(255,255,255,0.85); font-size: 18px; margin: 12px 0 30px; font-weight: 500;">Your store is active and performing well. Here's your business summary for today.</p>
                 <div style="display:flex; gap:12px;">
-                    <a class="glass-btn" href="/Mekong_CyberUnit/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/pos">
+                    <a class="glass-btn" href="<?php echo $urlPrefix; ?>/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/pos">
                         <i class="fas fa-plus"></i> Open Terminal
                     </a>
-                    <a class="glass-btn" style="background: rgba(255,255,255,0.1);" href="/Mekong_CyberUnit/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/reports">
+                    <a class="glass-btn" style="background: rgba(255,255,255,0.1);" href="<?php echo $urlPrefix; ?>/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/reports">
                         <i class="fas fa-chart-pie"></i> View Reports
                     </a>
                 </div>
@@ -212,7 +216,7 @@ foreach ($labels as $ym) {
                 <div style="padding: 24px; border-top: 1px solid var(--pos-border);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 class="pos-card-title">Recent Transactions</h3>
-                        <a href="/Mekong_CyberUnit/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/orders" style="font-size: 13px; font-weight: 700; color: var(--pos-primary); text-decoration: none;">View All History <i class="fas fa-chevron-right" style="font-size: 10px;"></i></a>
+                        <a href="<?php echo $urlPrefix; ?>/<?php echo htmlspecialchars($tenant['subdomain'] ?? 'pos'); ?>/pos/orders" style="font-size: 13px; font-weight: 700; color: var(--pos-primary); text-decoration: none;">View All History <i class="fas fa-chevron-right" style="font-size: 10px;"></i></a>
                     </div>
                     <div class="pos-recent" style="overflow: auto;">
                         <table>

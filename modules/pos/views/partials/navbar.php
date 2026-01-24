@@ -3,20 +3,19 @@
 // Expected optional vars from caller:
 //   - $activeNav: one of dashboard|pos|holds|products|orders|customers|reports
 
-$basePath = '/Mekong_CyberUnit';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$basePath = $isProduction ? '' : '/Mekong_CyberUnit';
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
 
 $tenantSlug = null;
-$tenantName = 'POS';
+$tenantName = 'Mekong';
+
 if (class_exists('Tenant')) {
     $currentTenant = Tenant::getCurrent();
     if (is_array($currentTenant)) {
-        if (!empty($currentTenant['subdomain'])) {
-            $tenantSlug = $currentTenant['subdomain'];
-        }
-        if (!empty($currentTenant['name'])) {
-            $tenantName = $currentTenant['name'];
-        }
+        $tenantSlug = $currentTenant['subdomain'] ?? null;
+        $tenantName = $currentTenant['name'] ?? 'Mekong';
     }
 }
 
@@ -117,10 +116,10 @@ $activeClass = function (string $key) use ($activeNav): string {
     <main class="pos-main" style="flex: 1; min-width: 0;">
         <header class="pos-topbar" style="height: 80px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(16px); border-bottom: 1px solid var(--pos-border); display: flex; align-items: center; padding: 0 40px; position: sticky; top: 0; z-index: 50;">
             <div class="pos-header-left">
-                <button class="pos-icon-btn pos-sidebar-toggle" style="display: none;" type="button" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
+                <button class="pos-icon-btn pos-sidebar-toggle" type="button" onclick="window.__posToggleSidebar && window.__posToggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-left: 10px;">
                     <div style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);"></div>
                     <span style="font-weight: 800; font-size: 15px; color: var(--pos-text); text-transform: capitalize; letter-spacing: -0.2px;">
                         <?php echo htmlspecialchars($pageTitle ?? ucfirst($activeNav === 'pos' ? 'Terminal' : ($activeNav ?: 'Dashboard'))); ?>

@@ -1,3 +1,15 @@
+<?php
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -46,7 +58,7 @@
                 <h1 style="font-size: 32px; font-weight: 900; margin: 0; color: var(--pos-text);">Inventory Management</h1>
                 <p style="color: var(--pos-text-muted); margin-top: 6px; font-weight: 500;">Control your products, tracking stock and pricing.</p>
             </div>
-            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/create" class="btn-add">
+            <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/create" class="btn-add">
                 <i class="fas fa-plus"></i> Add New Product
             </a>
         </div>
@@ -128,10 +140,10 @@
                                 </td>
                                 <td class="prod-td" style="text-align: right; border-radius: 0 20px 20px 0;">
                                     <div style="display: flex; justify-content: flex-end; gap: 10px;">
-                                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/<?php echo $product['id']; ?>/edit" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: #4f46e5; background: white;" title="Edit Product">
+                                        <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/<?php echo $product['id']; ?>/edit" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #e2e8f0; color: #4f46e5; background: white;" title="Edit Product">
                                             <i class="fas fa-pencil" style="font-size: 14px;"></i>
                                         </a>
-                                        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/<?php echo $product['id']; ?>/delete" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #fee2e2; color: #ef4444; background: white;" data-pos-confirm="Are you sure you want to delete this product?" title="Delete Product">
+                                        <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/products/<?php echo $product['id']; ?>/delete" class="pos-icon-btn" style="width: 44px; height: 44px; border-radius: 14px; border-color: #fee2e2; color: #ef4444; background: white;" data-pos-confirm="Are you sure you want to delete this product?" title="Delete Product">
                                             <i class="fas fa-trash-can" style="font-size: 14px;"></i>
                                         </a>
                                     </div>

@@ -66,9 +66,43 @@ try {
                 include $baseDir . '/public/logout.php';
                 exit;
             }
-            // Add POS routing if needed
+            // POS Module Routing
             if ($module === 'pos' && isset($segments[2])) {
-                // Future POS routing logic
+                $sub = $segments[2];
+                $controller = null;
+                $action = 'index';
+
+                if ($sub === 'dashboard') {
+                    require_once $baseDir . '/modules/pos/controllers/DashboardController.php';
+                    $controller = new DashboardController();
+                } elseif ($sub === 'pos') {
+                    require_once $baseDir . '/modules/pos/controllers/PosController.php';
+                    $controller = new PosController();
+                } elseif ($sub === 'products') {
+                    require_once $baseDir . '/modules/pos/controllers/ProductController.php';
+                    $controller = new ProductController();
+                } elseif ($sub === 'orders') {
+                    require_once $baseDir . '/modules/pos/controllers/OrderController.php';
+                    $controller = new OrderController();
+                } elseif ($sub === 'customers') {
+                    require_once $baseDir . '/modules/pos/controllers/CustomerController.php';
+                    $controller = new CustomerController();
+                } elseif ($sub === 'reports') {
+                    require_once $baseDir . '/modules/pos/controllers/ReportsController.php';
+                    $controller = new ReportsController();
+                } elseif ($sub === 'settings') {
+                    require_once $baseDir . '/modules/pos/controllers/SettingsController.php';
+                    $controller = new SettingsController();
+                }
+
+                if ($controller) {
+                    // Check for additional segments for specific actions (e.g., /edit/5)
+                    if (isset($segments[3])) {
+                         // Simple action routing if needed
+                    }
+                    $controller->index();
+                    exit;
+                }
             }
         }
     }
