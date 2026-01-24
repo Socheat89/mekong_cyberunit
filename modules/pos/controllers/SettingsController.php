@@ -124,10 +124,7 @@ class SettingsController {
                  $targetPath = $uploadDir . $fileName;
                  
                  if (move_uploaded_file($_FILES['logo_upload']['tmp_name'], $targetPath)) {
-                     $host = $_SERVER['HTTP_HOST'] ?? '';
-                     $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-                     $prefix = $isProd ? '' : '/Mekong_CyberUnit';
-                     $webPath = $prefix . '/public/uploads/tenants/' . $tenantId . '/' . $fileName;
+                     $webPath = '/Mekong_CyberUnit/public/uploads/tenants/' . $tenantId . '/' . $fileName;
                      Settings::set('receipt_logo_path', $webPath, $tenantId);
                  }
              }
@@ -143,20 +140,14 @@ class SettingsController {
                  $targetPath = $uploadDir . $fileName;
                  
                  if (move_uploaded_file($_FILES['khqr_upload']['tmp_name'], $targetPath)) {
-                     $host = $_SERVER['HTTP_HOST'] ?? '';
-                     $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-                     $prefix = $isProd ? '' : '/Mekong_CyberUnit';
-                     $webPath = $prefix . '/public/uploads/tenants/' . $tenantId . '/' . $fileName;
+                     $webPath = '/Mekong_CyberUnit/public/uploads/tenants/' . $tenantId . '/' . $fileName;
                      Settings::set('pos_method_khqr_image', $webPath, $tenantId);
                  }
              }
 
              // Redirect back
-             $subdomain = $_SESSION['tenant_subdomain'] ?? (class_exists('Tenant') ? Tenant::getCurrent()['subdomain'] : 'default');
-             $host = $_SERVER['HTTP_HOST'] ?? '';
-             $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-             $prefix = $isProd ? '' : '/Mekong_CyberUnit';
-             header("Location: " . $prefix . "/$subdomain/pos/settings?success=1");
+             $subdomain = $_SESSION['tenant_subdomain'] ?? 'default';
+             header("Location: /Mekong_CyberUnit/$subdomain/pos/settings?success=1");
              exit;
         }
     }

@@ -96,31 +96,11 @@ try {
                 }
 
                 if ($controller) {
-                    $method = 'index';
-                    $params = [];
-                    
-                    // Route to specific action if provided (e.g., /pos/products/create or /pos/products/edit/5)
+                    // Check for additional segments for specific actions (e.g., /edit/5)
                     if (isset($segments[3])) {
-                        if (method_exists($controller, $segments[3])) {
-                            $method = $segments[3];
-                            // Remaining segments are params
-                            $params = array_slice($segments, 4);
-                        } else {
-                            // If index takes an ID as first param (e.g., /pos/orders/5 -> index(5) or show(5)?)
-                            // Standardize: If 3rd segment exists and it's numeric, maybe it's show?
-                            if (is_numeric($segments[3])) {
-                                if (method_exists($controller, 'show')) {
-                                    $method = 'show';
-                                    $params = [$segments[3]];
-                                } elseif (method_exists($controller, 'view')) {
-                                    $method = 'view';
-                                    $params = [$segments[3]];
-                                }
-                            }
-                        }
+                         // Simple action routing if needed
                     }
-
-                    call_user_func_array([$controller, $method], $params);
+                    $controller->index();
                     exit;
                 }
             }
