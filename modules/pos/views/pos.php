@@ -1,5 +1,7 @@
 <?php
-$urlPrefix = '/Mekong_CyberUnit';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = $isProduction ? '' : '/Mekong_CyberUnit';
 ?>
 <!DOCTYPE html>
 <html lang="en">

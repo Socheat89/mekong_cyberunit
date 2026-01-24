@@ -3,7 +3,9 @@
 // Expected optional vars from caller:
 //   - $activeNav: one of dashboard|pos|holds|products|orders|customers|reports
 
-$basePath = '/Mekong_CyberUnit';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$basePath = $isProduction ? '' : '/Mekong_CyberUnit';
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
 
 $tenantSlug = null;
@@ -17,21 +19,17 @@ if (class_exists('Tenant')) {
     }
 }
 
-// Detect if we are on the development direct POS route: /Mekong_CyberUnit/pos/...
-$devPosPrefix = $basePath . '/pos/';
-$isDevPos = (strpos($requestPath, $devPosPrefix) === 0);
-
-$posBase = $basePath;
-if ($isDevPos) {
-    $posBase .= '/pos';
-} elseif ($tenantSlug) {
-    $posBase .= '/' . $tenantSlug . '/pos';
+// Build the correct POS base URL
+// Production: /socheatcofe/pos
+// Local: /Mekong_CyberUnit/socheatcofe/pos
+if ($tenantSlug) {
+    $posBase = $basePath . '/' . $tenantSlug . '/pos';
 } else {
-    // Fallback.
-    $posBase .= '/pos';
+    // Fallback if no tenant detected
+    $posBase = $basePath . '/pos';
 }
 
-$logoutUrl = $tenantSlug && !$isDevPos
+$logoutUrl = $tenantSlug
     ? ($basePath . '/' . $tenantSlug . '/logout')
     : ($basePath . '/public/logout.php');
 

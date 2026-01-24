@@ -102,7 +102,10 @@ class OrderController {
         $result = $db->update('orders', ['status' => 'completed'], 'id = ? AND tenant_id = ? AND status = ?', [$id, $tenantId, 'pending']);
 
         if ($result) {
-            header("Location: /Mekong_CyberUnit/" . Tenant::getCurrent()['subdomain'] . "/pos/orders");
+            $host = $_SERVER['HTTP_HOST'] ?? '';
+            $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+            $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+            header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/orders");
             exit;
         } else {
             die('Order not found or already completed');
@@ -224,10 +227,14 @@ class OrderController {
 
                 $db->getConnection()->commit();
 
+                $host = $_SERVER['HTTP_HOST'] ?? '';
+                $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+                $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+
                 if ($status === 'completed') {
-                    header("Location: /Mekong_CyberUnit/" . Tenant::getCurrent()['subdomain'] . "/pos/orders/{$resumeOrderId}/receipt?autoprint=1");
+                    header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/orders/{$resumeOrderId}/receipt?autoprint=1");
                 } else {
-                    header("Location: /Mekong_CyberUnit/" . Tenant::getCurrent()['subdomain'] . "/pos/holds");
+                    header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/holds");
                 }
                 exit;
             }
@@ -309,11 +316,15 @@ class OrderController {
 
             $db->getConnection()->commit();
 
+            $host = $_SERVER['HTTP_HOST'] ?? '';
+            $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+            $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+
             // Redirect to receipt if completed, else to orders
             if ($status === 'completed') {
-                header("Location: /Mekong_CyberUnit/" . Tenant::getCurrent()['subdomain'] . "/pos/orders/{$orderId}/receipt?autoprint=1");
+                header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/orders/{$orderId}/receipt?autoprint=1");
             } else {
-                header("Location: /Mekong_CyberUnit/" . Tenant::getCurrent()['subdomain'] . "/pos/holds");
+                header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/holds");
             }
             exit;
 
