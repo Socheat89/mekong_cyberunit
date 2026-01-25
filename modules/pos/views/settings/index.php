@@ -11,133 +11,133 @@ $pageTitle = 'POS Settings';
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Custom styles matching POS theme */
-        .pos-form-group { margin-bottom: 20px; }
-        .pos-form-label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--pos-text); font-size: 14px; }
+        /* Modernized Styles for Premium POS Settings */
+        .pos-form-group { margin-bottom: 24px; }
+        .pos-form-label { display: block; margin-bottom: 10px; font-weight: 800; color: var(--pos-text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
         .pos-form-control { 
             width: 100%; 
-            padding: 12px 14px; 
-            border: 1px solid var(--pos-border); 
-            border-radius: 14px; 
-            font-size: 14px; 
+            padding: 14px 18px; 
+            border: 1.5px solid var(--pos-border); 
+            border-radius: 16px; 
+            font-size: 15px; 
             font-weight: 600;
             color: var(--pos-text);
-            background: #fff;
-            transition: all 0.2s;
+            background: #f8fafc;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
         }
         .pos-form-control:focus { 
-            border-color: var(--pos-brand-a); 
-            outline: none; 
-            box-shadow: 0 0 0 3px rgba(106, 92, 255, 0.12);
+            border-color: var(--pos-primary); 
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
         
         .pos-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--pos-border);
-            padding-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 32px;
+            padding: 6px;
+            background: #f1f5f9;
+            border-radius: 18px;
+            width: fit-content;
         }
         
         .pos-tab-link {
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 800;
             cursor: pointer;
-            color: var(--pos-muted);
-            transition: all 0.2s;
+            color: var(--pos-text-muted);
+            transition: all 0.25s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 14px;
         }
         
-        .pos-tab-link:hover { background: rgba(0,0,0,0.05); color: var(--pos-text); }
-        .pos-tab-link.active { background: var(--pos-brand-a); color: #fff; box-shadow: 0 4px 12px rgba(106, 92, 255, 0.25); }
+        .pos-tab-link:hover { color: var(--pos-text); }
+        .pos-tab-link.active { 
+            background: white; 
+            color: var(--pos-primary); 
+            box-shadow: var(--pos-shadow-sm);
+        }
         
-        .tab-content { display: none; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
         .tab-content.active { display: block; }
         
-        /* User List Styling */
         .user-list { 
             display: grid;
-            gap: 10px;
-            max-height: 400px; 
+            gap: 12px;
+            max-height: 480px; 
             overflow-y: auto; 
+            padding-right: 10px;
         }
         .user-card {
             display: flex;
             align-items: center;
-            padding: 12px;
-            border: 1px solid var(--pos-border);
-            border-radius: 14px;
-            background: #fff;
-            transition: transform 0.1s;
+            padding: 16px;
+            border: 1.5px solid var(--pos-border);
+            border-radius: 18px;
+            background: white;
+            transition: all 0.2s;
         }
-        .user-card:hover { transform: translateY(-1px); border-color: rgba(106, 92, 255, 0.3); }
+        .user-card:hover { transform: translateY(-2px); border-color: var(--pos-primary); box-shadow: var(--pos-shadow-md); }
         
-        /* Toggle Switch */
-        .pos-toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .pos-small { font-size: 12px; color: var(--pos-text-muted); font-weight: 600; }
+        .pos-card-sub { font-size: 14px; color: var(--pos-text-muted); font-weight: 500; margin-bottom: 24px; }
+
+        /* Toggle Switch Premium */
+        .pos-toggle { position: relative; display: inline-block; width: 48px; height: 26px; }
         .pos-toggle input { opacity: 0; width: 0; height: 0; }
-        .pos-toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-        .pos-toggle-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .pos-toggle-slider { background-color: var(--pos-brand-a); }
-        input:checked + .pos-toggle-slider:before { transform: translateX(20px); }
+        .pos-toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .3s; border-radius: 34px; }
+        .pos-toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input:checked + .pos-toggle-slider { background-color: var(--pos-primary); }
+        input:checked + .pos-toggle-slider:before { transform: translateX(22px); }
         
-        /* Preview Pane */
         .preview-pane { 
-            background: #202232; 
-            padding: 30px; 
-            border-radius: 16px; 
+            background: #1e293b; 
+            padding: 40px; 
+            border-radius: 24px; 
             display: flex; 
             justify-content: center; 
             align-items: flex-start; 
-            min-height: 500px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
-        }
-        .preview-receipt { 
-            background: white; 
-            padding: 20px; 
-            font-family: 'Courier New', monospace; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            line-height: 1.4;
+            min-height: 600px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body class="pos-app">
     <?php $activeNav = 'settings'; include __DIR__ . '/../partials/navbar.php'; ?>
     
-    <div class="pos-row" style="margin-bottom: 20px;">
+    <div class="pos-row" style="margin-bottom: 32px; align-items: flex-end;">
         <div class="pos-title">
-            <h1>Settings</h1>
-            <p>Manage access control and receipt configuration</p>
-        </div>
-        <div style="display:flex; gap:10px;">
-             <!-- Actions if needed -->
+            <h1>Intelligence Settings</h1>
+            <p>Configure ecosystem preferences and security policy</p>
         </div>
     </div>
 
     <?php if (isset($_GET['success'])): ?>
        <script>
        document.addEventListener('DOMContentLoaded', function() {
-           if(window.POSUI) window.POSUI.toast({type: 'success', title: 'Settings Saved', message: 'Your configuration has been updated successfully.'});
+           if(window.POSUI) window.POSUI.toast({type: 'success', title: 'Settings Synchronized', message: 'Your hardware and access preferences have been updated.'});
        });
        </script>
     <?php endif; ?>
 
     <form action="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/settings/update" method="POST" enctype="multipart/form-data">
         
-        <div class="pos-card pad" style="margin-bottom: 20px;">
+        <div class="pos-card pad" style="margin-bottom: 40px; border-radius: 28px;">
             <div class="pos-tabs">
                 <div class="pos-tab-link active" onclick="switchTab('users', this)">
-                    <i class="fas fa-users-cog"></i> User Access
+                    <i class="fas fa-shield-halved"></i> User Access
                 </div>
                 <?php if (Tenant::getPosLevel() >= 2): ?>
                 <div class="pos-tab-link" onclick="switchTab('receipt', this)">
-                    <i class="fas fa-receipt"></i> Receipt Design
+                    <i class="fas fa-file-invoice"></i> Receipt Design
                 </div>
                 <?php endif; ?>
                 <div class="pos-tab-link" onclick="switchTab('payment', this)">
-                    <i class="fas fa-credit-card"></i> Payment Methods
+                    <i class="fas fa-credit-card"></i> Pay Methods
                 </div>
             </div>
 
@@ -173,16 +173,18 @@ $pageTitle = 'POS Settings';
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <div style="background: rgba(106, 92, 255, 0.04); border-radius: 14px; padding: 20px; border: 1px dashed rgba(106, 92, 255, 0.2);">
-                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <i class="fas fa-info-circle" style="color: var(--pos-brand-a); font-size: 20px;"></i>
-                            <span style="font-weight: 700; color: var(--pos-brand-a);">Access Control Info</span>
+                    <div style="background: rgba(99, 102, 241, 0.04); border-radius: 20px; padding: 28px; border: 1.5px dashed rgba(99, 102, 241, 0.2);">
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center;">
+                            <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--pos-primary); color: white; display: grid; place-items: center; font-size: 18px;">
+                                <i class="fas fa-shield-check"></i>
+                            </div>
+                            <span style="font-weight: 800; color: var(--pos-text); font-size: 16px;">Security Policy</span>
                         </div>
-                        <p class="pos-small" style="line-height: 1.6;">
-                            Only users selected here will be able to log in to the POS system. 
-                            Users without access will be redirected to the main dashboard if they attempt to enter.
+                        <p class="pos-small" style="line-height: 1.7; font-size: 13px;">
+                            Only users selected here will be authorized to access the POS terminal. 
+                            Unauthorized members will be restricted from entering transactions.
                             <br><br>
-                            <strong>Super Admins</strong> are usually granted access by default, but it's best to explicitly selecting them to avoid confusion.
+                            <strong style="color: var(--pos-primary);">Pro Tip:</strong> Super Admins always retain core access, but explicit selection is recommended for clear auditing.
                         </p>
                     </div>
                 </div>
@@ -265,8 +267,18 @@ $pageTitle = 'POS Settings';
                     </div>
                     
                     <div>
-                        <p class="pos-card-title" style="margin-bottom: 15px;">Live Preview</p>
+                        <p class="pos-card-title" style="margin-bottom: 15px;">Dynamic Preview</p>
                         <div class="preview-pane">
+                            <style>
+                                .preview-receipt { 
+                                    background: white; 
+                                    padding: 32px; 
+                                    font-family: 'Courier New', Courier, monospace; 
+                                    box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+                                    line-height: 1.5;
+                                    color: #000;
+                                }
+                            </style>
                             <div class="preview-receipt" id="receipt-box" style="width: <?php echo ($settings['receipt_paper_width'] ? $settings['receipt_paper_width'].'px' : '300px'); ?>; font-size: <?php echo ($settings['receipt_font_size'] ? $settings['receipt_font_size'].'px' : '12px'); ?>;">
                                 <div style="text-align: center; padding-bottom: 10px; border-bottom: 1px dashed #000; mb-3">
                                     <div id="preview-logo-container" style="<?php echo ($settings['receipt_show_logo'] != '1') ? 'display:none;' : ''; ?>; margin-bottom: 10px;">
@@ -438,10 +450,10 @@ $pageTitle = 'POS Settings';
                 </div>
             </div>
 
-            <div class="pos-row" style="margin-top: 20px; justify-content: flex-end;">
-                 <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" style="text-decoration: none; color: var(--pos-muted); font-weight: 700; margin-right: 20px;">Cancel</a>
-                 <button type="submit" class="pos-pill" style="border: none; cursor: pointer; font-size: 14px;">
-                    <i class="fas fa-save"></i> Save Changes
+            <div class="pos-row" style="margin-top: 32px; justify-content: flex-end; gap: 16px;">
+                 <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" style="text-decoration: none; color: var(--pos-text-muted); font-weight: 700; font-size: 14px;">Cancel Operation</a>
+                 <button type="submit" class="btn btn-primary" style="padding: 14px 32px; border-radius: 16px; font-size: 15px; font-weight: 800; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">
+                    <i class="fas fa-cloud-upload-alt"></i> Commit Changes
                  </button>
             </div>
             
