@@ -100,27 +100,40 @@ try {
                 }
 
                 if ($controller) {
-                    // Check for additional segments for specific actions (e.g., /orders/5 or /orders/5/receipt)
+                    // Check for third segment (Action or ID)
                     if (isset($segments[3])) {
-                        $id = $segments[3];
-                        if (isset($segments[4])) {
-                            $action = $segments[4];
-                            if (method_exists($controller, $action)) {
-                                $controller->$action($id);
+                        $thirdSeg = $segments[3];
+                        
+                        // Case A: /module/action (e.g., /products/create)
+                        if (!is_numeric($thirdSeg) && method_exists($controller, $thirdSeg)) {
+                            $action = $thirdSeg;
+                            $controller->$action();
+                        } 
+                        // Case B: /module/id/... (e.g., /products/5 or /products/5/edit)
+                        else {
+                            $id = $thirdSeg;
+                            if (isset($segments[4])) {
+                                $action = $segments[4];
+                                if (method_exists($controller, $action)) {
+                                    $controller->$action($id);
+                                } else {
+                                    http_response_code(404);
+                                    echo "<h1>404 - Action Not Found</h1>";
+                                }
                             } else {
-                                // Fallback if action method doesn't exist for the given ID
-                                http_response_code(404);
-                                echo "<h1>404 - Action Not Found</h1>";
-                            }
-                        } else {
-                            // If just /orders/5, assume show or it depends on the controller
-                            if (method_exists($controller, 'show')) {
-                                $controller->show($id);
-                            } else {
-                                $controller->index(); // Default to index if no specific show method
+                                // Default action for ID if no sub-action provided
+                                if (method_exists($controller, 'show')) {
+                                    $controller->show($id);
+                                } elseif (method_exists($controller, 'edit')) {
+                                    // Often /products/5 means edit
+                                    $controller->edit($id);
+                                } else {
+                                    $controller->index();
+                                }
                             }
                         }
                     } else {
+                        // Case C: /module (e.g., /products)
                         $controller->$action();
                     }
                     exit;

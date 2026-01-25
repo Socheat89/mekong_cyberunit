@@ -141,17 +141,16 @@ class ProductController {
             mkdir($uploadDir, 0755, true);
         }
 
+        // Increase memory limit for processing large images
+        ini_set('memory_limit', '512M');
+
         // Generate unique filename with .webp extension
         $fileName = uniqid() . '.webp';
         $targetPath = $uploadDir . $fileName;
 
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($file['type'], $allowedTypes)) {
-            die('Invalid file type. Only JPG, PNG, GIF, and WebP are allowed. Images will be automatically converted to WebP format.');
-        }
-
-        if ($file['size'] > 5 * 1024 * 1024) { // 5MB limit
-            die('File size too large. Maximum 5MB allowed.');
+            die('Invalid file type. Only JPG, PNG, GIF, and WebP are allowed.');
         }
 
         // Convert image to WebP
