@@ -4,8 +4,7 @@
 //   - $activeNav: one of dashboard|pos|holds|products|orders|customers|reports
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$basePath = $isProduction ? '' : '/Mekong_CyberUnit';
+$basePath = '/Mekong_CyberUnit';
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
 
 $tenantSlug = null;

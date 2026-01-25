@@ -3,8 +3,7 @@
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
 
-$isCleanDomain = ($_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
-$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+$urlPrefix = '/Mekong_CyberUnit';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: register.php');

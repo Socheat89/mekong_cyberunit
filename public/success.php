@@ -2,7 +2,7 @@
 // public/success.php
 $subdomain = $_GET['subdomain'] ?? '';
 $businessName = $_GET['name'] ?? 'Your Business';
-$workspaceUrl = "http://" . $subdomain . ".mekongcyber.com"; // Mock URL structure
+$workspaceUrl = "https://mekongcyberunit.app/Mekong_CyberUnit/" . urlencode($subdomain) . "/pos/dashboard";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -214,7 +214,7 @@ $workspaceUrl = "http://" . $subdomain . ".mekongcyber.com"; // Mock URL structu
             <span class="info-label" style="margin-top: 1.5rem;">Access URL</span>
             <div class="workspace-url">
                 <i class="ph-bold ph-globe"></i>
-                <span class="url-text" id="urlText"><?php echo htmlspecialchars($subdomain); ?>.mekongcyber.com</span>
+                <span class="url-text" id="urlText">mekongcyberunit.app/Mekong_CyberUnit/<?php echo htmlspecialchars($subdomain); ?></span>
                 <button class="copy-btn" onclick="copyUrl()" title="Copy URL">
                     <i class="ph-bold ph-copy"></i>
                 </button>

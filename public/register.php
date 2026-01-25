@@ -879,7 +879,7 @@
                         `;
                         
                         setTimeout(() => {
-                            window.location.href = `setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
+                            window.location.href = `/Mekong_CyberUnit/public/setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
                         }, 2000);
                     }
                 } catch (e) { console.error("Polling error", e); }

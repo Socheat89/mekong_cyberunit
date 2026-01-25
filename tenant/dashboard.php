@@ -13,8 +13,7 @@ $db = Database::getInstance();
 $tenantId = Tenant::getId();
 $user = Auth::user();
 
-$isCleanDomain = (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
-$urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+$urlPrefix = '/Mekong_CyberUnit';
 $subdomain = Tenant::getCurrent()['subdomain'];
 
 // Get subscribed systems

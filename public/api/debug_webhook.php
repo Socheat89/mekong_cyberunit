@@ -53,7 +53,7 @@ if ($json && $json['ok']) {
         echo "⚠️ <strong>You are on Localhost.</strong> Telegram cannot connect to this address.<br>";
         echo "Please enter your <strong>Real Website Domain</strong> below to set the webhook for your live server.";
         echo "</div>";
-        $callbackUrl = "https://mekongcyberunit.app/public/api/telegram_callback.php"; // Suggestion
+        $callbackUrl = "https://mekongcyberunit.app/Mekong_CyberUnit/public/api/telegram_callback.php"; // Suggestion
     }
     
     echo "<form method='POST'>";

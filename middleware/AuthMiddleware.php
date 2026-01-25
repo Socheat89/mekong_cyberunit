@@ -2,8 +2,7 @@
 // middleware/AuthMiddleware.php
 class AuthMiddleware {
     public static function handle($requiredLevel = 1) {
-        $isCleanDomain = (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] === 'mekongcyberunit.app');
-        $urlPrefix = $isCleanDomain ? '' : '/Mekong_CyberUnit';
+        $urlPrefix = '/Mekong_CyberUnit';
 
         if (!Auth::check()) {
             header("Location: $urlPrefix/public/login.php");

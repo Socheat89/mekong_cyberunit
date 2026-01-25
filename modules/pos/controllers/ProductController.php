@@ -76,8 +76,7 @@ class ProductController {
 
         Product::delete($id);
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-        $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+        $prefix = '/Mekong_CyberUnit';
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }
@@ -101,8 +100,7 @@ class ProductController {
 
         Product::create($data);
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-        $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+        $prefix = '/Mekong_CyberUnit';
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }
@@ -126,8 +124,7 @@ class ProductController {
 
         Product::update($id, $data);
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        $isProd = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-        $prefix = $isProd ? '' : '/Mekong_CyberUnit';
+        $prefix = '/Mekong_CyberUnit';
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }

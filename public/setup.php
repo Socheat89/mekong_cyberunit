@@ -5,7 +5,7 @@ $ref = $_GET['ref'] ?? '';
 $paid = $_GET['paid'] ?? 'false';
 
 if ($paid !== 'true') {
-    header('Location: register.php?error=' . urlencode('Payment verification required to access setup.'));
+    header('Location: /Mekong_CyberUnit/public/register.php?error=' . urlencode('Payment verification required to access setup.'));
     exit;
 }
 ?>
@@ -212,7 +212,7 @@ if ($paid !== 'true') {
             </div>
         </div>
 
-        <form method="POST" action="register_process.php" id="setupForm">
+        <form method="POST" action="/Mekong_CyberUnit/public/register_process.php" id="setupForm">
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label for="business_name"><i class="ph-bold ph-storefront" style="color: var(--primary);"></i> Business Name</label>
@@ -221,9 +221,9 @@ if ($paid !== 'true') {
 
                 <div class="form-group full-width">
                     <label for="subdomain"><i class="ph-bold ph-globe" style="color: var(--primary);"></i> Workspace URL</label>
-                    <div style="display: flex; align-items: center; position: relative;">
-                        <input type="text" id="subdomain" name="subdomain" required pattern="[a-zA-Z0-9]+" title="Only letters and numbers allowed" placeholder="your-business" style="padding-right: 140px;">
-                        <span style="position: absolute; right: 1rem; color: #64748b; font-weight: 600; font-size: 0.85rem; pointer-events: none; background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem; border: 1px solid #e2e8f0;">.mekongcyber.com</span>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; padding: 0 1rem;">
+                        <span style="color: #64748b; font-weight: 600; font-size: 0.85rem; white-space: nowrap;">mekongcyberunit.app/Mekong_CyberUnit/</span>
+                        <input type="text" id="subdomain" name="subdomain" required pattern="[a-zA-Z0-9]+" title="Only letters and numbers allowed" placeholder="your-business" style="border: none; background: transparent; padding: 0.875rem 0; outline: none; box-shadow: none;">
                     </div>
                     <span class="form-helper">This will be your unique portal address.</span>
                 </div>
