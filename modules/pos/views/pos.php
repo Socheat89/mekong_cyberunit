@@ -501,51 +501,52 @@ $urlPrefix = '/Mekong_CyberUnit';
 
 
     <div id="paymentModal" class="pos-modal-overlay">
-        <div class="pos-modal" style="max-width: 540px;">
-            <div class="pos-modal__header">
+        <div class="pos-modal pos-modal--small">
+            <div class="pos-modal__header" style="border: none; padding: 32px 32px 16px;">
                 <div class="pos-modal__title">
-                    <div class="pos-modal__icon">
-                        <i class="fas fa-credit-card"></i>
+                    <div class="pos-modal__icon" style="background: var(--pos-gradient-primary); color: white;">
+                        <i class="fas fa-receipt"></i>
                     </div>
                     <div>
-                        <h3>Checkout Process</h3>
-                        <p>Complete payment details</p>
+                        <h3 style="font-weight: 900; letter-spacing: -0.5px;">Checkout Summary</h3>
+                        <p style="font-weight: 600;">Securely finalize your transaction</p>
                     </div>
                 </div>
                 <button class="pos-modal__close" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="pos-modal__body">
-                <div style="background: #f8fafc; border-radius: 24px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid var(--pos-border);">
+
+            <div class="pos-modal__body" style="padding: 0 32px 32px;">
+                <div style="background: rgba(255,255,255,0.5); border-radius: 24px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid rgba(255,255,255,0.6); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
                     <div>
-                        <div style="font-size: 12px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Payable Total</div>
-                        <div id="modal_subtotal" style="font-size: 32px; font-weight: 900; color: var(--pos-primary);">$0.00</div>
+                        <div style="font-size: 11px; font-weight: 900; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Total Payable</div>
+                        <div id="modal_subtotal" style="font-size: 32px; font-weight: 950; color: var(--pos-text);">$0.00</div>
                     </div>
                     <div style="text-align: right;">
-                        <div id="clock_now" style="font-size: 14px; font-weight: 800; color: var(--pos-text-muted); font-variant-numeric: tabular-nums;"></div>
+                        <div id="clock_now" style="font-size: 13px; font-weight: 800; color: var(--pos-primary); background: var(--pos-primary-light); padding: 4px 12px; border-radius: 10px;"></div>
                     </div>
                 </div>
 
                 <div class="pos-form-group">
-                    <label class="pos-form-label" style="font-size: 12px; margin-bottom: 12px;">Preferred Payment Method</label>
-                    <div class="payment-method-grid">
+                    <label class="pos-form-label" style="font-size: 11px;">Payment Instrument</label>
+                    <div class="payment-method-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px;">
                         <?php if ($settings['pos_method_cash_enabled'] == '1'): ?>
-                        <div class="payment-method-item active" data-method="cash" onclick="selectPaymentMethod('cash')">
-                            <i class="fas fa-wallet"></i>
-                            <span>Cash</span>
+                        <div class="payment-method-item active" data-method="cash" onclick="selectPaymentMethod('cash')" style="padding: 12px; border-radius: 16px;">
+                            <i class="fas fa-wallet" style="font-size: 18px;"></i>
+                            <span style="font-size: 12px;">Cash</span>
                         </div>
                         <?php endif; ?>
                         
                         <?php if ($settings['pos_method_khqr_enabled'] == '1'): ?>
-                        <div class="payment-method-item" data-method="khqr" onclick="selectPaymentMethod('khqr')">
-                            <i class="fas fa-qrcode"></i>
-                            <span>Bakong KHQR</span>
+                        <div class="payment-method-item" data-method="khqr" onclick="selectPaymentMethod('khqr')" style="padding: 12px; border-radius: 16px;">
+                            <i class="fas fa-qrcode" style="font-size: 18px;"></i>
+                            <span style="font-size: 12px;">KHQR</span>
                         </div>
                         <?php endif; ?>
                         
                         <?php if ($settings['pos_method_card_enabled'] == '1'): ?>
-                        <div class="payment-method-item" data-method="card" onclick="selectPaymentMethod('card')">
-                            <i class="fas fa-credit-card"></i>
-                            <span>Card Pay</span>
+                        <div class="payment-method-item" data-method="card" onclick="selectPaymentMethod('card')" style="padding: 12px; border-radius: 16px;">
+                            <i class="fas fa-credit-card" style="font-size: 18px;"></i>
+                            <span style="font-size: 12px;">Card</span>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -553,42 +554,37 @@ $urlPrefix = '/Mekong_CyberUnit';
 
                 <div id="cashAmountGroup">
                     <div class="pos-form-group">
-                        <label class="pos-form-label" style="font-size: 12px;">Amount Tendered</label>
+                        <label class="pos-form-label" style="font-size: 11px;">Cash Received</label>
                         <div style="position: relative;">
-                            <span style="position: absolute; left: 20px; top: 18px; font-weight: 900; color: var(--pos-text-muted); font-size: 20px;">$</span>
-                            <input id="modal_cash_given" class="pos-form-control" type="number" step="0.01" min="0" placeholder="0.00" style="padding: 18px 20px 18px 40px; font-size: 24px; font-weight: 900; border-width: 2px; border-color: var(--pos-primary);">
+                            <span style="position: absolute; left: 16px; top: 16px; font-weight: 900; color: var(--pos-text-muted); font-size: 18px;">$</span>
+                            <input id="modal_cash_given" class="pos-form-control" type="number" step="0.01" min="0" placeholder="0.00" style="padding: 16px 16px 16px 36px; font-size: 20px; font-weight: 900; background: white; border-radius: 16px;">
                         </div>
                     </div>
                     
-                    <div id="changeGroup" style="margin-top: 20px; background: #ecfdf5; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #bbf7d0;">
-                        <span style="font-weight: 800; color: #065f46; font-size: 15px;">Balance / Change</span>
-                        <span id="modal_change" style="font-size: 28px; font-weight: 900; color: var(--pos-success);">$0.00</span>
+                    <div id="changeGroup" style="margin-top: 16px; background: #f0fdf4; padding: 16px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #dcfce7;">
+                        <span style="font-weight: 800; color: #166534; font-size: 13px; text-transform: uppercase;">Balance Change</span>
+                        <span id="modal_change" style="font-size: 24px; font-weight: 950; color: #15803d;">$0.00</span>
                     </div>
                 </div>
                 
-                <div id="khqrGroup" style="display: none; text-align: center; background: white; padding: 32px; border-radius: 24px; border: 2px dashed var(--pos-border);">
-                    <div id="qrcode_container" style="background: white; padding: 16px; border-radius: 20px; border: 1px solid var(--pos-border); display: inline-block; box-shadow: var(--pos-shadow-lg);">
-                       <!-- QR Code here -->
-                    </div>
-                    <div style="margin-top: 24px;">
-                        <div style="font-weight: 900; color: #E31E26; font-size: 18px; letter-spacing: 1px;">WAITING FOR KHQR SCAN</div>
-                        <div style="font-size: 13px; color: var(--pos-text-muted); margin-top: 6px; font-weight: 600;">Secure payment via Bakong Network</div>
+                <div id="khqrGroup" style="display: none; text-align: center; background: white; padding: 24px; border-radius: 20px; border: 1.5px solid var(--pos-border);">
+                    <div id="qrcode_container" style="background: white; padding: 12px; border-radius: 16px; border: 1px solid var(--pos-border); display: inline-block;"></div>
+                    <div style="margin-top: 20px;">
+                        <div style="font-weight: 900; color: #b91c1c; font-size: 14px; letter-spacing: 1px;">WAITING FOR SCAN</div>
                     </div>
                 </div>
 
-                <div id="cardGroup" style="display: none; text-align: center; padding: 60px 24px; background: #f8fafc; border-radius: 24px; border: 1.5px solid var(--pos-border);">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: white; display: grid; place-items: center; margin: 0 auto 24px; box-shadow: var(--pos-shadow-sm);">
-                        <i class="fas fa-credit-card" style="font-size: 32px; color: var(--pos-primary);"></i>
-                    </div>
-                    <p style="font-weight: 800; color: var(--pos-text); font-size: 16px;">Waiting for terminal...</p>
-                    <p style="font-size: 13px; color: var(--pos-text-muted); font-weight: 500; margin-top: 4px;">Please swipe or insert card in external machine</p>
+                <div id="cardGroup" style="display: none; text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1.5px solid var(--pos-border);">
+                    <i class="fas fa-terminal" style="font-size: 32px; color: var(--pos-primary); margin-bottom: 16px;"></i>
+                    <p style="font-weight: 800; color: var(--pos-text); font-size: 14px; margin: 0;">Connect External Terminal</p>
                 </div>
             </div>
-            <div class="pos-modal__actions" style="padding: 0 32px 32px;">
-                <button class="pos-modal-btn" onclick="closePaymentModal()" style="padding: 18px; flex: 1; border-radius: 20px; font-weight: 700;">Cancel</button>
-                <button class="pos-modal-btn primary" onclick="confirmPayment()" style="padding: 18px; flex: 2; border-radius: 20px; font-weight: 800;">
-                    Complete Payment <i class="fas fa-check" style="margin-left: 8px;"></i>
+
+            <div class="pos-modal__actions" style="padding: 0 32px 32px; background: transparent; border: none; flex-direction: column; gap: 12px;">
+                <button class="btn btn-primary" onclick="confirmPayment()" style="width: 100%; padding: 18px; border-radius: 18px; font-size: 16px; font-weight: 900;">
+                    Complete Payment <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
                 </button>
+                <button class="btn btn-outline" onclick="closePaymentModal()" style="width: 100%; padding: 14px; border-radius: 18px; border: none; color: var(--pos-text-muted); font-size: 13px; font-weight: 700;">Discard Checkout</button>
             </div>
         </div>
     </div>

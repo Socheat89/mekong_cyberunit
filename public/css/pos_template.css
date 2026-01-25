@@ -742,10 +742,13 @@ body {
 .pos-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: none;
     place-items: center;
+    justify-content: center;
+    align-items: center;
     padding: 24px;
     z-index: 5000;
 }
@@ -753,11 +756,18 @@ body {
 .pos-modal {
     width: 100%;
     max-width: 500px;
-    background: white;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    animation: posModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: posModalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pos-modal--small {
+    max-width: 440px;
 }
 
 .pos-modal--lg {
