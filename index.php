@@ -93,14 +93,36 @@ try {
                 } elseif ($sub === 'settings') {
                     require_once $baseDir . '/modules/pos/controllers/SettingsController.php';
                     $controller = new SettingsController();
+                } elseif ($sub === 'holds') {
+                    require_once $baseDir . '/modules/pos/controllers/OrderController.php';
+                    $controller = new OrderController();
+                    $action = 'holds';
                 }
 
                 if ($controller) {
-                    // Check for additional segments for specific actions (e.g., /edit/5)
+                    // Check for additional segments for specific actions (e.g., /orders/5 or /orders/5/receipt)
                     if (isset($segments[3])) {
-                         // Simple action routing if needed
+                        $id = $segments[3];
+                        if (isset($segments[4])) {
+                            $action = $segments[4];
+                            if (method_exists($controller, $action)) {
+                                $controller->$action($id);
+                            } else {
+                                // Fallback if action method doesn't exist for the given ID
+                                http_response_code(404);
+                                echo "<h1>404 - Action Not Found</h1>";
+                            }
+                        } else {
+                            // If just /orders/5, assume show or it depends on the controller
+                            if (method_exists($controller, 'show')) {
+                                $controller->show($id);
+                            } else {
+                                $controller->index(); // Default to index if no specific show method
+                            }
+                        }
+                    } else {
+                        $controller->$action();
                     }
-                    $controller->index();
                     exit;
                 }
             }

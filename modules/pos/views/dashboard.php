@@ -1,3 +1,30 @@
+<?php
+$stats = $stats ?? [];
+$recentOrders = $recentOrders ?? [];
+$salesByMonth = $salesByMonth ?? [];
+$topProducts = $topProducts ?? [];
+$lowStockItems = $lowStockItems ?? [];
+
+$tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
+$tenantName = is_array($tenant) && !empty($tenant['name']) ? $tenant['name'] : 'Tenant';
+
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+$urlPrefix = '/Mekong_CyberUnit';
+
+$fmtMoney = function($value): string {
+    return '$' . number_format((float)$value, 2);
+};
+
+$labels = array_keys($salesByMonth ?? []);
+$values = array_values($salesByMonth ?? []);
+
+$friendlyLabels = [];
+foreach ($labels as $ym) {
+    $dt = DateTime::createFromFormat('Y-m', $ym);
+    $friendlyLabels[] = $dt ? $dt->format('M') : $ym;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

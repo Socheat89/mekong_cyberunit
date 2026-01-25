@@ -138,7 +138,7 @@ $activeClass = function (string $key) use ($activeNav): string {
                     <div class="pos-user-details">
                         <?php 
                         $user = Auth::user(); 
-                        $userName = $user ? ($user['first_name'] ? $user['first_name'] . ' ' . $user['last_name'] : $user['username']) : 'Administrator';
+                        $userName = $user ? (isset($user['first_name']) && $user['first_name'] ? $user['first_name'] . ' ' . ($user['last_name'] ?? '') : ($user['username'] ?? 'Administrator')) : 'Administrator';
                         $roleName = $user['role_name'] ?? 'Super Admin';
                         ?>
                         <span class="pos-user-name"><?php echo htmlspecialchars($userName); ?></span>

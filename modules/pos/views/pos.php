@@ -307,7 +307,7 @@ $urlPrefix = '/Mekong_CyberUnit';
             .pos-terminal__cart { position: fixed; right: 0; top: var(--pos-topbar-h); bottom: 0; width: 400px; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .pos-terminal__cart.active { transform: translateX(0); }
         }
-    </style>
+
 
         /* Modal Enhancements */
         .pos-modal-overlay {
