@@ -193,9 +193,30 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
     </div>
 
     <div style="text-align: center; margin-top: 20px;">
-        <a href="javascript:window.print()" class="btn">Print Receipt</a>
-        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders" class="btn">Back to Orders</a>
+        <a href="javascript:window.print()" class="btn" style="background: var(--pos-gradient-primary); border: none; font-weight: 800; padding: 14px 28px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);">
+            <i class="fas fa-print"></i> Print Receipt
+        </a>
+        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos" class="btn" style="background: #f8fafc; color: var(--pos-text); border: 1.5px solid var(--pos-border); font-weight: 700; padding: 14px 28px; border-radius: 12px;">
+            <i class="fas fa-arrow-left"></i> Back to Terminal
+        </a>
     </div>
+
+    <script>
+        window.onafterprint = function() {
+            // Redirect back to POS terminal after printing or canceling the dialog
+            setTimeout(function() {
+                window.location.href = "/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos";
+            }, 500);
+        };
+
+        <?php if ($autoPrint): ?>
+            window.addEventListener('load', function () {
+                setTimeout(function () { 
+                    window.print(); 
+                }, 500);
+            });
+        <?php endif; ?>
+    </script>
 
     </div>
 
