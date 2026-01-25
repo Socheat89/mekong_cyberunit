@@ -58,14 +58,7 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
         <?php $activeNav = 'orders'; include __DIR__ . '/partials/navbar.php'; ?>
     <?php endif; ?>
 
-    <?php if ($autoPrint): ?>
-        <script>
-            window.addEventListener('load', function () {
-                // Small delay improves reliability across browsers after redirect.
-                setTimeout(function () { window.print(); }, 250);
-            });
-        </script>
-    <?php endif; ?>
+
 
     <div class="receipt-wrap">
     <div class="receipt">
