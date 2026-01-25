@@ -3,132 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS - Customers</title>
+    <title>Customers - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
-    <style>
-        .cust-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .cust-row { background: white; border-radius: 12px; transition: all 0.2s; box-shadow: var(--pos-shadow-sm); }
-        .cust-row:hover { transform: translateY(-2px); box-shadow: var(--pos-shadow-md); }
-        .cust-td { padding: 20px; border: none; }
-        .cust-th { padding: 12px 20px; font-size: 11px; text-transform: uppercase; color: var(--pos-muted); font-weight: 800; letter-spacing: 0.5px; }
+        .search-container { position: relative; margin-bottom: 24px; }
+        .search-container i { position: absolute; left: 20px; top: 16px; color: var(--pos-primary); font-size: 18px; }
+        .search-container input { width: 100%; padding: 14px 20px 14px 54px; border-radius: 16px; border: 1.5px solid var(--pos-border); background: white; font-size: 15px; font-weight: 600; outline: none; transition: all 0.3s; }
+        .search-container input:focus { border-color: var(--pos-primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        
+        .avatar-circle { width: 44px; height: 44px; border-radius: 12px; background: #eef2ff; color: var(--pos-primary); display: grid; place-items: center; font-weight: 900; font-size: 16px; border: 1px solid rgba(99, 102, 241, 0.1); }
     </style>
 </head>
 <body class="pos-app">
     <?php $activeNav = 'customers'; include __DIR__ . '/partials/navbar.php'; ?>
 
     <div class="fade-in">
-        <div class="pos-row" style="margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
             <div class="pos-title">
-                <h1 class="text-gradient">Customers</h1>
-                <p>Manage your client database and relationships.</p>
+                <h1>Customer Relations</h1>
+                <p>Manage your clientele, contact details and purchase history.</p>
             </div>
-            <div style="display:flex; gap:12px;">
-                <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers/create" class="pos-pill" style="padding: 12px 24px;">
-                    <i class="fas fa-plus"></i> Add Customer
-                </a>
+            <a href="<?php echo htmlspecialchars($posUrl('customers/create')); ?>" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Add Customer
+            </a>
+        </div>
+
+        <div class="pos-grid cols-4" style="margin-bottom: 32px;">
+            <div class="pos-stat">
+                <span class="k">Total Clients</span>
+                <p class="v"><?php echo count($customers); ?></p>
+                <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: var(--pos-primary);"><i class="fas fa-users"></i></div>
+            </div>
+            <div class="pos-stat">
+                <span class="k">Active This Month</span>
+                <p class="v"><?php echo count($customers); ?></p>
+                <div class="chip" style="background: rgba(16, 185, 129, 0.1); color: var(--pos-success);"><i class="fas fa-user-check"></i></div>
             </div>
         </div>
 
-        <div class="pos-grid cols-4" style="margin-bottom: 24px;">
-            <div class="pos-stat pos-shadow-sm" style="border: none;">
-                <div class="k">Total Customers</div>
-                <div class="v"><?php echo count($customers); ?></div>
-                <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;"><i class="fas fa-users"></i></div>
-            </div>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, email or phone number..." onkeyup="searchCustomers()">
         </div>
 
-        <div class="pos-card pos-shadow-sm" style="padding: 30px; border: none;">
-            <div class="pos-topbar__search" style="max-width: 100%; margin-bottom: 24px; background: #f8fafc; border: 1px solid var(--pos-border);">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search customers by name, email or phone..." onkeyup="searchCustomers()" style="font-weight: 700;">
-            </div>
-
-            <div style="overflow:auto;">
-                <table class="cust-table" id="customersTable">
-                    <thead>
+        <div class="pos-table-container">
+            <table class="pos-table" id="customersTable">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">Profile</th>
+                        <th>Display Name</th>
+                        <th>Contact info</th>
+                        <th>Location / Address</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($customers)): ?>
                         <tr>
-                            <th class="cust-th">Customer</th>
-                            <th class="cust-th">Contact Details</th>
-                            <th class="cust-th">Address</th>
-                            <th class="cust-th" style="text-align: right;">Actions</th>
+                            <td colspan="5" style="padding: 100px; text-align: center;">
+                                <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px;">
+                                    <i class="fas fa-users" style="font-size: 32px; color: #cbd5e1;"></i>
+                                </div>
+                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;">No customers yet</h3>
+                                <p style="color: var(--pos-text-muted); margin-top: 8px;">Your client database will appear here.</p>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($customers)): ?>
-                            <tr>
-                                <td colspan="4" style="padding: 60px; text-align: center; color: var(--pos-muted);">
-                                    <i class="fas fa-users" style="font-size: 40px; opacity: 0.2; margin-bottom: 16px; display: block;"></i>
-                                    <p style="font-weight: 700;">No customers found yet.</p>
+                    <?php else: ?>
+                        <?php foreach ($customers as $c): ?>
+                            <tr class="customer-row">
+                                <td>
+                                    <div class="avatar-circle">
+                                        <?php echo strtoupper(substr($c['name'], 0, 1)); ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 800; font-size: 15px; color: var(--pos-text);"><?php echo htmlspecialchars($c['name']); ?></div>
+                                    <div style="font-size: 12px; font-weight: 600; color: var(--pos-text-muted); margin-top: 2px;">ID: #100<?php echo $c['id']; ?></div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <?php if (!empty($c['email'])): ?>
+                                            <div style="font-size: 13px; font-weight: 600; color: var(--pos-text); display: flex; align-items: center; gap: 6px;">
+                                                <i class="far fa-envelope" style="color: var(--pos-text-muted); font-size: 11px;"></i> <?php echo htmlspecialchars($c['email']); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if (!empty($c['phone'])): ?>
+                                            <div style="font-size: 13px; font-weight: 600; color: var(--pos-text); display: flex; align-items: center; gap: 6px;">
+                                                <i class="fas fa-phone-alt" style="color: var(--pos-text-muted); font-size: 11px;"></i> <?php echo htmlspecialchars($c['phone']); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="font-size: 13px; font-weight: 600; color: var(--pos-text-muted);">
+                                        <i class="fas fa-map-marker-alt" style="margin-right: 6px; font-size: 11px;"></i>
+                                        <?php echo !empty($c['address']) ? htmlspecialchars($c['address']) : 'Not provided'; ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                                        <a href="<?php echo htmlspecialchars($posUrl('customers/' . $c['id'] . '/edit')); ?>" class="pos-icon-btn" title="Edit">
+                                            <i class="fas fa-pencil-alt" style="font-size: 14px;"></i>
+                                        </a>
+                                        <a href="<?php echo htmlspecialchars($posUrl('customers/' . $c['id'] . '/delete')); ?>" class="pos-icon-btn" style="color: var(--pos-danger);" data-pos-confirm="Are you sure you want to delete this customer?" title="Delete">
+                                            <i class="fas fa-trash-alt" style="font-size: 14px;"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($customers as $customer): ?>
-                                <tr class="cust-row">
-                                    <td class="cust-td" style="border-radius: 12px 0 0 12px;">
-                                        <div style="display: flex; align-items: center; gap: 12px;">
-                                            <div style="width: 40px; height: 40px; border-radius: 10px; background: #eff6ff; color: #3b82f6; display: grid; place-items: center; font-weight: 900;">
-                                                <?php echo strtoupper(substr($customer['name'], 0, 1)); ?>
-                                            </div>
-                                            <div style="font-weight: 800; font-size: 15px; color: var(--pos-text);"><?php echo htmlspecialchars($customer['name']); ?></div>
-                                        </div>
-                                    </td>
-                                    <td class="cust-td">
-                                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                                            <?php if (!empty($customer['email'])): ?>
-                                                <span style="font-size: 13px; font-weight: 600; color: var(--pos-text);"><i class="far fa-envelope" style="width: 16px; color: var(--pos-muted);"></i> <?php echo htmlspecialchars($customer['email']); ?></span>
-                                            <?php endif; ?>
-                                            <?php if (!empty($customer['phone'])): ?>
-                                                <span style="font-size: 13px; font-weight: 600; color: var(--pos-text);"><i class="fas fa-phone" style="width: 16px; color: var(--pos-muted);"></i> <?php echo htmlspecialchars($customer['phone']); ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </td>
-                                    <td class="cust-td">
-                                        <span style="font-size: 13px; font-weight: 600; color: var(--pos-muted);"><?php echo !empty($customer['address']) ? htmlspecialchars($customer['address']) : '—'; ?></span>
-                                    </td>
-                                    <td class="cust-td" style="text-align: right; border-radius: 0 12px 12px 0;">
-                                        <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                                            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers/<?php echo $customer['id']; ?>/edit" class="pos-icon-btn" style="width: 36px; height: 36px; color: var(--pos-brand-a); border-color: rgba(99, 102, 241, 0.1);">
-                                                <i class="fas fa-pen" style="font-size: 14px;"></i>
-                                            </a>
-                                            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers/<?php echo $customer['id']; ?>/delete" class="pos-icon-btn" style="width: 36px; height: 36px; color: #ef4444; border-color: rgba(239, 68, 68, 0.1);" data-pos-confirm="Are you sure you want to delete this customer?">
-                                                <i class="fas fa-trash" style="font-size: 14px;"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script>
         function searchCustomers() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById('customersTable');
-            const tr = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < tr.length; i++) {
-                const tdName = tr[i].getElementsByTagName('td')[0];
-                const tdContact = tr[i].getElementsByTagName('td')[1];
-                
-                if (tdName || tdContact) {
-                    const txtValueName = tdName ? (tdName.textContent || tdName.innerText) : "";
-                    const txtValueContact = tdContact ? (tdContact.textContent || tdContact.innerText) : "";
-                    
-                    if (txtValueName.toUpperCase().indexOf(filter) > -1 || txtValueContact.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = '';
-                    } else {
-                        tr[i].style.display = 'none';
-                    }
-                }
-            }
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const rows = document.querySelectorAll('.customer-row');
+            rows.forEach(row => {
+                const text = row.innerText.toUpperCase();
+                row.style.display = text.includes(filter) ? '' : 'none';
+            });
         }
     </script>
     

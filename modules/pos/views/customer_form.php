@@ -3,79 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS - <?php echo isset($customer) ? 'Edit' : 'Add'; ?> Customer</title>
+    <title>Customer Management - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        .form-card { background: white; border-radius: 20px; padding: 40px; border: 1px solid var(--pos-border); max-width: 800px; margin: 0 auto; }
-        .form-group { margin-bottom: 24px; }
-        .form-label { display: block; font-size: 13px; font-weight: 800; color: var(--pos-text); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--pos-border); background: #f8fafc; font-size: 15px; font-weight: 600; color: var(--pos-text); transition: all 0.2s; }
-        .form-input:focus { outline: none; border-color: var(--pos-brand-a); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .required-star { color: #ef4444; margin-left: 2px; }
+        .form-card { background: white; border-radius: 24px; padding: 40px; border: 1.5px solid var(--pos-border); max-width: 800px; margin: 0 auto; }
     </style>
 </head>
 <body class="pos-app">
     <?php $activeNav = 'customers'; include __DIR__ . '/partials/navbar.php'; ?>
 
     <div class="fade-in">
-        <div class="pos-row" style="margin-bottom: 32px; justify-content: center; text-align: center;">
-            <div class="pos-title">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
-                    <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers" class="pos-icon-btn" style="width: 36px; height: 36px;"><i class="fas fa-arrow-left"></i></a>
-                    <span class="pos-pill" style="font-size: 12px; background: #eef2ff; color: #4338ca;">Directories</span>
-                </div>
-                <h1 class="text-gradient"><?php echo isset($customer) ? 'Edit Customer' : 'New Customer Profile'; ?></h1>
-                <p>Ensure accurate details for better relationship management.</p>
+        <div style="text-align: center; margin-bottom: 40px;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px; background: rgba(16, 185, 129, 0.1); color: var(--pos-success); padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">
+                <i class="fas fa-users-cog"></i> Client Relations
             </div>
+            <h1 style="font-size: 36px; font-weight: 900; color: var(--pos-text); margin: 0;"><?php echo isset($customer) ? 'Profile Update' : 'New Client Registration'; ?></h1>
+            <p style="color: var(--pos-text-muted); margin-top: 8px; font-size: 16px;">Keep your customer records accurate for personalized service.</p>
         </div>
 
-        <div class="form-card pos-shadow-sm">
+        <div class="form-card pos-shadow-xl">
             <form method="POST">
                 
-                <div style="margin-bottom: 32px;">
-                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-user-circle"></i> Identity Details
+                <section style="margin-bottom: 32px;">
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 24px; height: 1.5px; background: var(--pos-primary);"></span>
+                        Personal Identity
                     </h3>
-                    <div class="form-group">
-                        <label class="form-label">Full Name <span class="required-star">*</span></label>
-                        <input type="text" name="name" class="form-input" value="<?php echo htmlspecialchars($customer['name'] ?? ''); ?>" required placeholder="e.g. John Doe">
+                    <div class="pos-form-group">
+                        <label class="pos-form-label">Full Display Name <span style="color:red;">*</span></label>
+                        <input type="text" name="name" class="pos-form-control" value="<?php echo htmlspecialchars($customer['name'] ?? ''); ?>" required placeholder="e.g. Johnathan Doe">
                     </div>
-                </div>
+                </section>
 
-                <div style="margin-bottom: 32px;">
-                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-address-card"></i> Contact Information
+                <section style="margin-bottom: 32px;">
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 24px; height: 1.5px; background: var(--pos-primary);"></span>
+                        Communication
                     </h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" name="email" class="form-input" value="<?php echo htmlspecialchars($customer['email'] ?? ''); ?>" placeholder="john@example.com">
+                    <div class="pos-grid cols-2">
+                        <div class="pos-form-group">
+                            <label class="pos-form-label">Email Address</label>
+                            <input type="email" name="email" class="pos-form-control" value="<?php echo htmlspecialchars($customer['email'] ?? ''); ?>" placeholder="client@company.com">
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" name="phone" class="form-input" value="<?php echo htmlspecialchars($customer['phone'] ?? ''); ?>" placeholder="+1 234 567 8900">
+                        <div class="pos-form-group">
+                            <label class="pos-form-label">Primary Phone</label>
+                            <input type="tel" name="phone" class="pos-form-control" value="<?php echo htmlspecialchars($customer['phone'] ?? ''); ?>" placeholder="+00 000 000 000">
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div style="margin-bottom: 40px;">
-                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-brand-a); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-map-marker-alt"></i> Location
+                <section>
+                    <h3 style="font-size: 14px; font-weight: 900; color: var(--pos-primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 24px; height: 1.5px; background: var(--pos-primary);"></span>
+                        Delivery & Location
                     </h3>
-                    <div class="form-group">
-                        <label class="form-label">Street Address</label>
-                        <textarea name="address" class="form-input" rows="3" style="resize: none;" placeholder="Enter complete address..."><?php echo htmlspecialchars($customer['address'] ?? ''); ?></textarea>
+                    <div class="pos-form-group">
+                        <label class="pos-form-label">Full Physical Address</label>
+                        <textarea name="address" class="pos-form-control" rows="4" style="resize: none;" placeholder="Building, Street, City, State..."><?php echo htmlspecialchars($customer['address'] ?? ''); ?></textarea>
                     </div>
-                </div>
+                </section>
 
-                <div style="display: flex; justify-content: flex-end; gap: 12px; padding-top: 32px; border-top: 1px solid var(--pos-border);">
-                    <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/customers" class="pos-pill" style="background: white; color: var(--pos-text); border: 1px solid var(--pos-border); padding: 14px 28px;">
-                        Cancel
+                <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 48px; border-top: 1.5px solid var(--pos-border); padding-top: 32px;">
+                    <a href="<?php echo htmlspecialchars($posUrl('customers')); ?>" class="btn btn-outline" style="min-width: 140px;">
+                        Discard
                     </a>
-                    <button type="submit" class="pos-pill" style="padding: 14px 40px; border: none; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">
-                        <?php echo isset($customer) ? 'Save Changes' : 'Create Profile'; ?>
+                    <button type="submit" class="btn btn-primary" style="min-width: 200px; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);">
+                        <i class="fas fa-check-circle" style="margin-right: 8px;"></i> <?php echo isset($customer) ? 'Update Profile' : 'Register Client'; ?>
                     </button>
                 </div>
             </form>

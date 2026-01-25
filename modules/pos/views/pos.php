@@ -18,18 +18,7 @@ $urlPrefix = '/Mekong_CyberUnit';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pos-primary: #6366f1;
-            --pos-primary-light: #eef2ff;
-            --pos-secondary: #8b5cf6;
-            --pos-accent: #0ea5e9;
-            --pos-bg: #f1f5f9;
-            --pos-card-bg: #ffffff;
-            --pos-text: #1e293b;
-            --pos-text-muted: #64748b;
-            --pos-border: #e2e8f0;
-            --pos-radius: 16px;
-            --pos-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-            --pos-terminal-sidebar: 400px;
+            --pos-terminal-sidebar: 420px;
         }
 
         body.pos-app {
@@ -40,205 +29,163 @@ $urlPrefix = '/Mekong_CyberUnit';
             overflow: hidden;
         }
 
-        h1, h2, h3, .pos-prod-card__name, .pos-cart-header h2 {
-            font-family: 'Outfit', sans-serif;
-        }
-
         /* Layout */
         .pos-terminal {
-            display: flex;
-            height: calc(100vh - 72px);
+            display: grid;
+            grid-template-columns: 1fr var(--pos-terminal-sidebar);
+            height: calc(100vh - var(--pos-topbar-h));
             overflow: hidden;
-            background: #f8fafc;
         }
 
         .pos-terminal__products {
-            flex: 1;
-            padding: 24px;
+            padding: 32px;
             overflow-y: auto;
-            position: relative;
+            background: #f8fafc;
         }
 
         .pos-terminal__cart {
-            width: var(--pos-terminal-sidebar);
             background: white;
             border-left: 1px solid var(--pos-border);
             display: flex;
             flex-direction: column;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.03);
+            box-shadow: -20px 0 60px rgba(0,0,0,0.02);
+            position: relative;
             z-index: 10;
         }
 
-        /* Search Bar & Categories */
-        .pos-search-section {
+        /* Search Section */
+        .pos-terminal-header {
             display: flex;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             align-items: center;
         }
 
-        .pos-search-bar {
+        .pos-search-box {
             flex: 1;
-            background: white;
-            border: 1px solid var(--pos-border);
-            border-radius: 20px;
-            padding: 12px 24px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .pos-search-bar:focus-within {
-            border-color: var(--pos-primary);
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
-            transform: translateY(-2px);
+        .pos-search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--pos-primary);
+            font-size: 18px;
         }
 
-        .pos-search-bar input {
-            border: none;
-            outline: none;
+        .pos-search-box input {
             width: 100%;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--pos-text);
-            background: transparent;
-        }
-
-        .pos-category-select {
+            padding: 16px 20px 16px 54px;
+            border-radius: 18px;
+            border: 1.5px solid var(--pos-border);
             background: white;
-            border: 1px solid var(--pos-border);
-            border-radius: 20px;
-            padding: 12px 20px;
+            font-size: 16px;
             font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
             outline: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            min-width: 180px;
+            transition: all 0.2s;
+            box-shadow: var(--pos-shadow-sm);
         }
 
-        /* Products Grid */
+        .pos-search-box input:focus {
+            border-color: var(--pos-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Product Cards */
         .pos-prod-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-            gap: 20px;
-            padding-bottom: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+            padding-bottom: 32px;
         }
 
         .pos-prod-card {
             background: white;
             border-radius: 24px;
             padding: 12px;
-            border: 1px solid var(--pos-border);
+            border: 1.2px solid var(--pos-border);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            position: relative;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
         .pos-prod-card:hover {
             transform: translateY(-8px);
             border-color: var(--pos-primary);
-            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1), 0 10px 10px -5px rgba(99, 102, 241, 0.04);
+            box-shadow: var(--pos-shadow-xl);
         }
 
         .pos-prod-card__img {
             width: 100%;
             aspect-ratio: 1;
-            border-radius: 18px;
+            border-radius: 20px;
             background: #f1f5f9;
+            overflow: hidden;
+            border: 1px solid var(--pos-border);
             display: grid;
             place-items: center;
-            overflow: hidden;
-            position: relative;
         }
 
         .pos-prod-card__img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .pos-prod-card:hover .pos-prod-card__img img {
-            transform: scale(1.1);
         }
 
         .pos-prod-card__info {
-            padding: 4px 8px 8px;
+            padding: 12px 6px 4px;
         }
 
         .pos-prod-card__name {
-            font-weight: 700;
+            font-weight: 800;
             font-size: 15px;
             color: var(--pos-text);
             margin-bottom: 6px;
+            line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 40px;
-            line-height: 1.3;
+            height: 42px;
         }
 
         .pos-prod-card__price {
-            font-weight: 800;
+            font-weight: 900;
             font-size: 18px;
-            border-radius: 12px;
             color: var(--pos-primary);
         }
 
         .pos-prod-card__stock {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.9);
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
             padding: 4px 10px;
             border-radius: 10px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--pos-text-muted);
             border: 1px solid var(--pos-border);
             z-index: 2;
         }
 
-        /* Cart Section */
+        /* Cart */
         .pos-cart-header {
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+            padding: 32px 24px 24px;
             border-bottom: 1px solid var(--pos-border);
         }
 
-        .pos-cart-header h2 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--pos-text);
-            margin: 0;
-        }
-
-        .cart-count {
-            background: var(--pos-primary-light);
-            color: var(--pos-primary);
-            padding: 6px 14px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 13px;
-        }
+        .pos-cart-header h2 { font-size: 24px; font-weight: 900; margin: 0; }
 
         .pos-cart-items {
             flex: 1;
             overflow-y: auto;
-            padding: 16px 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -248,149 +195,119 @@ $urlPrefix = '/Mekong_CyberUnit';
             display: flex;
             gap: 16px;
             align-items: center;
-            padding: 12px;
+            padding: 16px;
             background: white;
-            border-radius: 18px;
-            border: 1px solid var(--pos-border);
+            border-radius: 20px;
+            border: 1.5px solid var(--pos-border);
             transition: all 0.2s;
-            animation: slideInRight 0.3s ease-out;
         }
 
-        .pos-cart-item:hover {
-            border-color: var(--pos-primary);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+        .pos-cart-item:hover { border-color: var(--pos-primary); box-shadow: var(--pos-shadow-md); }
 
         .pos-cart-item__img {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            background: #f1f5f9;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--pos-border);
             overflow: hidden;
             flex-shrink: 0;
         }
 
-        .pos-cart-item__info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .pos-cart-item__name {
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .pos-cart-item__price {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--pos-primary);
-        }
+        .pos-cart-item__info { flex: 1; min-width: 0; }
+        .pos-cart-item__name { font-weight: 800; font-size: 14px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pos-cart-item__price { font-weight: 900; font-size: 13px; color: var(--pos-primary); }
 
         .pos-cart-qty {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #f8fafc;
+            background: #f1f5f9;
             padding: 4px;
-            border-radius: 12px;
-            border: 1px solid var(--pos-border);
+            border-radius: 14px;
         }
 
         .pos-cart-qty button {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
             border: none;
             background: white;
-            color: var(--pos-text);
             cursor: pointer;
-            font-weight: 700;
             display: grid;
             place-items: center;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .pos-cart-qty button:hover {
-            background: var(--pos-primary);
-            color: white;
-        }
-
-        .pos-cart-qty span {
             font-weight: 800;
-            font-size: 14px;
-            min-width: 24px;
-            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
 
-        /* Cart Footer */
+        .pos-cart-qty button:hover { background: var(--pos-primary); color: white; }
+        .pos-cart-qty span { font-weight: 900; font-size: 14px; min-width: 24px; text-align: center; }
+
+        /* Footer */
         .pos-cart-footer {
             padding: 24px;
-            background: white;
+            background: #ffffff;
             border-top: 1px solid var(--pos-border);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.02);
         }
 
-        .totals-card {
+        .pos-totals {
+            padding: 20px;
             background: #f8fafc;
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--pos-border);
         }
 
-        .pos-cart-total-row {
+        .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--pos-text-muted);
         }
 
-        .pos-cart-total-row.grand {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--pos-border);
-            font-size: 22px;
-            font-weight: 800;
+        .total-row.grand {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1.5px dashed var(--pos-border);
+            font-size: 24px;
+            font-weight: 900;
             color: var(--pos-text);
         }
 
-        .pos-cart-total-row.grand span:last-child {
-            color: var(--pos-primary);
-        }
+        .total-row.grand span:last-child { color: var(--pos-primary); }
 
-        .pos-btn-pay {
+        .btn-pay {
             width: 100%;
-            background: linear-gradient(135deg, var(--pos-primary) 0%, var(--pos-secondary) 100%);
-            border: none;
-            color: white;
-            padding: 18px;
+            padding: 20px;
             border-radius: 20px;
-            font-weight: 800;
+            background: var(--pos-gradient-primary);
+            color: white;
+            border: none;
             font-size: 18px;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-            transition: all 0.3s;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             gap: 12px;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s;
         }
 
-        .pos-btn-pay:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
-            filter: brightness(1.1);
+        .btn-pay:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
         }
 
-        .pos-btn-pay:active {
-            transform: translateY(0);
+        @media (max-width: 1200px) {
+            .pos-terminal { grid-template-columns: 1fr; }
+            .pos-terminal__cart { position: fixed; right: 0; top: var(--pos-topbar-h); bottom: 0; width: 400px; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .pos-terminal__cart.active { transform: translateX(0); }
         }
+    </style>
 
         /* Modal Enhancements */
         .pos-modal-overlay {
@@ -481,25 +398,24 @@ $urlPrefix = '/Mekong_CyberUnit';
 
     <div class="pos-terminal">
         <div class="pos-terminal__products">
-            <div class="pos-search-section">
-                <div class="pos-search-bar">
-                    <i class="fas fa-search" style="color: var(--pos-primary);"></i>
-                    <input type="text" id="search" placeholder="Search products, SKU or scan..." autocomplete="off">
-                    <kbd style="background: #f1f5f9; padding: 2px 6px; border-radius: 6px; font-size: 10px; font-weight: 700; color: var(--pos-text-muted); border: 1px solid var(--pos-border);">ENTER</kbd>
+            <div class="pos-terminal-header">
+                <div class="pos-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search products, SKUs, or scan barcodes..." autocomplete="off">
                 </div>
-                <select id="category" class="pos-category-select">
+                <select id="category" class="pos-form-control pos-form-select" style="max-width: 220px; background-color: white;">
                     <option value="">All Categories</option>
                 </select>
             </div>
 
             <?php if (isset($resumeOrder) && $resumeOrder): ?>
-                <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 16px; padding: 12px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 32px; height: 32px; border-radius: 10px; background: #6366f1; color: white; display: grid; place-items: center;">
-                        <i class="fas fa-history" style="font-size: 14px;"></i>
+                <div style="background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 20px; padding: 16px 24px; margin-bottom: 32px; display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--pos-primary); color: white; display: grid; place-items: center; font-size: 18px;">
+                        <i class="fas fa-history"></i>
                     </div>
                     <div>
-                        <div style="font-size: 12px; font-weight: 700; color: #4338ca; text-transform: uppercase;">Resuming Order</div>
-                        <div style="font-size: 14px; font-weight: 800; color: #1e1b4b;">#<?php echo (int)$resumeOrder['id']; ?></div>
+                        <div style="font-size: 12px; font-weight: 800; color: #4338ca; text-transform: uppercase; letter-spacing: 1px;">Continuing Order</div>
+                        <div style="font-size: 16px; font-weight: 900; color: #1e1b4b; margin-top: 2px;">Reference #<?php echo (int)$resumeOrder['id']; ?></div>
                     </div>
                 </div>
             <?php endif; ?>
@@ -509,19 +425,18 @@ $urlPrefix = '/Mekong_CyberUnit';
 
         <div class="pos-terminal__cart">
             <div class="pos-cart-header">
-                <h2>Cart</h2>
-                <div class="cart-count" id="cartCount">0 Items</div>
+                <h2>Billing Cart</h2>
             </div>
 
             <div id="cart" class="pos-cart-items">
-                <!-- Cart items added here via JS -->
-                 <div style="height: 100%; display: grid; place-items: center; text-align: center; color: var(--pos-text-muted); opacity: 0.5;">
+                <!-- Cart items injected via JS -->
+                 <div style="height: 100%; display: grid; place-items: center; text-align: center; opacity: 0.5;">
                     <div>
-                        <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px;">
-                            <i class="fas fa-shopping-basket" style="font-size: 32px;"></i>
+                        <div style="width: 100px; height: 100px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 24px;">
+                            <i class="fas fa-shopping-basket" style="font-size: 40px; color: #cbd5e1;"></i>
                         </div>
-                        <p style="font-weight: 700; font-size: 16px;">Your cart is empty</p>
-                        <p style="font-size: 14px;">Add some products to start a sale</p>
+                        <h3 style="font-weight: 800; color: var(--pos-text);">Your cart is empty</h3>
+                        <p style="font-size: 14px; color: var(--pos-text-muted); margin-top: 8px;">Select products from the left to start</p>
                     </div>
                  </div>
             </div>
@@ -536,49 +451,46 @@ $urlPrefix = '/Mekong_CyberUnit';
                     <input type="hidden" name="payment_method" id="payment_method" value="cash">
                     <input type="hidden" name="cash_given" id="cash_given" value="">
 
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 20px;">
-                        <div>
-                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">Customer</label>
-                            <div style="position: relative;">
-                                <i class="fas fa-user" style="position: absolute; left: 12px; top: 12px; font-size: 12px; color: var(--pos-text-muted);"></i>
-                                <select name="customer_id" id="customer" class="pos-input" style="padding: 10px 10px 10px 32px; border-radius: 12px; font-size: 13px; width: 100%; border: 1px solid var(--pos-border); background: #f8fafc; font-weight: 600;">
-                                    <option value="">Walk-in Customer</option>
-                                    <?php foreach ($customers as $customer1): ?>
-                                        <option value="<?php echo (int)$customer1['id']; ?>"><?php echo htmlspecialchars($customer1['name']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                        <div class="pos-form-group" style="margin: 0;">
+                            <label class="pos-form-label" style="font-size: 11px;">Customer</label>
+                            <select name="customer_id" id="customer" class="pos-form-control pos-form-select" style="background-color: white; padding: 12px 16px;">
+                                <option value="">Walk-in Customer</option>
+                                <?php foreach ($customers as $customer1): ?>
+                                    <option value="<?php echo (int)$customer1['id']; ?>"><?php echo htmlspecialchars($customer1['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-                        <div>
-                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">Order Type</label>
-                            <select id="terminal_order_status" class="pos-input" style="padding: 10px; border-radius: 12px; font-size: 13px; width: 100%; border: 1px solid var(--pos-border); background: #f8fafc; font-weight: 600;">
-                                <option value="completed">Immediate Sale</option>
-                                <option value="pending">Keep on Hold</option>
+                        <div class="pos-form-group" style="margin: 0;">
+                            <label class="pos-form-label" style="font-size: 11px;">Order Type</label>
+                            <select id="terminal_order_status" class="pos-form-control pos-form-select" style="background-color: white; padding: 12px 16px;">
+                                <option value="completed">Sale</option>
+                                <option value="pending">Hold</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="totals-card">
-                        <div class="pos-cart-total-row">
-                            <span>Subtotal</span>
+                    <div class="pos-totals">
+                        <div class="total-row">
+                            <span>Subtotal Items</span>
                             <span id="subtotal_pre">$0.00</span>
                         </div>
-                        <div class="pos-cart-total-row">
-                            <span>Tax (0%)</span>
+                        <div class="total-row">
+                            <span>Platform Tax</span>
                             <span>$0.00</span>
                         </div>
-                        <div class="pos-cart-total-row grand">
-                            <span>Total</span>
+                        <div class="total-row grand">
+                            <span>Grand Total</span>
                             <span id="subtotal">$0.00</span>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 12px;">
-                        <button class="pos-icon-btn" type="button" style="width: 60px; height: 60px; flex-shrink: 0; border-radius: 20px; color: #ef4444; border-color: #fee2e2; background: #fef2f2;" onclick="clearCart()" title="Clear Cart">
-                            <i class="fas fa-trash-alt"></i>
+                        <button class="pos-icon-btn" type="button" style="width: 64px; height: 64px; border-radius: 20px; color: var(--pos-danger); border-color: #fee2e2; background: #fef2f2;" onclick="clearCart()" title="Clear Cart">
+                            <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
                         </button>
-                        <button class="pos-btn-pay" type="button" id="btnPay">
-                             Proceed to Payment <i class="fas fa-arrow-right"></i>
+                        <button class="btn-pay" type="button" id="btnPay">
+                             Complete Checkout <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                 </form>
@@ -588,94 +500,93 @@ $urlPrefix = '/Mekong_CyberUnit';
 
 
     <div id="paymentModal" class="pos-modal-overlay">
-        <div class="pos-modal">
+        <div class="pos-modal" style="max-width: 540px;">
             <div class="pos-modal__header">
                 <div class="pos-modal__title">
                     <div class="pos-modal__icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-credit-card"></i>
                     </div>
                     <div>
-                        <h3>Checkout</h3>
-                        <p>Complete your transaction</p>
+                        <h3>Checkout Process</h3>
+                        <p>Complete payment details</p>
                     </div>
                 </div>
                 <button class="pos-modal__close" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="pos-modal__body">
-                <div style="background: #f8fafc; border-radius: 24px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--pos-border);">
+                <div style="background: #f8fafc; border-radius: 24px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid var(--pos-border);">
                     <div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Payable Amount</div>
+                        <div style="font-size: 12px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Payable Total</div>
                         <div id="modal_subtotal" style="font-size: 32px; font-weight: 900; color: var(--pos-primary);">$0.00</div>
                     </div>
                     <div style="text-align: right;">
-                        <div id="clock_now" style="font-size: 14px; font-weight: 700; color: var(--pos-text-muted);"></div>
+                        <div id="clock_now" style="font-size: 14px; font-weight: 800; color: var(--pos-text-muted); font-variant-numeric: tabular-nums;"></div>
                     </div>
                 </div>
 
-                <label style="display: block; font-size: 12px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Payment Method</label>
-                <div class="payment-method-grid">
-                    <?php if ($settings['pos_method_cash_enabled'] == '1'): ?>
-                    <div class="payment-method-item active" data-method="cash" onclick="selectPaymentMethod('cash')">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Cash</span>
+                <div class="pos-form-group">
+                    <label class="pos-form-label" style="font-size: 12px; margin-bottom: 12px;">Preferred Payment Method</label>
+                    <div class="payment-method-grid">
+                        <?php if ($settings['pos_method_cash_enabled'] == '1'): ?>
+                        <div class="payment-method-item active" data-method="cash" onclick="selectPaymentMethod('cash')">
+                            <i class="fas fa-wallet"></i>
+                            <span>Cash</span>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($settings['pos_method_khqr_enabled'] == '1'): ?>
+                        <div class="payment-method-item" data-method="khqr" onclick="selectPaymentMethod('khqr')">
+                            <i class="fas fa-qrcode"></i>
+                            <span>Bakong KHQR</span>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($settings['pos_method_card_enabled'] == '1'): ?>
+                        <div class="payment-method-item" data-method="card" onclick="selectPaymentMethod('card')">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Card Pay</span>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php endif; ?>
-                    
-                    <?php if ($settings['pos_method_khqr_enabled'] == '1'): ?>
-                    <div class="payment-method-item" data-method="khqr" onclick="selectPaymentMethod('khqr')">
-                        <i class="fas fa-qrcode"></i>
-                        <span>KHQR</span>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if ($settings['pos_method_card_enabled'] == '1'): ?>
-                    <div class="payment-method-item" data-method="card" onclick="selectPaymentMethod('card')">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Card</span>
-                    </div>
-                    <?php endif; ?>
-                    
-                    <?php if ($settings['pos_method_transfer_enabled'] == '1'): ?>
-                    <div class="payment-method-item" data-method="transfer" onclick="selectPaymentMethod('transfer')">
-                        <i class="fas fa-university"></i>
-                        <span>Bank</span>
-                    </div>
-                    <?php endif; ?>
                 </div>
 
                 <div id="cashAmountGroup">
-                    <label style="display: block; font-size: 12px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Cash Received</label>
-                    <div style="position: relative;">
-                        <span style="position: absolute; left: 16px; top: 14px; font-weight: 800; color: var(--pos-text-muted); font-size: 18px;">$</span>
-                        <input id="modal_cash_given" class="pos-input" type="number" step="0.01" min="0" placeholder="0.00" style="padding: 14px 14px 14px 35px; border-radius: 16px; width: 100%; font-size: 24px; font-weight: 800; border: 2px solid var(--pos-primary); outline: none; background: white;">
+                    <div class="pos-form-group">
+                        <label class="pos-form-label" style="font-size: 12px;">Amount Tendered</label>
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 20px; top: 18px; font-weight: 900; color: var(--pos-text-muted); font-size: 20px;">$</span>
+                            <input id="modal_cash_given" class="pos-form-control" type="number" step="0.01" min="0" placeholder="0.00" style="padding: 18px 20px 18px 40px; font-size: 24px; font-weight: 900; border-width: 2px; border-color: var(--pos-primary);">
+                        </div>
                     </div>
                     
-                    <div id="changeGroup" style="margin-top: 16px; background: #ecfdf5; padding: 16px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #bbf7d0;">
-                        <span style="font-weight: 800; color: #065f46; font-size: 14px;">Change to Return</span>
-                        <span id="modal_change" style="font-size: 24px; font-weight: 900; color: #10b981;">$0.00</span>
+                    <div id="changeGroup" style="margin-top: 20px; background: #ecfdf5; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #bbf7d0;">
+                        <span style="font-weight: 800; color: #065f46; font-size: 15px;">Balance / Change</span>
+                        <span id="modal_change" style="font-size: 28px; font-weight: 900; color: var(--pos-success);">$0.00</span>
                     </div>
                 </div>
                 
-                <div id="khqrGroup" style="display: none; text-align: center; background: white; padding: 24px; border-radius: 24px; border: 2px dashed var(--pos-border);">
-                    <div id="qrcode_container" style="background: white; padding: 12px; border-radius: 16px; border: 1px solid var(--pos-border); display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-                       <!-- Canvas or Img will be injected here -->
+                <div id="khqrGroup" style="display: none; text-align: center; background: white; padding: 32px; border-radius: 24px; border: 2px dashed var(--pos-border);">
+                    <div id="qrcode_container" style="background: white; padding: 16px; border-radius: 20px; border: 1px solid var(--pos-border); display: inline-block; box-shadow: var(--pos-shadow-lg);">
+                       <!-- QR Code here -->
                     </div>
-                    <div style="margin-top: 16px;">
-                        <div style="font-weight: 900; color: #E31E26; font-size: 16px; letter-spacing: 1px;">SCAN KHQR TO PAY</div>
-                        <div style="font-size: 13px; color: var(--pos-text-muted); margin-top: 4px;">Powered by Bakong</div>
+                    <div style="margin-top: 24px;">
+                        <div style="font-weight: 900; color: #E31E26; font-size: 18px; letter-spacing: 1px;">WAITING FOR KHQR SCAN</div>
+                        <div style="font-size: 13px; color: var(--pos-text-muted); margin-top: 6px; font-weight: 600;">Secure payment via Bakong Network</div>
                     </div>
                 </div>
 
-                <div id="cardGroup" style="display: none; text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 20px; border: 1px solid var(--pos-border);">
-                    <i class="fas fa-credit-card" style="font-size: 48px; color: var(--pos-primary); opacity: 0.5; margin-bottom: 20px;"></i>
-                    <p style="font-weight: 800; color: var(--pos-text);">Insert or Swpie Card</p>
-                    <p style="font-size: 13px; color: var(--pos-text-muted);">Please use the external card terminal</p>
+                <div id="cardGroup" style="display: none; text-align: center; padding: 60px 24px; background: #f8fafc; border-radius: 24px; border: 1.5px solid var(--pos-border);">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: white; display: grid; place-items: center; margin: 0 auto 24px; box-shadow: var(--pos-shadow-sm);">
+                        <i class="fas fa-credit-card" style="font-size: 32px; color: var(--pos-primary);"></i>
+                    </div>
+                    <p style="font-weight: 800; color: var(--pos-text); font-size: 16px;">Waiting for terminal...</p>
+                    <p style="font-size: 13px; color: var(--pos-text-muted); font-weight: 500; margin-top: 4px;">Please swipe or insert card in external machine</p>
                 </div>
             </div>
-            <div class="pos-modal__actions" style="padding: 0 30px 30px; border: none;">
-                <button class="pos-modal-btn" onclick="closePaymentModal()" style="padding: 16px 24px; flex: 1; border-radius: 18px; font-size: 16px;">Discard</button>
-                <button class="pos-modal-btn primary" onclick="confirmPayment()" style="padding: 16px 24px; flex: 2; border-radius: 18px; font-size: 16px;">
-                    <i class="fas fa-check-circle"></i> Complete Order
+            <div class="pos-modal__actions" style="padding: 0 32px 32px;">
+                <button class="pos-modal-btn" onclick="closePaymentModal()" style="padding: 18px; flex: 1; border-radius: 20px; font-weight: 700;">Cancel</button>
+                <button class="pos-modal-btn primary" onclick="confirmPayment()" style="padding: 18px; flex: 2; border-radius: 20px; font-weight: 800;">
+                    Complete Payment <i class="fas fa-check" style="margin-left: 8px;"></i>
                 </button>
             </div>
         </div>
