@@ -424,8 +424,9 @@ $urlPrefix = '/Mekong_CyberUnit';
         </div>
 
         <div class="pos-terminal__cart">
-            <div class="pos-cart-header">
+            <div class="pos-cart-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>Billing Cart</h2>
+                <span id="cartCount" class="badge badge-primary" style="font-size: 12px; font-weight: 800; padding: 6px 14px;">0 Items</span>
             </div>
 
             <div id="cart" class="pos-cart-items">
@@ -641,7 +642,6 @@ $urlPrefix = '/Mekong_CyberUnit';
             checkoutForm: document.getElementById('checkoutForm'),
             btnPay: document.getElementById('btnPay'),
             paymentModal: document.getElementById('paymentModal'),
-            modalPaymentMethod: document.getElementById('modal_payment_method'),
             modalCashGiven: document.getElementById('modal_cash_given'),
             modalSubtotal: document.getElementById('modal_subtotal'),
             modalChange: document.getElementById('modal_change')
@@ -768,11 +768,11 @@ $urlPrefix = '/Mekong_CyberUnit';
             }
 
             const subtotal = computeSubtotal();
-            els.subtotal.textContent = money(subtotal);
-            els.subtotalPre.textContent = money(subtotal);
+            if (els.subtotal) els.subtotal.textContent = money(subtotal);
+            if (els.subtotalPre) els.subtotalPre.textContent = money(subtotal);
 
             const itemCount = Array.from(cart.values()).reduce((acc, x) => acc + x.qty, 0);
-            els.cartCount.textContent = itemCount + ' Items';
+            if (els.cartCount) els.cartCount.textContent = itemCount + ' Items';
 
             syncFormItems();
         }
@@ -992,7 +992,6 @@ $urlPrefix = '/Mekong_CyberUnit';
                 els.orderStatus.value = e.target.value;
             });
 
-            els.modalPaymentMethod.addEventListener('change', toggleCashInput);
             els.modalCashGiven.addEventListener('input', updateModalChange);
 
             els.search.addEventListener('keydown', (e) => {
