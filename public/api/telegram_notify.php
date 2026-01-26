@@ -70,6 +70,9 @@ $md5 = $data['md5'] ?? '';
 $amount = $data['amount'] ?? '0.00';
 $plan = $data['plan'] ?? 'Unknown';
 $method = $data['method'] ?? 'bakong';
+$type = $data['type'] ?? 'registration'; // registration or renewal
+$businessName = $data['business_name'] ?? 'New Customer';
+$tenantId = $data['tenant_id'] ?? null;
 
 if (empty($md5)) {
     echo json_encode(['success' => false, 'error' => 'MD5 reference missing']);
@@ -85,7 +88,10 @@ $txData = [
     'method' => $method,
     'status' => 'PENDING',
     'timestamp' => time(),
-    'ip' => $_SERVER['REMOTE_ADDR']
+    'ip' => $_SERVER['REMOTE_ADDR'],
+    'type' => $type,
+    'business_name' => $businessName,
+    'tenant_id' => $tenantId
 ];
 
 TransactionLogger::save($md5, $txData);
@@ -100,9 +106,7 @@ try {
         'amount' => $amount,
         'status' => 'pending'
     ]);
-} catch (Exception $e) {
-    // If table doesn't exist or duplicate, ignore and rely on JSON
-}
+} catch (Exception $e) {}
 
 // 3. Send Telegram Notification
 if ($TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || empty($TELEGRAM_BOT_TOKEN)) {
@@ -110,16 +114,18 @@ if ($TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || empty($TELEGRAM_BOT_TOKEN))
     exit;
 }
 
-$message = "<b>🔔 New Payment Waiting Approval</b>\n\n";
+$title = ($type === 'renewal') ? "🔄 Subscription Renewal Request" : "🔔 New Registration Payment";
+
+$message = "<b>$title</b>\n\n";
+$message .= "<b>🏢 Business:</b> " . htmlspecialchars($businessName) . "\n";
 $message .= "<b>💰 Amount:</b> $" . htmlspecialchars($amount) . "\n";
 $message .= "<b>📦 Plan:</b> " . htmlspecialchars(ucfirst($plan)) . "\n";
 $message .= "<b>💳 Method:</b> " . htmlspecialchars(ucfirst($method)) . "\n";
 $message .= "<b>🔑 Ref:</b> <code>" . htmlspecialchars($md5) . "</code>\n";
 $message .= "<b>⏰ Time:</b> " . date('Y-m-d H:i:s') . "\n\n";
-$message .= "Please verify and approve this payment.";
+$message .= "Please verify and approve this transaction.";
 
 // FORCE DIRECT ACTIONS (CALLBACK)
-// Note: We use :: as a safer separator
 $keyboard = [
     'inline_keyboard' => [
         [

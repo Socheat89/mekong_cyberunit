@@ -65,7 +65,7 @@
         <p>Your workspace subscription has expired. Please contact our support team or renew your plan to continue using Mekong CyberUnit.</p>
         <div style="display: flex; gap: 1rem; justify-content: center;">
             <a href="login.php" class="btn" style="background: #64748b;">Return to Login</a>
-            <a href="#" class="btn">Renew Now</a>
+            <a href="renew.php" class="btn">Renew Now</a>
         </div>
     </div>
 </body>
