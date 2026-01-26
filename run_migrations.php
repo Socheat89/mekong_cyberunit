@@ -30,18 +30,18 @@ try {
         $db->query("ALTER TABLE system_modules ADD COLUMN feature_key VARCHAR(50) NULL AFTER module_name");
     }
 
-    // Fix indexes: check if old unique_system_module exists
-    $indexes = $db->fetchAll("SHOW INDEX FROM system_modules WHERE Key_name = 'unique_system_module'");
-    if (!empty($indexes)) {
-        echo "Cleaning up old index...<br>";
-        $db->query("ALTER TABLE system_modules DROP INDEX unique_system_module");
-    }
-
-    // Add new unique index if missing
+    // IMPORTANT: Add new index FIRST so MySQL always has an index for the Foreign Key
     $indexes = $db->fetchAll("SHOW INDEX FROM system_modules WHERE Key_name = 'unique_system_feature'");
     if (empty($indexes)) {
         echo "Adding new feature-level unique index...<br>";
         $db->query("ALTER TABLE system_modules ADD UNIQUE KEY unique_system_feature (system_id, module_name, feature_key)");
+    }
+
+    // Now it is safe to drop the old index
+    $indexes = $db->fetchAll("SHOW INDEX FROM system_modules WHERE Key_name = 'unique_system_module'");
+    if (!empty($indexes)) {
+        echo "Cleaning up old index...<br>";
+        $db->query("ALTER TABLE system_modules DROP INDEX unique_system_module");
     }
 
     echo "Migrations completed successfully!";
