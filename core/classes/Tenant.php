@@ -66,11 +66,14 @@ class Tenant {
             return self::getPosLevel() > 0;
         }
 
+        self::checkExpirations();
+
         $db = Database::getInstance();
         $count = $db->fetchOne(
             "SELECT COUNT(*) as count FROM tenant_systems ts 
              JOIN systems s ON ts.system_id = s.id 
-             WHERE ts.tenant_id = ? AND s.name = ? AND ts.status = 'active'",
+             WHERE ts.tenant_id = ? AND s.name = ? 
+             AND ts.status = 'active' AND (ts.expires_at IS NULL OR ts.expires_at > NOW())",
             [self::getId(), $systemName]
         );
         return $count['count'] > 0;
@@ -79,14 +82,35 @@ class Tenant {
     public static function hasModule($moduleName) {
         if (!self::$currentTenant) return false;
 
+        self::checkExpirations();
+
         $db = Database::getInstance();
         // Check if any of the subscribed systems (plans) have this module linked
         $count = $db->fetchOne(
             "SELECT COUNT(*) as count FROM tenant_systems ts 
              JOIN systems s ON ts.system_id = s.id 
              JOIN system_modules sm ON sm.system_id = s.id
-             WHERE ts.tenant_id = ? AND sm.module_name = ? AND ts.status = 'active'",
+             WHERE ts.tenant_id = ? AND sm.module_name = ? 
+             AND ts.status = 'active' AND (ts.expires_at IS NULL OR ts.expires_at > NOW())",
             [self::getId(), $moduleName]
+        );
+        
+        return $count['count'] > 0;
+    }
+
+    public static function hasFeature($moduleName, $featureKey) {
+        if (!self::$currentTenant) return false;
+
+        self::checkExpirations();
+
+        $db = Database::getInstance();
+        $count = $db->fetchOne(
+            "SELECT COUNT(*) as count FROM tenant_systems ts 
+             JOIN system_modules sm ON sm.system_id = ts.system_id
+             WHERE ts.tenant_id = ? 
+             AND sm.module_name = ? AND sm.feature_key = ?
+             AND ts.status = 'active' AND (ts.expires_at IS NULL OR ts.expires_at > NOW())",
+            [self::getId(), $moduleName, $featureKey]
         );
         
         return $count['count'] > 0;
@@ -95,11 +119,15 @@ class Tenant {
     public static function getPosLevel() {
         if (!self::$currentTenant) return 0;
         
+        self::checkExpirations();
+
         $db = Database::getInstance();
         $systems = $db->fetchAll(
             "SELECT s.name FROM tenant_systems ts 
              JOIN systems s ON ts.system_id = s.id 
-             WHERE ts.tenant_id = ? AND ts.status = 'active' AND s.name LIKE 'POS %'",
+             WHERE ts.tenant_id = ? AND ts.status = 'active' 
+             AND (ts.expires_at IS NULL OR ts.expires_at > NOW())
+             AND s.name LIKE 'POS %'",
             [self::getId()]
         );
         
@@ -110,6 +138,19 @@ class Tenant {
             if ($system['name'] == 'POS Premium') $level = max($level, 3);
         }
         return $level;
+    }
+
+    private static function checkExpirations() {
+        if (!self::$currentTenant) return;
+        
+        $db = Database::getInstance();
+        // Auto-expire anything that passed the date
+        $db->query(
+            "UPDATE tenant_systems SET status = 'expired' 
+             WHERE tenant_id = ? AND status = 'active' 
+             AND expires_at IS NOT NULL AND expires_at <= NOW()",
+            [self::getId()]
+        );
     }
 
     public static function setCurrent($tenant) {

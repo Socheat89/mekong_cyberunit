@@ -460,14 +460,30 @@
                     $plans = $db->fetchAll("SELECT * FROM systems WHERE status = 'active' ORDER BY price ASC");
                     foreach ($plans as $plan):
                         $planCode = strtolower(str_replace(' ', '_', $plan['name']));
+                        // Fetch features for this plan
+                        $features = $db->fetchAll("SELECT feature_key FROM system_modules WHERE system_id = ?", [$plan['id']]);
+                        $featureList = array_column($features, 'feature_key');
                     ?>
-                    <label class="checkbox-card" onclick="selectPlan(<?php echo $plan['id']; ?>, <?php echo $plan['price']; ?>, '<?php echo $planCode; ?>')">
-                        <input type="radio" name="plan_select" value="<?php echo $plan['id']; ?>" class="plan-radio">
-                        <div style="flex:1;">
-                            <span><?php echo htmlspecialchars($plan['name']); ?></span>
-                            <div style="font-size:0.8rem; color:#64748b;"><?php echo htmlspecialchars($plan['description']); ?></div>
+                    <label class="checkbox-card" onclick="selectPlan(<?php echo $plan['id']; ?>, <?php echo $plan['price']; ?>, '<?php echo $planCode; ?>')" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                        <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="radio" name="plan_select" value="<?php echo $plan['id']; ?>" class="plan-radio">
+                                <span><?php echo htmlspecialchars($plan['name']); ?></span>
+                            </div>
+                            <div class="checkbox-price" style="margin: 0;">$<?php echo number_format($plan['price'], 2); ?>/mo</div>
                         </div>
-                        <div class="checkbox-price">$<?php echo number_format($plan['price'], 2); ?>/mo</div>
+                        
+                        <div style="font-size:0.8rem; color:#64748b;"><?php echo htmlspecialchars($plan['description']); ?></div>
+                        
+                        <?php if (!empty($featureList)): ?>
+                        <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;">
+                            <?php foreach ($featureList as $feat): ?>
+                                <span style="font-size: 10px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #475569; border: 1px solid #e2e8f0; text-transform: capitalize;">
+                                    <?php echo str_replace('_', ' ', $feat); ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
                     </label>
                     <?php endforeach; ?>
                 </div>

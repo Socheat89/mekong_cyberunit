@@ -66,42 +66,63 @@ $activeClass = function (string $key) use ($activeNav): string {
 
         <nav class="pos-side-nav">
             <?php
-            $posLevel = 0;
-            if (class_exists('Tenant')) {
-               $posLevel = Tenant::getPosLevel();
-            }
-            if ($isDevPos) $posLevel = 3; 
+            $hasFeature = function($mod, $feat) use ($isDevPos) {
+                if ($isDevPos) return true;
+                if (!class_exists('Tenant')) return false;
+                return Tenant::hasFeature($mod, $feat);
+            };
             ?>
 
+            <?php if ($hasFeature('pos', 'core')): ?>
             <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>">
                 <i class="fas fa-chart-pie"></i><span>Overview</span>
             </a>
             <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>">
                 <i class="fas fa-desktop"></i><span>Point of Sale</span>
             </a>
+            <?php endif; ?>
+
+            <?php if ($hasFeature('pos', 'holds')): ?>
             <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>">
                 <i class="fas fa-clock-rotate-left"></i><span>On Hold</span>
             </a>
+            <?php endif; ?>
+
+            <?php if ($hasFeature('pos', 'core')): ?>
             <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>">
                 <i class="fas fa-list-ul"></i><span>Orders</span>
             </a>
+            <?php endif; ?>
             
-            <?php if ($posLevel >= 1): ?>
+            <?php 
+            $canManage = $hasFeature('pos', 'inventory') || $hasFeature('pos', 'customers') || $hasFeature('pos', 'reports') || $hasFeature('pos', 'settings');
+            if ($canManage): 
+            ?>
                 <div style="margin: 24px 16px 8px; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1.5px;">Management</div>
+                
+                <?php if ($hasFeature('pos', 'inventory')): ?>
                 <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>">
                     <i class="fas fa-boxes-stacked"></i><span>Inventory</span>
                 </a>
+                <?php endif; ?>
+
+                <?php if ($hasFeature('pos', 'customers')): ?>
                 <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>">
                     <i class="fas fa-user-group"></i><span>Customers</span>
                 </a>
-                <?php if ($posLevel >= 3): ?>
+                <?php endif; ?>
+
+                <?php if ($hasFeature('pos', 'reports')): ?>
                 <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>">
                     <i class="fas fa-chart-line"></i><span>Analytics</span>
                 </a>
                 <?php endif; ?>
+
+                <?php if ($hasFeature('pos', 'settings')): ?>
                 <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>">
                     <i class="fas fa-gear"></i><span>Settings</span>
                 </a>
+                <?php endif; ?>
             <?php endif; ?>
         </nav>
 

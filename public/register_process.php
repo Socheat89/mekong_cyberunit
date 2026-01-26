@@ -113,11 +113,13 @@ try {
     ]);
 
     // Subscribe to selected systems
+    $expiryDate = date('Y-m-d H:i:s', strtotime('+30 days'));
     foreach ($selectedSystems as $systemId) {
         $db->insert('tenant_systems', [
             'tenant_id' => $tenantId,
             'system_id' => $systemId,
-            'status' => 'active'
+            'status' => 'active',
+            'expires_at' => $expiryDate
         ]);
     }
 
