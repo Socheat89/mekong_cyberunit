@@ -615,6 +615,8 @@
                         <i class="ph-bold ph-spinner ph-spin"></i>
                         <span id="waitingBadgeText">Waiting for manual approval...</span>
                     </div>
+
+                    <div id="apiStatus" style="font-size: 10px; color: #94a3b8; font-family: monospace; margin-top: 10px; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">Status: Initializing...</div>
                 </div>
             </div>
         </div>
@@ -858,17 +860,25 @@
         function startApprovalPolling(md5) {
             if (pollingInterval) clearInterval(pollingInterval);
             
+            const startTime = Date.now();
+            const waitingBadgeText = document.getElementById('waitingBadgeText');
+            
             pollingInterval = setInterval(async () => {
                 try {
                     const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
                     const response = await fetch(`${baseUrl}api/check_approval.php?md5=${md5}&t=${Date.now()}`);
                     const result = await response.json();
 
-                    if (result.success && result.status === 'SUCCESS') {
+                    // Debug Status for dev
+                    const statusEl = document.getElementById('apiStatus');
+                    if (statusEl) {
+                        statusEl.textContent = `Local Status: ${result.status || 'Checking...'} (JSON: ${result.json || '?'}, DB: ${result.db || '?'})`;
+                    }
+
+                    if (result.success && (result.status === 'SUCCESS' || result.status === 'APPROVED')) {
                         clearInterval(pollingInterval);
                         clearInterval(countdownInterval);
                         
-                        // Show success state in waiting modal first
                         const waitingContent = document.querySelector('#waitingModal .modal-body');
                         waitingContent.innerHTML = `
                             <div style="text-align:center; color: #16a34a; padding: 15px;">
@@ -881,9 +891,17 @@
                         setTimeout(() => {
                             window.location.href = `/Mekong_CyberUnit/public/setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
                         }, 2000);
+                        return;
                     }
+
+                    // Standard Polling: Just check for status changes
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    if (elapsed > 30) {
+                        waitingBadgeText.textContent = "Still waiting for admin... Please check your internet connection.";
+                    }
+
                 } catch (e) { console.error("Polling error", e); }
-            }, 3000); // Check every 3 seconds
+            }, 3000); 
         }
 
         window.closeWaitingModal = function() {

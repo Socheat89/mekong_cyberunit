@@ -27,9 +27,9 @@ try {
 
     $telegram = new TelegramBot();
     $message = "<b>🔔 New Payment Notification</b>\n\n";
-    $message .= "<b>Plan:</b> " . ucfirst($plan) . "\n";
-    $message .= "<b>Amount:</b> $" . number_format($amount, 2) . "\n";
-    $message .= "<b>Ref:</b> <code>$ref</code>\n\n";
+    $message .= "<b>Plan:</b> " . htmlspecialchars(ucfirst($plan)) . "\n";
+    $message .= "<b>Amount:</b> $" . htmlspecialchars(number_format($amount, 2)) . "\n";
+    $message .= "<b>Ref:</b> <code>" . htmlspecialchars($ref) . "</code>\n\n";
     $message .= "Please verify and approve this payment.";
 
     $keyboard = [

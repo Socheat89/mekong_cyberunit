@@ -14,20 +14,41 @@ if (empty($md5)) {
 
 // HARDENED PATH LOGIC V7 (Using Class)
 require_once __DIR__ . '/TransactionLogger.php';
+require_once __DIR__ . '/../../core/classes/Database.php';
 
-$tx = TransactionLogger::get($md5);
+$txJson = TransactionLogger::get($md5);
+$statusJson = $txJson ? strtoupper($txJson['status']) : 'NOT_FOUND';
 
-if ($tx) {
-    $status = $tx['status'];
-    
-    if ($status === 'APPROVED') {
-        echo json_encode(['success' => true, 'status' => 'SUCCESS']);
-    } elseif ($status === 'REJECTED') {
-        echo json_encode(['success' => true, 'status' => 'REJECTED']); // Handle rejection
+$statusDb = 'NOT_FOUND';
+try {
+    $db = Database::getInstance();
+    $dbTx = $db->fetchOne("SELECT status FROM payment_approvals WHERE reference_id = ?", [$md5]);
+    if ($dbTx) {
+        $statusDb = strtoupper($dbTx['status']);
+    }
+} catch (Exception $e) {
+    $statusDb = 'DB_ERROR: ' . $e->getMessage();
+}
+
+$finalStatus = ($statusJson !== 'NOT_FOUND') ? $statusJson : $statusDb;
+
+if ($finalStatus !== 'NOT_FOUND') {
+    if ($finalStatus === 'APPROVED' || $finalStatus === 'SUCCESS') {
+        echo json_encode(['success' => true, 'status' => 'SUCCESS', 'db' => $statusDb, 'json' => $statusJson]);
+    } elseif ($finalStatus === 'REJECTED') {
+        echo json_encode(['success' => true, 'status' => 'REJECTED', 'db' => $statusDb, 'json' => $statusJson]); 
     } else {
-        echo json_encode(['success' => true, 'status' => 'PENDING']);
+        echo json_encode(['success' => true, 'status' => 'PENDING', 'db' => $statusDb, 'json' => $statusJson]);
     }
 } else {
-    echo json_encode(['success' => false, 'status' => 'NOT_FOUND', 'debug' => TransactionLogger::getPath()]);
+    echo json_encode([
+        'success' => false, 
+        'status' => 'NOT_FOUND', 
+        'debug' => [
+            'path' => TransactionLogger::getPath(),
+            'db_status' => $statusDb,
+            'json_status' => $statusJson
+        ]
+    ]);
 }
 ?>

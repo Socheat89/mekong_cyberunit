@@ -76,7 +76,7 @@ if (empty($md5)) {
     exit;
 }
 
-// 2. Save Transaction as PENDING
+// 2. Save Transaction as PENDING (Main Log)
 require_once __DIR__ . '/TransactionLogger.php';
 
 $txData = [
@@ -88,9 +88,20 @@ $txData = [
     'ip' => $_SERVER['REMOTE_ADDR']
 ];
 
-if (!TransactionLogger::save($md5, $txData)) {
-    echo json_encode(['success' => false, 'error' => 'Failed to save transaction log']);
-    exit;
+TransactionLogger::save($md5, $txData);
+
+// 2b. Database Backup (Secondary Log)
+try {
+    require_once __DIR__ . '/../../core/classes/Database.php';
+    $db = Database::getInstance();
+    $db->insert('payment_approvals', [
+        'reference_id' => $md5,
+        'plan' => $plan,
+        'amount' => $amount,
+        'status' => 'pending'
+    ]);
+} catch (Exception $e) {
+    // If table doesn't exist or duplicate, ignore and rely on JSON
 }
 
 // 3. Send Telegram Notification
@@ -99,23 +110,21 @@ if ($TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || empty($TELEGRAM_BOT_TOKEN))
     exit;
 }
 
-$message = "🚨 **New Payment Waiting Approval** 🚨\n\n";
-$message .= "💰 **Amount:** $$amount\n";
-$message .= "📦 **Plan:** $plan\n";
-$message .= "💳 **Method:** $method\n";
-$message .= "🔑 **Ref:** `$md5`\n";
-$message .= "⏰ **Time:** " . date('Y-m-d H:i:s') . "\n";
-$message .= "\nPlease verify and approve this payment.";
+$message = "<b>🔔 New Payment Waiting Approval</b>\n\n";
+$message .= "<b>💰 Amount:</b> $" . htmlspecialchars($amount) . "\n";
+$message .= "<b>📦 Plan:</b> " . htmlspecialchars(ucfirst($plan)) . "\n";
+$message .= "<b>💳 Method:</b> " . htmlspecialchars(ucfirst($method)) . "\n";
+$message .= "<b>🔑 Ref:</b> <code>" . htmlspecialchars($md5) . "</code>\n";
+$message .= "<b>⏰ Time:</b> " . date('Y-m-d H:i:s') . "\n\n";
+$message .= "Please verify and approve this payment.";
 
 // FORCE DIRECT ACTIONS (CALLBACK)
-// This will behave exactly as the user requested (Approval inside Telegram).
-// Note: This WILL NOT work on Localhost (button will spin) because Telegram cannot send the webhook back.
-// But this is the required code for production.
+// Note: We use :: as a safer separator
 $keyboard = [
     'inline_keyboard' => [
         [
-            ['text' => '✅ Approve', 'callback_data' => "approve:$md5"],
-            ['text' => '❌ Reject', 'callback_data' => "reject:$md5"]
+            ['text' => '✅ Approve', 'callback_data' => "approve::$md5"],
+            ['text' => '❌ Reject', 'callback_data' => "reject::$md5"]
         ]
     ]
 ];
@@ -124,7 +133,7 @@ $url = "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage";
 $postData = [
     'chat_id' => $TELEGRAM_CHAT_ID,
     'text' => $message,
-    'parse_mode' => 'Markdown',
+    'parse_mode' => 'HTML',
     'reply_markup' => json_encode($keyboard)
 ];
 
@@ -134,7 +143,7 @@ $options = [
         'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
         'method'  => 'POST',
         'content' => http_build_query($postData),
-        'ignore_errors' => true // IMPORTANT: Capture error response
+        'ignore_errors' => true 
     ]
 ];
 $context  = stream_context_create($options);
