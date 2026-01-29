@@ -406,6 +406,15 @@ $urlPrefix = '/Mekong_CyberUnit';
                 <select id="category" class="pos-form-control pos-form-select" style="max-width: 220px; background-color: white;">
                     <option value="">All Categories</option>
                 </select>
+
+                <!-- Menu Orders Button -->
+                <button class="pos-icon-btn" style="position: relative; width: auto; padding: 0 20px; gap: 8px; border-color: var(--pos-primary); color: var(--pos-primary);" onclick="toggleMenuOrders()">
+                    <i class="fas fa-list-check"></i>
+                    <span style="font-weight: 800;">Menu Orders</span>
+                    <?php if (count($pendingMenuOrders) > 0): ?>
+                        <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 99px; font-size: 11px; margin-left: 4px;"><?php echo count($pendingMenuOrders); ?></span>
+                    <?php endif; ?>
+                </button>
             </div>
 
             <?php if (isset($resumeOrder) && $resumeOrder): ?>
@@ -588,6 +597,61 @@ $urlPrefix = '/Mekong_CyberUnit';
             </div>
         </div>
     </div>
+
+    <!-- Menu Orders Side Panel -->
+    <div id="menuOrdersPanel" class="pos-modal-overlay" style="justify-content: flex-end; padding: 0;">
+        <div style="width: 100%; max-width: 450px; height: 100%; background: white; animation: slideInRight 0.4s ease; display: flex; flex-direction: column;">
+            <div class="pos-modal__header" style="padding: 32px;">
+                <h3 style="font-weight: 900; margin: 0;">Pending Orders</h3>
+                <button class="qty-btn" onclick="toggleMenuOrders()"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <?php if (empty($pendingMenuOrders)): ?>
+                    <div style="text-align: center; padding: 60px 20px; color: var(--pos-text-muted);">
+                        <i class="fas fa-inbox fa-3x" style="opacity: 0.2; margin-bottom: 16px;"></i>
+                        <p style="font-weight: 700;">No pending orders</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($pendingMenuOrders as $mo): ?>
+                        <div style="background: #f8fafc; border: 1.5px solid var(--pos-border); border-radius: 20px; padding: 20px; transition: all 0.2s; cursor: pointer;" 
+                             onclick="window.location.href='?resume=<?php echo $mo['id']; ?>'">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <div>
+                                    <span style="font-weight: 950; font-size: 16px; color: var(--pos-text);">#<?php echo $mo['id']; ?></span>
+                                    <div style="font-size: 12px; font-weight: 800; color: var(--pos-primary); margin-top: 4px;">
+                                        <i class="fas fa-clock"></i> <?php echo date('H:i', strtotime($mo['created_at'])); ?>
+                                    </div>
+                                </div>
+                                <div style="font-weight: 900; font-size: 18px; color: var(--pos-text);">$<?php echo number_format($mo['total'], 2); ?></div>
+                            </div>
+                            
+                            <?php if (!empty($mo['notes'])): ?>
+                                <div style="background: rgba(99, 102, 241, 0.08); padding: 8px 12px; border-radius: 10px; margin-bottom: 15px;">
+                                    <div style="font-size: 11px; font-weight: 800; color: var(--pos-primary); text-transform: uppercase;">Location/Note</div>
+                                    <div style="font-size: 14px; font-weight: 700; color: var(--pos-text);"><?php echo htmlspecialchars($mo['notes']); ?></div>
+                                </div>
+                            <?php endif; ?>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="font-size: 12px; font-weight: 700; color: var(--pos-text-muted);">
+                                    <?php echo (int)$mo['item_lines']; ?> Items
+                                </div>
+                                <button class="btn btn-primary" style="padding: 10px 20px; font-size: 12px;">
+                                    Resume Sale <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            
+            <div style="padding: 32px; border-top: 1px solid #f1f5f9;">
+                <button class="btn btn-outline w-100" onclick="toggleMenuOrders()">Close View</button>
+            </div>
+        </div>
+    </div>
+
 
 
     <script>
@@ -968,6 +1032,11 @@ $urlPrefix = '/Mekong_CyberUnit';
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        function toggleMenuOrders() {
+            const panel = document.getElementById('menuOrdersPanel');
+            panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex';
         }
 
         document.addEventListener('DOMContentLoaded', () => {

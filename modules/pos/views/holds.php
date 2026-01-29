@@ -60,7 +60,14 @@
                                     <span style="font-weight: 900; color: var(--pos-text); font-size: 18px;">ORD-<?php echo $id; ?></span>
                                     <span class="badge badge-warning" style="font-size: 10px;">Pending Completion</span>
                                 </div>
-                                <div style="font-weight: 700; color: var(--pos-text); font-size: 15px; margin-bottom: 8px;"><?php echo htmlspecialchars($cust); ?></div>
+                                <div style="font-weight: 700; color: var(--pos-text); font-size: 15px; margin-bottom: 8px;">
+                                    <?php echo htmlspecialchars($cust); ?>
+                                    <?php if (!empty($o['notes'])): ?>
+                                        <div style="margin-top: 4px; color: var(--pos-primary); font-size: 13px;">
+                                            <i class="fas fa-info-circle"></i> <?php echo htmlspecialchars($o['notes']); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                                 <div style="display: flex; gap: 8px;">
                                     <span class="hold-meta-tag"><i class="far fa-calendar-alt"></i> <?php echo $date; ?></span>
                                     <span class="hold-meta-tag"><i class="fas fa-tags"></i> <?php echo (int)$o['item_lines']; ?> SKUs</span>

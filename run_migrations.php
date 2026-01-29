@@ -15,13 +15,45 @@ try {
 
     // 2. system_modules table with feature control
     echo "Ensuring 'system_modules' table exists...<br>";
-    $db->query("CREATE TABLE IF NOT EXISTS system_modules (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        system_id INT NOT NULL,
-        module_name VARCHAR(50) NOT NULL,
-        feature_key VARCHAR(50) NULL,
-        FOREIGN KEY (system_id) REFERENCES systems(id) ON DELETE CASCADE
-    )");
+    
+    // Check if table exists first
+    $tableExists = $db->fetchAll("SHOW TABLES LIKE 'system_modules'");
+    if (empty($tableExists)) {
+        $db->query("CREATE TABLE system_modules (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            system_id INT NOT NULL,
+            module_name VARCHAR(50) NOT NULL,
+            feature_key VARCHAR(50) NULL,
+            FOREIGN KEY (system_id) REFERENCES systems(id) ON DELETE CASCADE
+        )");
+    } else {
+        // Table exists, check if 'id' is the primary key
+        $primaryKeys = $db->fetchAll("SHOW KEYS FROM system_modules WHERE Key_name = 'PRIMARY'");
+        $isIdPrimary = false;
+        if (count($primaryKeys) === 1 && $primaryKeys[0]['Column_name'] === 'id') {
+            $isIdPrimary = true;
+        }
+
+        if (!$isIdPrimary) {
+            echo "Repairing primary key for 'system_modules'...<br>";
+            // Check if 'id' column exists at all
+            $idCol = $db->fetchAll("SHOW COLUMNS FROM system_modules LIKE 'id'");
+            if (empty($idCol)) {
+                // If there's a composite primary key, we must drop it first
+                if (!empty($primaryKeys)) {
+                    $db->query("ALTER TABLE system_modules DROP PRIMARY KEY");
+                }
+                $db->query("ALTER TABLE system_modules ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY FIRST");
+            } else {
+                // 'id' exists but isn't primary. This is rare but possible.
+                if (!empty($primaryKeys)) {
+                    $db->query("ALTER TABLE system_modules DROP PRIMARY KEY");
+                }
+                $db->query("ALTER TABLE system_modules MODIFY COLUMN id INT AUTO_INCREMENT PRIMARY KEY");
+            }
+        }
+    }
+
 
     // Fix columns: check if feature_key exists
     $columns = $db->fetchAll("SHOW COLUMNS FROM system_modules LIKE 'feature_key'");
@@ -42,6 +74,14 @@ try {
     if (!empty($indexes)) {
         echo "Cleaning up old index...<br>";
         $db->query("ALTER TABLE system_modules DROP INDEX unique_system_module");
+    }
+
+    // 3. Add 'notes' column to 'orders' table
+    echo "Checking 'orders' table for 'notes' column...<br>";
+    $columns = $db->fetchAll("SHOW COLUMNS FROM orders LIKE 'notes'");
+    if (empty($columns)) {
+        echo "Adding 'notes' column to 'orders'...<br>";
+        $db->query("ALTER TABLE orders ADD COLUMN notes TEXT NULL AFTER status");
     }
 
     echo "Migrations completed successfully!";

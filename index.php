@@ -93,6 +93,9 @@ try {
                 } elseif ($sub === 'settings') {
                     require_once $baseDir . '/modules/pos/controllers/SettingsController.php';
                     $controller = new SettingsController();
+                } elseif ($sub === 'menu') {
+                    require_once $baseDir . '/modules/pos/controllers/MenuController.php';
+                    $controller = new MenuController();
                 } elseif ($sub === 'holds') {
                     require_once $baseDir . '/modules/pos/controllers/OrderController.php';
                     $controller = new OrderController();

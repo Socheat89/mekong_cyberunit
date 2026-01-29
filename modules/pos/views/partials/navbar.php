@@ -119,6 +119,9 @@ $activeClass = function (string $key) use ($activeNav): string {
                 <?php endif; ?>
 
                 <?php if ($hasFeature('pos', 'settings')): ?>
+                <a class="pos-side-link <?php echo $activeClass('digital_menu'); ?>" href="<?php echo htmlspecialchars($posUrl('menu/admin')); ?>">
+                    <i class="fas fa-qrcode"></i><span>Digital Menu</span>
+                </a>
                 <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>">
                     <i class="fas fa-gear"></i><span>Settings</span>
                 </a>

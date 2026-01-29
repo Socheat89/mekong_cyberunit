@@ -22,10 +22,11 @@ class PosController {
             die('No permission to access POS Terminal');
         }
 
+        $tenantId = Tenant::getId();
         $products = Product::getAll();
         $customers = $this->getCustomers();
+        $pendingMenuOrders = Order::getPending($tenantId);
         
-        $tenantId = Tenant::getId();
         $settings = Settings::getAll($tenantId);
         
         // Load config from file to ensure we use the latest values

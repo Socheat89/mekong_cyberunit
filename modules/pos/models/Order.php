@@ -35,7 +35,7 @@ class Order {
 
         return self::getDb()->fetchAll(
             "SELECT 
-                o.id, o.tenant_id, o.customer_id, o.total, o.tax, o.discount, o.status, o.created_at, o.updated_at,
+                o.id, o.tenant_id, o.customer_id, o.total, o.tax, o.discount, o.status, o.notes, o.created_at, o.updated_at,
                 c.name as customer_name,
                 (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id = o.id) as item_lines,
                 (SELECT COALESCE(SUM(oi.quantity), 0) FROM order_items oi WHERE oi.order_id = o.id) as total_qty
