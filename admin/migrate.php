@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../middleware/SuperAdminMiddleware.php';
+SuperAdminMiddleware::handle();
 require_once __DIR__ . '/../core/classes/Database.php';
 
 try {

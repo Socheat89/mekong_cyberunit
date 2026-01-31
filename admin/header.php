@@ -50,6 +50,12 @@ SuperAdminMiddleware::handle();
                             Subscriptions
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="security.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'security.php' ? 'active' : ''; ?>">
+                            <i class="ph-bold ph-lock"></i>
+                            Security
+                        </a>
+                    </li>
                     <li class="nav-item" style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
                         <a href="../public/index.php" class="nav-link">
                             <i class="ph-bold ph-arrow-left"></i>

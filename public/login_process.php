@@ -48,6 +48,7 @@ try {
     );
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['tenant_id'] = $user['tenant_id'];
         $_SESSION['tenant_subdomain'] = $user['subdomain'];

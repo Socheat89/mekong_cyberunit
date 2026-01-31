@@ -1,12 +1,13 @@
-# Options -Indexes
+# Security: Disable Directory Listing
+Options -Indexes
+
 RewriteEngine On
 RewriteBase /Mekong_CyberUnit/
 
-# Force HTTPS (Commented out for local development)
-# RewriteCond %{HTTPS} off
-# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Security: Block direct access to core system folders
+RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
 
-# Redirect root to public/
+# Force root to public/
 RewriteRule ^$ public/ [L,R=301]
 
 # Handle PHP files directly

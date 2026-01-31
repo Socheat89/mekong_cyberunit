@@ -5,6 +5,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 try {
+    // Harden Session Security
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_samesite', 'Lax');
+
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
