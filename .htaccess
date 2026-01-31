@@ -8,9 +8,9 @@ RewriteBase /
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
 
-# Force root to public/ BUT ONLY IF NOT ALREADY IN PUBLIC
-RewriteCond %{REQUEST_URI} !^/public/
-RewriteRule ^$ public/ [L]
+# Force root to public/ - DISABLED (Handled by index.php)
+# RewriteCond %{REQUEST_URI} !^/public/
+# RewriteRule ^$ public/ [L]
 
 # Handle PHP files directly
 RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
