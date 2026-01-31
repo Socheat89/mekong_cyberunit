@@ -17,10 +17,16 @@ RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
-# Handle other files and directories
+# 1. Check if file exists in public/ and rewrite to it internally
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+RewriteRule ^(.+)$ public/$1 [L]
+
+# 2. Existing files check (at root)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule . - [L]
 
-# Route everything else to index.php
+# 3. Fallback to index.php
 RewriteRule . index.php [L]
