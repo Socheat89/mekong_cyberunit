@@ -1,5 +1,5 @@
 # Security: Disable Directory Listing
-Options -Indexes
+# Options -Indexes
 
 RewriteEngine On
 RewriteBase /Mekong_CyberUnit/
