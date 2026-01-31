@@ -35,6 +35,13 @@ try {
     $scriptName = $_SERVER['SCRIPT_NAME'];
     $projectFolder = rtrim(dirname($scriptName), '/\\');
     
+    // PRODUCTION OVERRIDE: If on the live domain, force projectFolder to empty
+    // so that URLs look like mekongcyberunit.app/ instead of mekongcyberunit.app/Mekong_CyberUnit/
+    $isLive = (strpos($_SERVER['HTTP_HOST'], 'mekongcyberunit.app') !== false || strpos($_SERVER['HTTP_HOST'], 'mekongcy') !== false);
+    if ($isLive) {
+        $projectFolder = '';
+    }
+    
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
@@ -46,7 +53,7 @@ try {
 
     // Force hide "/public" or "/public/" from the URL bar
     if ($path === '/public' || $path === '/public/') {
-        header("Location: " . ($projectFolder ?: "/") . "/", true, 301);
+        header("Location: " . ($projectFolder ?: "") . "/", true, 301);
         exit;
     }
 
