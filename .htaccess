@@ -4,9 +4,9 @@
 RewriteEngine On
 RewriteBase /
 
-# 0. FIX BAD URLS: (Disabled to allow explicit /public/ in URL)
-# RewriteCond %{THE_REQUEST} \s/+(?:Mekong_CyberUnit/)?public/(\S*) [NC]
-# RewriteRule ^(?:Mekong_CyberUnit/)?public/(.*)$ /$1 [R=301,L,NE]
+# 0. FIX BAD URLS: If browser asks for /public/..., redirect to root /...
+RewriteCond %{THE_REQUEST} \s/+(?:Mekong_CyberUnit/)?public/(\S*) [NC]
+RewriteRule ^(?:Mekong_CyberUnit/)?public/(.*)$ /$1 [R=301,L,NE]
 
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/(.*)$ - [F,L]
