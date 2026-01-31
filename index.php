@@ -32,12 +32,11 @@ try {
     Language::init();
 
     // Dynamic Base Path Detection
-    $scriptName = $_SERVER['SCRIPT_NAME'];
-    $projectFolder = rtrim(dirname($scriptName), '/\\');
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
+    $projectFolder = rtrim(dirname($scriptName), '/');
     
     // PRODUCTION OVERRIDE: If on the live domain, force projectFolder to empty
-    // so that URLs look like mekongcyberunit.app/ instead of mekongcyberunit.app/Mekong_CyberUnit/
-    $isLive = (strpos($_SERVER['HTTP_HOST'], 'mekongcyberunit.app') !== false || strpos($_SERVER['HTTP_HOST'], 'mekongcy') !== false);
+    $isLive = (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'], 'mekongcyberunit.app') !== false || strpos($_SERVER['HTTP_HOST'], 'mekongcy') !== false));
     if ($isLive) {
         $projectFolder = '';
     }
@@ -45,15 +44,16 @@ try {
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Normalize path by stripping the project folder
-    if (!empty($projectFolder) && strpos($path, $projectFolder) === 0) {
+    // Normalize path by stripping the project folder (case-insensitive)
+    if (!empty($projectFolder) && stripos($path, $projectFolder) === 0) {
         $path = substr($path, strlen($projectFolder));
     }
     if (empty($path)) $path = '/';
 
     // Force hide "/public" or "/public/" from the URL bar
     if ($path === '/public' || $path === '/public/') {
-        header("Location: " . ($projectFolder ?: "") . "/", true, 301);
+        $target = ($projectFolder ?: "");
+        header("Location: " . ($target ?: "/") . "/", true, 301);
         exit;
     }
 
