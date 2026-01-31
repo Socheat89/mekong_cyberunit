@@ -37,8 +37,9 @@ try {
     if (empty($path)) $path = '/';
 
     // 1. Static/Public Routing
-    if (strpos($path, '/public/') === 0) {
-        $file = $baseDir . $path;
+    if (strpos($path, '/public/') === 0 || strpos($path, '/admin/') === 0) {
+        $cleanPath = str_replace('/', DIRECTORY_SEPARATOR, $path);
+        $file = $baseDir . $cleanPath;
         if (file_exists($file) && !is_dir($file)) {
             include $file;
             exit;

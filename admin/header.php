@@ -57,7 +57,7 @@ SuperAdminMiddleware::handle();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="../public/logout.php" class="nav-link" style="color: #ef4444;">
+                        <a href="logout.php" class="nav-link" style="color: #ef4444;">
                             <i class="ph-bold ph-sign-out"></i>
                             Logout
                         </a>

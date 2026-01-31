@@ -11,10 +11,10 @@ class SettingsController {
         
         // Add middleware checks if they are available/standard
         // Assuming they are needed as in other controllers
-        // require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
-        // require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
-        // TenantMiddleware::handle();
-        // AuthMiddleware::handle();
+        require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
+        require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
+        TenantMiddleware::handle();
+        AuthMiddleware::handle();
 
         if (class_exists('Tenant') && Tenant::getPosLevel() < 1) {
              die('POS access required.');
