@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="public/css/landing.css">
+    <link rel="stylesheet" href="/Mekong_CyberUnit/public/css/landing.css">
     
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -158,7 +158,7 @@
         </form>
         
         <div class="auth-footer">
-            Don't have an account? <a href="register">Sign up</a>
+            Don't have an account? <a href="/Mekong_CyberUnit/register">Sign up</a>
         </div>
     </div>
 </body>

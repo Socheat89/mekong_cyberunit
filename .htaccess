@@ -2,7 +2,7 @@
 Options -Indexes
 
 RewriteEngine On
-# RewriteBase /Mekong_CyberUnit/
+RewriteBase /Mekong_CyberUnit/
 
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
