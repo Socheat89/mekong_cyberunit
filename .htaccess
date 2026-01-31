@@ -1,5 +1,6 @@
 # Options -Indexes
 RewriteEngine On
+RewriteBase /Mekong_CyberUnit/
 
 # Force HTTPS (Commented out for local development)
 # RewriteCond %{HTTPS} off
