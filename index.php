@@ -61,8 +61,13 @@ try {
     // Force hide "/public" or "/public/" from the URL bar
     if ($path === '/public' || $path === '/public/' || strpos($path, '/public/') === 0) {
         $cleanPath = str_replace(['/public/', '/public'], ['', ''], $path);
-        $target = ($projectFolder ?: "");
-        header("Location: " . ($target ?: "/") . ($cleanPath ?: "/"), true, 301);
+        
+        // Build the redirect URL safely
+        $redirectUrl = ($projectFolder ?: '') . '/' . ltrim($cleanPath, '/');
+        $redirectUrl = preg_replace('#/+#', '/', $redirectUrl);
+        if (empty($redirectUrl)) $redirectUrl = '/';
+        
+        header("Location: " . $redirectUrl, true, 301);
         exit;
     }
 
