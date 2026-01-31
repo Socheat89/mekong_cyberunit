@@ -21,33 +21,50 @@ try {
     $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
     $projectFolder = rtrim(dirname($scriptName), '/');
     
-    // PRODUCTION OVERRIDE: If on the live domain, force projectFolder to empty
+    // Check if we are on the live domain
     $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    $host = str_replace('www.', '', $host);
     $isLive = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
+    
+    // PRODUCTION OVERRIDE: On live, we assume we want to be at the root
     if ($isLive) {
-        $projectFolder = '';
+        $projectFolder = ''; 
     }
     
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
-    $path = parse_url($requestUri, PHP_URL_PATH);
+    $pathFull = parse_url($requestUri, PHP_URL_PATH);
+    $path = $pathFull;
 
-    // 2. Aggressive Path Normalization (Strip Folder names & /public/)
-    foreach (['/Mekong_CyberUnit', $projectFolder, '/public'] as $prefix) {
+    // 2. Normalize path by stripping unwanted folder prefixes
+    // We strip "/Mekong_CyberUnit" and "/public" and the detected $projectFolder
+    $unwanted = ['/Mekong_CyberUnit', '/public'];
+    if (!empty($projectFolder)) $unwanted[] = $projectFolder;
+    
+    // Order matters: strip longer ones first if they are prefixes
+    usort($unwanted, function($a, $b) { return strlen($b) - strlen($a); });
+    
+    reset_stripping:
+    foreach ($unwanted as $prefix) {
         if (!empty($prefix) && stripos($path, $prefix) === 0) {
             $path = substr($path, strlen($prefix));
+            goto reset_stripping; // Repeat to catch composite paths like /Mekong_CyberUnit/public
         }
     }
     if (empty($path)) $path = '/';
 
-    // 3. Force Clean URL Redirect if we detects legacy paths in the URL string
-    // This fixed the ERR_INVALID_REDIRECT by building the URL more safely
-    if (stripos($requestUri, '/public') !== false || (!empty($projectFolder) && stripos($requestUri, $projectFolder . '/') !== false)) {
+    // 3. Force Clean URL Redirect if "public" or "Mekong_CyberUnit" is visible in the URI bar
+    // BUT only if the path has changed from the Full Path (meaning we stripped something)
+    if ($path !== $pathFull) {
+        $queryString = isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
         $redirectUrl = ($projectFolder ?: '') . '/' . ltrim($path, '/');
         $redirectUrl = preg_replace('#/+#', '/', $redirectUrl);
-        if (empty($redirectUrl) || $redirectUrl === '') $redirectUrl = '/';
+        if (empty($redirectUrl)) $redirectUrl = '/';
         
-        header("Location: " . $redirectUrl, true, 301);
-        exit;
+        // Prevent infinite loop if we are already at the target
+        if ($redirectUrl !== $pathFull) {
+            header("Location: " . $redirectUrl . $queryString, true, 301);
+            exit;
+        }
     }
 
     // 4. Auto-load Core Components after routing is decided
