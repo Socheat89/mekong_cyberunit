@@ -56,7 +56,7 @@ try {
         $redirect = '';
         // Redirect based on role
         if ($user['role_level'] == 3) { // Super admin
-            $redirect = "$urlPrefix/admin/dashboard.php";
+            $redirect = "$urlPrefix/admin/index.php";
         } else {
             // Redirect to tenant dashboard
             $redirect = "$urlPrefix/{$user['subdomain']}/dashboard";

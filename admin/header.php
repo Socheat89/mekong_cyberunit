@@ -1,5 +1,7 @@
 <?php
 // admin/header.php
+require_once __DIR__ . '/../middleware/SuperAdminMiddleware.php';
+SuperAdminMiddleware::handle();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,6 +54,12 @@
                         <a href="../public/index.php" class="nav-link">
                             <i class="ph-bold ph-arrow-left"></i>
                             Back to Site
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../public/logout.php" class="nav-link" style="color: #ef4444;">
+                            <i class="ph-bold ph-sign-out"></i>
+                            Logout
                         </a>
                     </li>
                 </ul>
