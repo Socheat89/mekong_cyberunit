@@ -16,27 +16,14 @@ try {
     date_default_timezone_set('Asia/Phnom_Penh');
 
     $baseDir = dirname(__FILE__);
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-    $host = str_replace('www.', '', $host);
-    $isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-    
-    // Auto-load Core Components
-    require_once $baseDir . '/core/classes/Database.php';
-    require_once $baseDir . '/core/classes/Tenant.php';
-    require_once $baseDir . '/core/classes/Auth.php';
-    require_once $baseDir . '/core/classes/Language.php';
-    require_once $baseDir . '/middleware/AuthMiddleware.php';
-    require_once $baseDir . '/middleware/TenantMiddleware.php';
 
-    // Initialize Language
-    Language::init();
-
-    // Dynamic Base Path Detection
+    // 1. Dynamic Base Path Detection
     $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
     $projectFolder = rtrim(dirname($scriptName), '/');
     
     // PRODUCTION OVERRIDE: If on the live domain, force projectFolder to empty
-    $isLive = (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'], 'mekongcyberunit.app') !== false || strpos($_SERVER['HTTP_HOST'], 'mekongcy') !== false));
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+    $isLive = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
     if ($isLive) {
         $projectFolder = '';
     }
@@ -44,32 +31,34 @@ try {
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Normalize path by stripping the project folder if it exists at the start
-    // On production, we also want to strip '/Mekong_CyberUnit' if someone types it manually
-    $legacyFolder = '/Mekong_CyberUnit';
-    if (stripos($path, $legacyFolder) === 0) {
-        $path = substr($path, strlen($legacyFolder));
+    // 2. Aggressive Path Normalization (Strip Folder names & /public/)
+    foreach (['/Mekong_CyberUnit', $projectFolder, '/public'] as $prefix) {
+        if (!empty($prefix) && stripos($path, $prefix) === 0) {
+            $path = substr($path, strlen($prefix));
+        }
     }
-    
-    // Also strip the detected project folder if different
-    if (!empty($projectFolder) && stripos($path, $projectFolder) === 0) {
-        $path = substr($path, strlen($projectFolder));
-    }
-
     if (empty($path)) $path = '/';
 
-    // Force hide "/public" or "/public/" from the URL bar
-    if ($path === '/public' || $path === '/public/' || strpos($path, '/public/') === 0) {
-        $cleanPath = str_replace(['/public/', '/public'], ['', ''], $path);
-        
-        // Build the redirect URL safely
-        $redirectUrl = ($projectFolder ?: '') . '/' . ltrim($cleanPath, '/');
+    // 3. Force Clean URL Redirect if we detects legacy paths in the URL string
+    // This fixed the ERR_INVALID_REDIRECT by building the URL more safely
+    if (stripos($requestUri, '/public') !== false || (!empty($projectFolder) && stripos($requestUri, $projectFolder . '/') !== false)) {
+        $redirectUrl = ($projectFolder ?: '') . '/' . ltrim($path, '/');
         $redirectUrl = preg_replace('#/+#', '/', $redirectUrl);
-        if (empty($redirectUrl)) $redirectUrl = '/';
+        if (empty($redirectUrl) || $redirectUrl === '') $redirectUrl = '/';
         
         header("Location: " . $redirectUrl, true, 301);
         exit;
     }
+
+    // 4. Auto-load Core Components after routing is decided
+    require_once $baseDir . '/core/classes/Database.php';
+    require_once $baseDir . '/core/classes/Tenant.php';
+    require_once $baseDir . '/core/classes/Auth.php';
+    require_once $baseDir . '/core/classes/Language.php';
+    require_once $baseDir . '/middleware/AuthMiddleware.php';
+    require_once $baseDir . '/middleware/TenantMiddleware.php';
+
+    Language::init();
 
     // 1. Clean URLs Routing Table
     $cleanRoutes = [
