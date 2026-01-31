@@ -6,7 +6,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
 $urlPrefix = '/Mekong_CyberUnit';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: login");
+    header("Location: login.php");
     exit;
 }
 
@@ -14,7 +14,7 @@ $username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';
 
 if (empty($username) || empty($password)) {
-    header("Location: login?error=" . urlencode('Credentials required'));
+    header("Location: login.php?error=" . urlencode('Credentials required'));
     exit;
 }
 
@@ -37,14 +37,14 @@ try {
         $_SESSION['role_level'] = $user['role_level'];
         
         // Success: Go to admin dashboard
-        header("Location: index");
+        header("Location: index.php");
         exit;
     } else {
-        header("Location: login?error=" . urlencode('Invalid master credentials or unauthorized role.'));
+        header("Location: login.php?error=" . urlencode('Invalid master credentials or unauthorized role.'));
         exit;
     }
 } catch (Exception $e) {
-    header("Location: login?error=" . urlencode('System error occurred.'));
+    header("Location: login.php?error=" . urlencode('System error occurred.'));
     exit;
 }
 ?>

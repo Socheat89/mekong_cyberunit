@@ -41,42 +41,8 @@ try {
     }
     if (empty($path)) $path = '/';
 
-    // Force hide "/public/" from the URL bar
-    if ($path === '/public' || $path === '/public/') {
-        header("Location: " . $projectFolder . "/", true, 301);
-        exit;
-    }
-
-    // 1. Clean URLs Routing Table
-    $cleanRoutes = [
-        '/login'          => '/public/login.php',
-        '/login_process'  => '/public/login_process.php',
-        '/register'          => '/public/register.php',
-        '/register_process'  => '/public/register_process.php',
-        '/setup'             => '/public/setup.php',
-        '/logout'            => '/public/logout.php',
-    ];
-
-    if (isset($cleanRoutes[$path])) {
-        include $baseDir . str_replace('/', DIRECTORY_SEPARATOR, $cleanRoutes[$path]);
-        exit;
-    }
-
-    // 2. Clean Admin Routing (e.g., /admin/plans -> /admin/plans.php)
-    if (strpos($path, '/admin') === 0) {
-        $subPath = trim(substr($path, 6), '/');
-        if (empty($subPath)) $subPath = 'index';
-        
-        // Handle login specifically if needed, otherwise just append .php
-        $file = $baseDir . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . $subPath . '.php';
-        if (file_exists($file)) {
-            include $file;
-            exit;
-        }
-    }
-
-    // 3. Static/Public Asset Routing (Keep this for CSS/JS)
-    if (strpos($path, '/public/') === 0) {
+    // 1. Static/Public Routing
+    if (strpos($path, '/public/') === 0 || strpos($path, '/admin/') === 0) {
         $cleanPath = str_replace('/', DIRECTORY_SEPARATOR, $path);
         $file = $baseDir . $cleanPath;
         if (file_exists($file) && !is_dir($file)) {
@@ -198,7 +164,7 @@ try {
     }
 
     // 3. Root/Home Page
-    if ($path === '/' || $path === '' || $path === '/public' || $path === '/public/') {
+    if ($path === '/' || $path === '') {
         include $baseDir . '/public/index.php';
         exit;
     }

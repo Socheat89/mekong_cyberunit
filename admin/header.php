@@ -27,31 +27,31 @@ SuperAdminMiddleware::handle();
             <nav>
                 <ul class="nav-links">
                     <li class="nav-item">
-                        <a href="index" class="nav-link <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', 'index']) ? 'active' : ''; ?>">
+                        <a href="index.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
                             <i class="ph-bold ph-house"></i>
                             Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="plans" class="nav-link <?php echo basename($_SERVER['PHP_SELF'], '.php') == 'plans' ? 'active' : ''; ?>">
+                        <a href="plans.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'plans.php' ? 'active' : ''; ?>">
                             <i class="ph-bold ph-package"></i>
                             Pricing Plans
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="modules" class="nav-link <?php echo basename($_SERVER['PHP_SELF'], '.php') == 'modules' ? 'active' : ''; ?>">
+                        <a href="modules.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'modules.php' ? 'active' : ''; ?>">
                             <i class="ph-bold ph-squares-four"></i>
                             Plan Modules
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="tenants" class="nav-link <?php echo basename($_SERVER['PHP_SELF'], '.php') == 'tenants' ? 'active' : ''; ?>">
+                        <a href="tenants.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'tenants.php' ? 'active' : ''; ?>">
                             <i class="ph-bold ph-users-three"></i>
                             Subscriptions
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="security" class="nav-link <?php echo basename($_SERVER['PHP_SELF'], '.php') == 'security' ? 'active' : ''; ?>">
+                        <a href="security.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'security.php' ? 'active' : ''; ?>">
                             <i class="ph-bold ph-lock"></i>
                             Security
                         </a>
@@ -63,7 +63,7 @@ SuperAdminMiddleware::handle();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="logout" class="nav-link" style="color: #ef4444;">
+                        <a href="logout.php" class="nav-link" style="color: #ef4444;">
                             <i class="ph-bold ph-sign-out"></i>
                             Logout
                         </a>

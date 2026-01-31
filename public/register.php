@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/Mekong_CyberUnit/public/css/landing.css">
+    <link rel="stylesheet" href="css/landing.css">
     
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -433,7 +433,7 @@
 <body>
     <div class="auth-card">
         <div class="auth-header">
-            <a href="index" class="auth-logo">
+            <a href="index.php" class="auth-logo">
                 <div class="logo-icon">
                     <i class="ph-bold ph-cube"></i>
                 </div>
@@ -450,7 +450,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="register_process" id="registerForm">
+        <form method="POST" action="register_process.php" id="registerForm">
             <!-- Plan Selection (Visible First) -->
             <div class="system-selection" id="plan_section">
                 <h3>1. Select Plan to Pay</h3>
@@ -536,7 +536,7 @@
         </form>
         
         <div class="auth-footer">
-            Already have an account? <a href="login">Sign in</a>
+            Already have an account? <a href="login.php">Sign in</a>
         </div>
     </div>
 
@@ -905,7 +905,7 @@
                         `;
                         
                         setTimeout(() => {
-                            window.location.href = `/Mekong_CyberUnit/setup?plan=${selectedPlan}&paid=true&ref=${md5}`;
+                            window.location.href = `/Mekong_CyberUnit/public/setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
                         }, 2000);
                         return;
                     }

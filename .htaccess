@@ -7,9 +7,17 @@ RewriteBase /Mekong_CyberUnit/
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
 
-# Handle images, CSS, JS directly
+# Force root to public/
+RewriteRule ^$ public/ [L,R=301]
+
+# Handle PHP files directly
+RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
 RewriteCond %{REQUEST_FILENAME} -f
-RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|svg|ico|webp|woff|woff2|ttf|otf)$ [NC]
+RewriteRule . - [L]
+
+# Handle other files and directories
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule . - [L]
 
 # Route everything else to index.php
