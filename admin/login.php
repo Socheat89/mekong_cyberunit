@@ -154,7 +154,7 @@ $error = $_GET['error'] ?? '';
             </div>
         <?php endif; ?>
 
-        <form action="login_process.php" method="POST">
+        <form action="login_process" method="POST">
             <div class="form-group">
                 <label>Username</label>
                 <div class="input-wrapper">

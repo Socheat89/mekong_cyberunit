@@ -140,7 +140,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="login_process.php">
+        <form method="POST" action="login_process">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required placeholder="Enter your username">
@@ -158,7 +158,7 @@
         </form>
         
         <div class="auth-footer">
-            Don't have an account? <a href="register.php">Sign up</a>
+            Don't have an account? <a href="register">Sign up</a>
         </div>
     </div>
 </body>

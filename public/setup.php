@@ -5,7 +5,7 @@ $ref = $_GET['ref'] ?? '';
 $paid = $_GET['paid'] ?? 'false';
 
 if ($paid !== 'true') {
-    header('Location: /Mekong_CyberUnit/public/register.php?error=' . urlencode('Payment verification required to access setup.'));
+    header('Location: /Mekong_CyberUnit/register?error=' . urlencode('Payment verification required to access setup.'));
     exit;
 }
 ?>
@@ -212,7 +212,7 @@ if ($paid !== 'true') {
             </div>
         </div>
 
-        <form method="POST" action="/Mekong_CyberUnit/public/register_process.php" id="setupForm">
+        <form method="POST" action="/Mekong_CyberUnit/register_process" id="setupForm">
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label for="business_name"><i class="ph-bold ph-storefront" style="color: var(--primary);"></i> Business Name</label>

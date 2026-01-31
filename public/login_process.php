@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         echo json_encode(['success' => false, 'error' => 'Invalid request method']);
         exit;
     }
-    header("Location: $urlPrefix/public/login.php");
+    header("Location: $urlPrefix/login");
     exit;
 }
 
@@ -31,7 +31,7 @@ if (empty($username) || empty($password)) {
         echo json_encode(['success' => false, 'error' => 'Username and password are required']);
         exit;
     }
-    header("Location: $urlPrefix/public/login.php?error=" . urlencode('Username and password are required'));
+    header("Location: $urlPrefix/login?error=" . urlencode('Username and password are required'));
     exit;
 }
 
@@ -57,7 +57,7 @@ try {
         $redirect = '';
         // Redirect based on role
         if ($user['role_level'] == 3) { // Super admin
-            $redirect = "$urlPrefix/admin/index.php";
+            $redirect = "$urlPrefix/admin/index";
         } else {
             // Redirect to tenant dashboard
             $redirect = "$urlPrefix/{$user['subdomain']}/dashboard";
@@ -75,7 +75,7 @@ try {
             echo json_encode(['success' => false, 'error' => 'Invalid username or password']);
             exit;
         }
-        header("Location: $urlPrefix/public/login.php?error=" . urlencode('Invalid username or password'));
+        header("Location: $urlPrefix/login?error=" . urlencode('Invalid username or password'));
         exit;
     }
 } catch (Exception $e) {
@@ -86,7 +86,7 @@ try {
         echo json_encode(['success' => false, 'error' => 'System error: ' . $e->getMessage()]);
         exit;
     }
-    header("Location: $urlPrefix/public/login.php?error=" . urlencode('System error occurred. Please try again.'));
+    header("Location: $urlPrefix/login?error=" . urlencode('System error occurred. Please try again.'));
     exit;
 }
 ?>
