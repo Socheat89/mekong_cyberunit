@@ -1,0 +1,22 @@
+# ============================================================
+# PLACE THIS FILE IN YOUR HOSTING ROOT (e.g., public_html/)
+# RENAME THIS FILE TO: .htaccess
+# ============================================================
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect all requests to Mekong_CyberUnit/public/
+# This makes https://mekongcyberunit.app/ serve content from /Mekong_CyberUnit/public/
+
+# If the request is not for an existing file or directory in root
+RewriteCond %{REQUEST_URI} !^/Mekong_CyberUnit/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite to Mekong_CyberUnit/public/
+RewriteRule ^(.*)$ /Mekong_CyberUnit/public/$1 [L]
+
+# If accessing root directly, go to Mekong_CyberUnit/public/index.php
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /Mekong_CyberUnit/public/index.php [L]
