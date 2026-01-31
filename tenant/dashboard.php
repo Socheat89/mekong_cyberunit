@@ -43,6 +43,9 @@ if ($hasPOS) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6a5cff;
@@ -68,7 +71,7 @@ if ($hasPOS) {
         }
         
         body {
-            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: "Battambang", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
             background: 
                 radial-gradient(900px 600px at 15% -10%, rgba(106, 92, 255, 0.15), transparent 60%),
                 radial-gradient(900px 600px at 110% 10%, rgba(138, 63, 252, 0.12), transparent 60%),
@@ -156,6 +159,78 @@ if ($hasPOS) {
         .nav-links .logout-btn:hover {
             background: var(--danger);
             color: white;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .lang-btn {
+            background: rgba(106, 92, 255, 0.08);
+            color: var(--primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .lang-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .lang-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            padding-top: 15px; /* Bridge gap */
+            display: none;
+            z-index: 1100;
+        }
+
+        .lang-dropdown-inner {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 1px solid var(--border);
+            min-width: 160px;
+            overflow: hidden;
+        }
+        
+        .lang-switcher:hover .lang-dropdown,
+        .lang-switcher.active .lang-dropdown {
+            display: block;
+        }
+        
+        .lang-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .lang-dropdown a:hover {
+            background: rgba(106, 92, 255, 0.05);
+            color: var(--primary);
+        }
+
+        .lang-dropdown a.active {
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(106, 92, 255, 0.08);
         }
 
         /* Main Container */
@@ -575,10 +650,33 @@ if ($hasPOS) {
                 <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?>
             </div>
             <ul class="nav-links">
-                <li><a href="<?php echo $urlPrefix; ?>/tenant/dashboard.php" class="active"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
-                <li><a href="<?php echo $urlPrefix; ?>/tenant/users.php"><i class="fas fa-users"></i><span>Users</span></a></li>
-                <li><a href="<?php echo $urlPrefix; ?>/tenant/settings.php"><i class="fas fa-cog"></i><span>Settings</span></a></li>
-                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/dashboard" class="active"><i class="fas fa-home"></i><span><?php echo __('dashboard'); ?></span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/users"><i class="fas fa-users"></i><span><?php echo __('profile'); ?></span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/settings"><i class="fas fa-cog"></i><span><?php echo __('settings'); ?></span></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i><span><?php echo __('logout'); ?></span></a></li>
+                <li class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" onclick="toggleLangDropdown(event)">
+                        <i class="fas fa-globe"></i>
+                        <?php 
+                        $curr = Language::getCurrentLang();
+                        echo $curr == 'en' ? 'English' : ($curr == 'km' ? 'ភាសាខ្មែរ' : '中文');
+                        ?>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </button>
+                    <div class="lang-dropdown">
+                        <div class="lang-dropdown-inner">
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
+                            </a>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -587,8 +685,8 @@ if ($hasPOS) {
     <div class="container">
         <!-- Welcome Header -->
         <div class="welcome-header">
-            <h1>Welcome back, <?php echo htmlspecialchars($user['username']); ?>! 👋</h1>
-            <p>Here's what's happening with your business today</p>
+            <h1><?php echo __('welcome_back'); ?>, <?php echo htmlspecialchars($user['username']); ?>! 👋</h1>
+            <p><?php echo __('business_happening'); ?></p>
         </div>
 
         <!-- Stats Grid -->
@@ -599,7 +697,7 @@ if ($hasPOS) {
                 </div>
                 <div class="stat-content">
                     <h3><?php echo count($systems); ?></h3>
-                    <p>Active Systems</p>
+                    <p><?php echo __('active_systems'); ?></p>
                 </div>
             </div>
 
@@ -610,7 +708,7 @@ if ($hasPOS) {
                 </div>
                 <div class="stat-content">
                     <h3><?php echo count($recentOrders); ?></h3>
-                    <p>Recent Orders</p>
+                    <p><?php echo __('recent_orders'); ?></p>
                 </div>
             </div>
 
@@ -623,7 +721,7 @@ if ($hasPOS) {
                     $totalRevenue = array_sum(array_column($recentOrders, 'total'));
                     ?>
                     <h3>$<?php echo number_format($totalRevenue, 0); ?></h3>
-                    <p>Total Revenue</p>
+                    <p><?php echo __('total_revenue'); ?></p>
                 </div>
             </div>
             <?php endif; ?>
@@ -644,13 +742,13 @@ if ($hasPOS) {
             <!-- Your Systems Card -->
             <div class="card <?php echo ($hasPOS && Auth::isTenantAdmin()) ? 'card-half' : 'card-full'; ?>">
                 <div class="card-header">
-                    <h3><i class="fas fa-layer-group"></i> Your Systems</h3>
+                    <h3><i class="fas fa-layer-group"></i> <?php echo __('your_systems'); ?></h3>
                 </div>
                 <div class="card-body">
                     <?php if (empty($systems)): ?>
                         <div class="empty-state">
                             <i class="fas fa-inbox"></i>
-                            <p>No systems subscribed yet.</p>
+                            <p><?php echo __('no_systems'); ?></p>
                         </div>
                     <?php else: ?>
                         <ul class="systems-list">
@@ -662,7 +760,7 @@ if ($hasPOS) {
                                         </div>
                                         <span class="system-name"><?php echo htmlspecialchars($system['name']); ?></span>
                                     </div>
-                                    <span class="system-date">Since <?php echo date('M j, Y', strtotime($system['subscribed_at'])); ?></span>
+                                    <span class="system-date"><?php echo __('since'); ?> <?php echo date('M j, Y', strtotime($system['subscribed_at'])); ?></span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -674,15 +772,15 @@ if ($hasPOS) {
             <?php if (Auth::isTenantAdmin()): ?>
             <div class="card card-half">
                 <div class="card-header">
-                    <h3><i class="fas fa-tools"></i> Administration</h3>
+                    <h3><i class="fas fa-tools"></i> <?php echo __('administration'); ?></h3>
                 </div>
                 <div class="card-body">
                     <div class="action-grid">
                         <a href="<?php echo $urlPrefix; ?>/tenant/users.php" class="btn btn-info">
-                            <i class="fas fa-users"></i> Manage Users
+                            <i class="fas fa-users"></i> <?php echo __('manage_users'); ?>
                         </a>
                         <a href="<?php echo $urlPrefix; ?>/tenant/settings.php" class="btn btn-warning">
-                            <i class="fas fa-cog"></i> Settings
+                            <i class="fas fa-cog"></i> <?php echo __('settings'); ?>
                         </a>
                     </div>
                 </div>
@@ -693,24 +791,24 @@ if ($hasPOS) {
             <?php if ($hasPOS): ?>
             <div class="card card-full">
                 <div class="card-header">
-                    <h3><i class="fas fa-rocket"></i> Quick Actions</h3>
+                    <h3><i class="fas fa-rocket"></i> <?php echo __('quick_actions'); ?></h3>
                 </div>
                 <div class="card-body">
                     <div class="action-grid pos-actions">
                         <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/dashboard" class="btn btn-success">
-                            <i class="fas fa-chart-line"></i> POS Dashboard
+                            <i class="fas fa-chart-line"></i> <?php echo __('pos_dashboard'); ?>
                         </a>
                         <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/order" class="btn btn-primary">
-                            <i class="fas fa-cash-register"></i> New Order
+                            <i class="fas fa-cash-register"></i> <?php echo __('new_order'); ?>
                         </a>
                         <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/products" class="btn btn-info">
-                            <i class="fas fa-box"></i> Products
+                            <i class="fas fa-box"></i> <?php echo __('products'); ?>
                         </a>
                         <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/customers" class="btn btn-warning">
-                            <i class="fas fa-users"></i> Customers
+                            <i class="fas fa-users"></i> <?php echo __('customers'); ?>
                         </a>
                         <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/pos/reports" class="btn btn-info">
-                            <i class="fas fa-chart-bar"></i> Reports
+                            <i class="fas fa-chart-bar"></i> <?php echo __('reports'); ?>
                         </a>
                     </div>
                 </div>
@@ -719,7 +817,7 @@ if ($hasPOS) {
             <!-- Recent Orders -->
             <div class="card card-full">
                 <div class="card-header">
-                    <h3><i class="fas fa-shopping-cart"></i> Recent Orders</h3>
+                    <h3><i class="fas fa-shopping-cart"></i> <?php echo __('recent_orders'); ?></h3>
                 </div>
                 <div class="card-body">
                     <?php if (empty($recentOrders)): ?>
@@ -731,10 +829,10 @@ if ($hasPOS) {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
+                                    <th><?php echo __('order_id'); ?></th>
+                                    <th><?php echo __('total'); ?></th>
+                                    <th><?php echo __('status'); ?></th>
+                                    <th><?php echo __('date'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -751,7 +849,7 @@ if ($hasPOS) {
                                                     'cancelled' => '✗'
                                                 ];
                                                 echo isset($icons[$order['status']]) ? $icons[$order['status']] . ' ' : '';
-                                                echo ucfirst($order['status']);
+                                                echo __($order['status']);
                                                 ?>
                                             </span>
                                         </td>
@@ -766,5 +864,18 @@ if ($hasPOS) {
             <?php endif; ?>
         </div>
     </div>
+    <script id="langToggleScript">
+        function toggleLangDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('langSwitcher').classList.toggle('active');
+        }
+        
+        document.addEventListener('click', function(e) {
+            const switcher = document.getElementById('langSwitcher');
+            if (switcher && !switcher.contains(e.target)) {
+                switcher.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

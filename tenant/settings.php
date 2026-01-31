@@ -1,6 +1,6 @@
 <?php
 // tenant/settings.php
-session_start();
+
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Tenant.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
@@ -13,7 +13,7 @@ AuthMiddleware::handle();
 
 // Check if user has permission to manage settings
 if (!Auth::isTenantAdmin()) {
-    header('Location: /Mekong_CyberUnit/tenant/dashboard.php?error=' . urlencode('Access denied'));
+    header('Location: /Mekong_CyberUnit/' . Tenant::getCurrent()['subdomain'] . '/dashboard?error=' . urlencode('Access denied'));
     exit;
 }
 
@@ -123,6 +123,9 @@ $settings = Settings::getAll($tenantId);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6a5cff;
@@ -148,7 +151,7 @@ $settings = Settings::getAll($tenantId);
         }
         
         body {
-            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: "Battambang", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
             background: 
                 radial-gradient(900px 600px at 15% -10%, rgba(106, 92, 255, 0.15), transparent 60%),
                 radial-gradient(900px 600px at 110% 10%, rgba(138, 63, 252, 0.12), transparent 60%),
@@ -236,6 +239,78 @@ $settings = Settings::getAll($tenantId);
         .nav-links .logout-btn:hover {
             background: var(--danger);
             color: white;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        .lang-btn {
+            background: rgba(106, 92, 255, 0.08);
+            color: var(--primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .lang-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .lang-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            padding-top: 15px; /* Bridge gap */
+            display: none;
+            z-index: 1100;
+        }
+
+        .lang-dropdown-inner {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 1px solid var(--border);
+            min-width: 160px;
+            overflow: hidden;
+        }
+        
+        .lang-switcher:hover .lang-dropdown,
+        .lang-switcher.active .lang-dropdown {
+            display: block;
+        }
+        
+        .lang-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .lang-dropdown a:hover {
+            background: rgba(106, 92, 255, 0.05);
+            color: var(--primary);
+        }
+
+        .lang-dropdown a.active {
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(106, 92, 255, 0.08);
         }
 
         /* Container */
@@ -505,10 +580,33 @@ $settings = Settings::getAll($tenantId);
                 <i class="fas fa-cube"></i> <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?> Admin
             </div>
             <ul class="nav-links">
-                <li><a href="/Mekong_CyberUnit/tenant/dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/users.php"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/settings.php" class="active"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard"><i class="fas fa-chart-line"></i> <?php echo __('dashboard'); ?></a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/users"><i class="fas fa-users"></i> <?php echo __('profile'); ?></a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/settings" class="active"><i class="fas fa-cog"></i> <?php echo __('settings'); ?></a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <?php echo __('logout'); ?></a></li>
+                <li class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" onclick="toggleLangDropdown(event)">
+                        <i class="fas fa-globe"></i>
+                        <?php 
+                        $curr = Language::getCurrentLang();
+                        echo $curr == 'en' ? 'English' : ($curr == 'km' ? 'ភាសាខ្មែរ' : '中文');
+                        ?>
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                    </button>
+                    <div class="lang-dropdown">
+                        <div class="lang-dropdown-inner">
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
+                            </a>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -516,11 +614,11 @@ $settings = Settings::getAll($tenantId);
     <div class="container">
         <div class="welcome-header">
             <div class="welcome-content">
-                <h1>System Settings</h1>
+                <h1><?php echo __('system_settings'); ?></h1>
                 <p>Configure your tenant details and system preferences</p>
             </div>
-            <a href="/Mekong_CyberUnit/tenant/dashboard.php" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
-                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                <i class="fas fa-arrow-left"></i> <?php echo __('back_to_dashboard'); ?>
             </a>
         </div>
 
@@ -534,44 +632,44 @@ $settings = Settings::getAll($tenantId);
 
         <div class="tabs">
             <div class="tab-buttons">
-                <button class="tab-button active" onclick="openTab('company')"><i class="fas fa-building"></i> Company Information</button>
-                <button class="tab-button" onclick="openTab('receipt')"><i class="fas fa-receipt"></i> Receipt Design</button>
-                <button class="tab-button" onclick="openTab('payment')"><i class="fas fa-credit-card"></i> Payment Methods</button>
+                <button class="tab-button active" onclick="openTab('company')"><i class="fas fa-building"></i> <?php echo __('company_info'); ?></button>
+                <button class="tab-button" onclick="openTab('receipt')"><i class="fas fa-receipt"></i> <?php echo __('receipt_design'); ?></button>
+                <button class="tab-button" onclick="openTab('payment')"><i class="fas fa-credit-card"></i> <?php echo __('payment_methods'); ?></button>
             </div>
 
             <div id="company" class="tab-content active">
                 <h3><i class="fas fa-building" style="color: var(--primary);"></i> Company Details</h3>
                 <form method="POST">
                     <div class="form-group">
-                        <label><i class="fas fa-map-marker-alt"></i> Company Address</label>
+                        <label><i class="fas fa-map-marker-alt"></i> <?php echo __('company_address'); ?></label>
                         <textarea name="company_address" placeholder="Enter full business address"><?php echo htmlspecialchars($settings['company_address'] ?? ''); ?></textarea>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
-                            <label><i class="fas fa-phone"></i> Phone Number</label>
+                            <label><i class="fas fa-phone"></i> <?php echo __('phone_number'); ?></label>
                             <input type="text" name="company_phone" value="<?php echo htmlspecialchars($settings['company_phone'] ?? ''); ?>" placeholder="+855 12 345 678">
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-envelope"></i> Email Address</label>
+                            <label><i class="fas fa-envelope"></i> <?php echo __('email_address'); ?></label>
                             <input type="email" name="company_email" value="<?php echo htmlspecialchars($settings['company_email'] ?? ''); ?>" placeholder="contact@company.com">
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
-                            <label><i class="fas fa-file-invoice-dollar"></i> Tax ID / VAT Number</label>
+                            <label><i class="fas fa-file-invoice-dollar"></i> <?php echo __('tax_id'); ?></label>
                             <input type="text" name="company_tax_id" value="<?php echo htmlspecialchars($settings['company_tax_id'] ?? ''); ?>" placeholder="TIN-123456789">
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-globe"></i> Website</label>
+                            <label><i class="fas fa-globe"></i> <?php echo __('website'); ?></label>
                             <input type="url" name="company_website" value="<?php echo htmlspecialchars($settings['company_website'] ?? ''); ?>" placeholder="https://www.example.com">
                         </div>
                     </div>
 
-                    <button type="submit" name="update_company_info" class="btn"><i class="fas fa-save"></i> Save Company Information</button>
+                    <button type="submit" name="update_company_info" class="btn"><i class="fas fa-save"></i> <?php echo __('save_settings'); ?></button>
                 </form>
             </div>
 
@@ -843,5 +941,18 @@ $settings = Settings::getAll($tenantId);
             }
         </script>
     </div>
+    <script id="langToggleScript">
+        function toggleLangDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('langSwitcher').classList.toggle('active');
+        }
+        
+        document.addEventListener('click', function(e) {
+            const switcher = document.getElementById('langSwitcher');
+            if (switcher && !switcher.contains(e.target)) {
+                switcher.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

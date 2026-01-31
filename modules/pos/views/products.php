@@ -13,8 +13,11 @@ $urlPrefix = '/Mekong_CyberUnit';
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
+        body, h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea {
+            font-family: 'Battambang', 'Outfit', 'Inter', sans-serif !important;
+        }
         .search-container { position: relative; margin-bottom: 24px; }
         .search-container i { position: absolute; left: 20px; top: 16px; color: var(--pos-primary); font-size: 18px; }
         .search-container input { width: 100%; padding: 14px 20px 14px 54px; border-radius: 16px; border: 1.5px solid var(--pos-border); background: white; font-size: 15px; font-weight: 600; outline: none; transition: all 0.3s; }
@@ -29,22 +32,22 @@ $urlPrefix = '/Mekong_CyberUnit';
     <div class="fade-in">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
             <div class="pos-title">
-                <h1>Inventory Management</h1>
-                <p>Track your stock levels, prices and product catalog.</p>
+                <h1><?php echo __('products'); ?></h1>
+                <p><?php echo __('track_stock_msg'); ?></p>
             </div>
             <a href="<?php echo htmlspecialchars($posUrl('products/create')); ?>" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Add Product
+                <i class="fas fa-plus"></i> <?php echo __('add'); ?>
             </a>
         </div>
 
         <div class="pos-grid cols-4" style="margin-bottom: 32px;">
             <div class="pos-stat">
-                <span class="k">Total SKUs</span>
+                <span class="k"><?php echo __('total_skus'); ?></span>
                 <p class="v"><?php echo count($products); ?></p>
                 <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: var(--pos-primary);"><i class="fas fa-box"></i></div>
             </div>
             <div class="pos-stat">
-                <span class="k">Active Categories</span>
+                <span class="k"><?php echo __('active_categories'); ?></span>
                 <p class="v">12</p>
                 <div class="chip" style="background: rgba(139, 92, 246, 0.1); color: var(--pos-secondary);"><i class="fas fa-tags"></i></div>
             </div>
@@ -52,18 +55,18 @@ $urlPrefix = '/Mekong_CyberUnit';
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by name, SKU or barcode..." onkeyup="searchProducts()">
+            <input type="text" id="searchInput" placeholder="<?php echo __('search_product_placeholder'); ?>" onkeyup="searchProducts()">
         </div>
 
         <div class="pos-table-container">
             <table class="pos-table" id="productsTable">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">Pic</th>
-                        <th>Product Details</th>
-                        <th>Status</th>
-                        <th>Unit Price</th>
-                        <th style="text-align: right;">Actions</th>
+                        <th style="width: 60px;"><?php echo __('pic'); ?></th>
+                        <th><?php echo __('products'); ?></th>
+                        <th><?php echo __('status'); ?></th>
+                        <th><?php echo __('price'); ?></th>
+                        <th style="text-align: right;"><?php echo __('actions'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,8 +76,8 @@ $urlPrefix = '/Mekong_CyberUnit';
                                 <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px;">
                                     <i class="fas fa-box-open" style="font-size: 32px; color: #cbd5e1;"></i>
                                 </div>
-                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;">No products found</h3>
-                                <p style="color: var(--pos-text-muted); margin-top: 8px;">Start by adding your first product items.</p>
+                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;"><?php echo __('no_products_found'); ?></h3>
+                                <p style="color: var(--pos-text-muted); margin-top: 8px;"><?php echo __('start_adding_products'); ?></p>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -100,7 +103,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                                 </td>
                                 <td>
                                     <span class="badge <?php echo $badge; ?>">
-                                        <?php echo $stock; ?> in stock
+                                        <?php echo __('in_stock_msg', ['count' => $stock]); ?>
                                     </span>
                                 </td>
                                 <td>
@@ -111,7 +114,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                                         <a href="<?php echo htmlspecialchars($posUrl('products/' . $p['id'] . '/edit')); ?>" class="pos-icon-btn" title="Edit">
                                             <i class="fas fa-pencil-alt" style="font-size: 14px;"></i>
                                         </a>
-                                        <a href="<?php echo htmlspecialchars($posUrl('products/' . $p['id'] . '/delete')); ?>" class="pos-icon-btn" style="color: var(--pos-danger);" data-pos-confirm="Are you sure you want to delete this product?" title="Delete">
+                                        <a href="<?php echo htmlspecialchars($posUrl('products/' . $p['id'] . '/delete')); ?>" class="pos-icon-btn" style="color: var(--pos-danger);" data-pos-confirm="<?php echo __('confirm_delete_product'); ?>" title="Delete">
                                             <i class="fas fa-trash-alt" style="font-size: 14px;"></i>
                                         </a>
                                     </div>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Menu - <?php echo htmlspecialchars($tenant['name']); ?></title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title><?php echo __('digital_menu'); ?> - <?php echo htmlspecialchars($tenant['name']); ?></title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -21,7 +21,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Battambang', 'Outfit', sans-serif;
         }
 
         body {
@@ -475,18 +475,18 @@
         <img src="<?php echo htmlspecialchars($settings['receipt_logo_path']); ?>" alt="Logo" style="height: 60px; margin-bottom: 15px; border-radius: 12px; background: white; padding: 5px;">
     <?php endif; ?>
     <div class="logo"><?php echo htmlspecialchars($tenant['name']); ?></div>
-    <div class="tagline">Explore our delicious menu</div>
+    <div class="tagline"><?php echo __('explore_menu_msg'); ?></div>
 </header>
 
 <div class="container">
     <div class="search-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search for food or drinks..." onkeyup="filterMenu()">
+        <input type="text" id="searchInput" class="search-input" placeholder="<?php echo __('search_food_drinks'); ?>" onkeyup="filterMenu()">
     </div>
 
     <?php if (empty($categories)): ?>
         <div class="no-results">
             <i class="fas fa-utensils fa-3x mb-3"></i>
-            <p>No items found in the menu yet.</p>
+            <p><?php echo __('no_items_found'); ?></p>
         </div>
     <?php else: ?>
         <?php foreach ($categories as $categoryName => $items): ?>
@@ -501,17 +501,17 @@
                                 <?php else: ?>
                                     <div class="no-image-placeholder">
                                         <i class="fas fa-utensils"></i>
-                                        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Freshly Prepared</span>
+                                        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php echo __('freshly_prepared'); ?></span>
                                     </div>
                                 <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <div class="product-name"><?php echo htmlspecialchars($product['name']); ?></div>
-                                <p class="product-description"><?php echo htmlspecialchars($product['description'] ?: 'Tailored to perfection with the finest ingredients.'); ?></p>
+                                <p class="product-description"><?php echo htmlspecialchars($product['description'] ?: __('product_desc_fallback', ['default' => 'Tailored to perfection with the finest ingredients.'])); ?></p>
                                 <div class="product-footer">
                                     <span class="price-tag">$<?php echo number_format($product['price'], 2); ?></span>
                                     <?php if ($product['status'] !== 'active'): ?>
-                                        <span class="badge" style="background:#fee2e2; color:#ef4444; border: 1px solid #fecaca;">Sold Out</span>
+                                        <span class="badge" style="background:#fee2e2; color:#ef4444; border: 1px solid #fecaca;"><?php echo __('sold_out'); ?></span>
                                     <?php else: ?>
                                         <button class="add-to-cart-btn" onclick="addToCart(<?php echo htmlspecialchars(json_encode([
                                             'id' => $product['id'],
@@ -543,7 +543,7 @@
 
 <div class="cart-drawer" id="cartDrawer">
     <div class="cart-header">
-        <h3 style="font-weight: 800;">Your Cart</h3>
+        <h3 style="font-weight: 800;"><?php echo __('your_cart'); ?></h3>
         <button class="qty-btn" onclick="toggleCart()"><i class="fas fa-times"></i></button>
     </div>
     <div class="cart-items" id="cartItemsList">
@@ -552,19 +552,19 @@
     <div class="cart-footer">
         <div class="checkout-form">
             <div class="form-group">
-                <label>Table Number / Location</label>
-                <input type="text" id="tableNumber" class="form-control" placeholder="e.g. Table 05">
+                <label><?php echo __('table_number_location'); ?></label>
+                <input type="text" id="tableNumber" class="form-control" placeholder="<?php echo __('table_number_placeholder'); ?>">
             </div>
             <div class="form-group">
-                <label>Your Name (Optional)</label>
-                <input type="text" id="cartCustomerName" class="form-control" placeholder="For the order">
+                <label><?php echo __('your_name_optional'); ?></label>
+                <input type="text" id="cartCustomerName" class="form-control" placeholder="<?php echo __('order_name_placeholder'); ?>">
             </div>
         </div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 800; font-size: 1.2rem;">
-            <span>Total</span>
+            <span><?php echo __('total'); ?></span>
             <span id="cartTotalText">$0.00</span>
         </div>
-        <button class="btn-order" id="orderSubmitBtn" onclick="placeOrder()">Place Order Now</button>
+        <button class="btn-order" id="orderSubmitBtn" onclick="placeOrder()"><?php echo __('place_order_now'); ?></button>
     </div>
 </div>
 
@@ -618,7 +618,7 @@
             cartItemsList.innerHTML = `
                 <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
                     <i class="fas fa-shopping-basket fa-3x" style="margin-bottom: 15px; opacity: 0.3;"></i>
-                    <p>Your cart is empty.</p>
+                    <p><?php echo __('cart_empty_msg'); ?></p>
                 </div>
             `;
         }
@@ -694,13 +694,13 @@
         const customerName = document.getElementById('cartCustomerName').value;
 
         if (!tableNumber) {
-            alert('Please enter your table number or location.');
+            alert('<?php echo __('enter_table_msg'); ?>');
             return;
         }
 
         const btn = document.getElementById('orderSubmitBtn');
         btn.disabled = true;
-        btn.innerText = 'Submitting...';
+        btn.innerText = '<?php echo __('submitting'); ?>';
 
         try {
             const response = await fetch('<?php echo $protocol . "://" . $host . "/Mekong_CyberUnit/" . $tenant["subdomain"] . "/pos/menu/place_order"; ?>', {
@@ -716,20 +716,20 @@
             const result = await response.json();
 
             if (result.success) {
-                alert('Order placed successfully! We are preparing your food.');
+                alert('<?php echo __('order_success_msg'); ?>');
                 cart = [];
                 updateCartUI();
                 toggleCart(false);
                 document.getElementById('tableNumber').value = '';
                 document.getElementById('cartCustomerName').value = '';
             } else {
-                alert('Failed to place order: ' + result.message);
+                alert('<?php echo __('order_failed_msg'); ?>' + result.message);
             }
         } catch (error) {
-            alert('Something went wrong. Please try again or call staff.');
+            alert('<?php echo __('something_wrong_msg'); ?>');
         } finally {
             btn.disabled = false;
-            btn.innerText = 'Place Order Now';
+            btn.innerText = '<?php echo __('place_order_now'); ?>';
         }
     }
 

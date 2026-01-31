@@ -15,7 +15,7 @@ class ReportsController {
             die('POS system not subscribed for your plan');
         }
 
-        if (Tenant::getPosLevel() < 3) {
+        if (!Tenant::hasFeature('pos', 'reports')) {
              die('Upgrade to POS Premium to view advanced reports.');
         }
 

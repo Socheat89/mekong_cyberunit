@@ -59,7 +59,7 @@ $activeClass = function (string $key) use ($activeNav): string {
                 </div>
                 <div class="pos-brand__text">
                     <span class="pos-brand__title"><?php echo htmlspecialchars($tenantName); ?></span>
-                    <span class="pos-brand__sub">Cyber Unit POS</span>
+                    <span class="pos-brand__sub"><?php echo __('cyber_unit_pos'); ?></span>
                 </div>
             </a>
         </div>
@@ -75,63 +75,68 @@ $activeClass = function (string $key) use ($activeNav): string {
 
             <?php if ($hasFeature('pos', 'core')): ?>
             <a class="pos-side-link <?php echo $activeClass('dashboard'); ?>" href="<?php echo htmlspecialchars($posUrl('dashboard')); ?>">
-                <i class="fas fa-chart-pie"></i><span>Overview</span>
+                <i class="fas fa-chart-pie"></i><span><?php echo __('dashboard'); ?></span>
             </a>
             <a class="pos-side-link <?php echo $activeClass('pos'); ?>" href="<?php echo htmlspecialchars($posUrl('pos')); ?>">
-                <i class="fas fa-desktop"></i><span>Point of Sale</span>
+                <i class="fas fa-desktop"></i><span><?php echo __('pos'); ?></span>
             </a>
             <?php endif; ?>
 
             <?php if ($hasFeature('pos', 'holds')): ?>
             <a class="pos-side-link <?php echo $activeClass('holds'); ?>" href="<?php echo htmlspecialchars($posUrl('holds')); ?>">
-                <i class="fas fa-clock-rotate-left"></i><span>On Hold</span>
+                <i class="fas fa-clock-rotate-left"></i><span><?php echo __('on_hold'); ?></span>
             </a>
             <?php endif; ?>
 
-            <?php if ($hasFeature('pos', 'core')): ?>
+            <?php if ($hasFeature('pos', 'orders')): ?>
             <a class="pos-side-link <?php echo $activeClass('orders'); ?>" href="<?php echo htmlspecialchars($posUrl('orders')); ?>">
-                <i class="fas fa-list-ul"></i><span>Orders</span>
+                <i class="fas fa-list-ul"></i><span><?php echo __('orders'); ?></span>
             </a>
             <?php endif; ?>
             
             <?php 
-            $canManage = $hasFeature('pos', 'inventory') || $hasFeature('pos', 'customers') || $hasFeature('pos', 'reports') || $hasFeature('pos', 'settings');
+            $canManage = $hasFeature('pos', 'inventory') || $hasFeature('pos', 'customers') || $hasFeature('pos', 'reports') || $hasFeature('pos', 'settings') || $hasFeature('pos', 'digital_menu');
             if ($canManage): 
             ?>
-                <div style="margin: 24px 16px 8px; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1.5px;">Management</div>
+                <div class="pos-nav-header" style="margin: 24px 16px 8px; font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1.5px;"><?php echo __('management'); ?></div>
                 
                 <?php if ($hasFeature('pos', 'inventory')): ?>
                 <a class="pos-side-link <?php echo $activeClass('products'); ?>" href="<?php echo htmlspecialchars($posUrl('products')); ?>">
-                    <i class="fas fa-boxes-stacked"></i><span>Inventory</span>
+                    <i class="fas fa-boxes-stacked"></i><span><?php echo __('inventory'); ?></span>
                 </a>
                 <?php endif; ?>
 
                 <?php if ($hasFeature('pos', 'customers')): ?>
                 <a class="pos-side-link <?php echo $activeClass('customers'); ?>" href="<?php echo htmlspecialchars($posUrl('customers')); ?>">
-                    <i class="fas fa-user-group"></i><span>Customers</span>
+                    <i class="fas fa-user-group"></i><span><?php echo __('customers'); ?></span>
                 </a>
                 <?php endif; ?>
 
                 <?php if ($hasFeature('pos', 'reports')): ?>
                 <a class="pos-side-link <?php echo $activeClass('reports'); ?>" href="<?php echo htmlspecialchars($posUrl('reports')); ?>">
-                    <i class="fas fa-chart-line"></i><span>Analytics</span>
+                    <i class="fas fa-chart-line"></i><span><?php echo __('analytics'); ?></span>
                 </a>
                 <?php endif; ?>
 
-                <?php if ($hasFeature('pos', 'settings')): ?>
-                <a class="pos-side-link <?php echo $activeClass('digital_menu'); ?>" href="<?php echo htmlspecialchars($posUrl('menu/admin')); ?>">
-                    <i class="fas fa-qrcode"></i><span>Digital Menu</span>
-                </a>
-                <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>">
-                    <i class="fas fa-gear"></i><span>Settings</span>
-                </a>
+                <?php if ($hasFeature('pos', 'digital_menu') || $hasFeature('pos', 'settings')): ?>
+                    <?php if ($hasFeature('pos', 'digital_menu')): ?>
+                    <a class="pos-side-link <?php echo $activeClass('digital_menu'); ?>" href="<?php echo htmlspecialchars($posUrl('menu/admin')); ?>">
+                        <i class="fas fa-qrcode"></i><span><?php echo __('digital_menu'); ?></span>
+                    </a>
+                    <?php endif; ?>
+                    
+                    <?php if ($hasFeature('pos', 'settings')): ?>
+                    <a class="pos-side-link <?php echo $activeClass('settings'); ?>" href="<?php echo htmlspecialchars($posUrl('settings')); ?>">
+                        <i class="fas fa-gear"></i><span><?php echo __('settings'); ?></span>
+                    </a>
+                    <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
         </nav>
 
         <div class="pos-sidebar__footer">
             <a class="pos-side-link" href="<?php echo htmlspecialchars($logoutUrl); ?>">
-                <i class="fas fa-right-from-bracket"></i><span>Logout</span>
+                <i class="fas fa-right-from-bracket"></i><span><?php echo __('logout'); ?></span>
             </a>
         </div>
     </aside>
@@ -145,7 +150,7 @@ $activeClass = function (string $key) use ($activeNav): string {
                 <div class="pos-status-indicator">
                     <div class="pos-status-dot"></div>
                     <span class="pos-status-text">
-                        <?php echo htmlspecialchars($pageTitle ?? ucfirst($activeNav === 'pos' ? 'Terminal' : ($activeNav ?: 'Dashboard'))); ?>
+                        <?php echo htmlspecialchars($pageTitle ?? ($activeNav === 'pos' ? __('terminal') : ($activeNav ? __($activeNav) : __('dashboard')))); ?>
                     </span>
                 </div>
             </div>
@@ -154,6 +159,101 @@ $activeClass = function (string $key) use ($activeNav): string {
                 <div class="pos-clock-widget">
                      <div id="posClock" class="pos-clock-time"><?php echo date('H:i'); ?></div>
                      <div class="pos-clock-date"><?php echo date('F d, Y'); ?></div>
+                </div>
+
+                <div class="pos-header-divider"></div>
+
+                <!-- Language Switcher -->
+                <style>
+                    .pos-lang-switcher {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                    }
+                    .pos-lang-btn {
+                        background: #f1f5f9;
+                        border: 1.5px solid #e2e8f0;
+                        padding: 8px 12px;
+                        border-radius: 12px;
+                        font-weight: 800;
+                        font-family: 'Outfit', sans-serif;
+                        font-size: 13px;
+                        color: #475569;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        transition: all 0.2s;
+                    }
+                    .pos-lang-btn:hover {
+                        border-color: #6366f1;
+                        background: #eff6ff;
+                        color: #6366f1;
+                    }
+                    .pos-lang-dropdown { 
+                        position: absolute;
+                        top: 100%;
+                        right: 0;
+                        padding-top: 15px; /* Bridge gap */
+                        background: transparent;
+                        display: none;
+                        z-index: 1000;
+                    }
+                    .pos-lang-dropdown-inner {
+                        background: white;
+                        border-radius: 16px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+                        border: 1px solid #e2e8f0;
+                        min-width: 160px;
+                        padding: 6px;
+                        overflow: hidden;
+                    }
+                    .pos-lang-switcher:hover .pos-lang-dropdown,
+                    .pos-lang-switcher.active .pos-lang-dropdown { 
+                        display: block;
+                    }
+                    .pos-lang-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 10px 14px;
+                        text-decoration: none;
+                        color: #475569;
+                        font-size: 13px;
+                        font-weight: 700;
+                        border-radius: 10px;
+                        transition: all 0.2s;
+                    }
+                    .pos-lang-item:hover {
+                        background: #f1f5f9;
+                        color: #6366f1;
+                    }
+                    .pos-lang-item.active {
+                        background: #eff6ff;
+                        color: #6366f1;
+                    }
+                </style>
+                <div class="pos-lang-switcher" id="posLangSwitcher">
+                    <button class="pos-lang-btn" onclick="togglePosLang(event)">
+                        <i class="fas fa-globe"></i>
+                        <?php 
+                        $curr = Language::getCurrentLang();
+                        echo $curr == 'en' ? 'English' : ($curr == 'km' ? 'ភាសាខ្មែរ' : '中文');
+                        ?>
+                    </button>
+                    <div class="pos-lang-dropdown">
+                        <div class="pos-lang-dropdown-inner">
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="pos-lang-item <?php echo $curr == 'en' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="pos-lang-item <?php echo $curr == 'km' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
+                            </a>
+                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="pos-lang-item <?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                                <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pos-header-divider"></div>
@@ -198,10 +298,26 @@ $activeClass = function (string $key) use ($activeNav): string {
     function toggle() {
         var shell = document.getElementById('posShell');
         if (!shell) return;
-        setOpen(!shell.classList.contains('pos-shell--open'));
+
+        if (window.innerWidth >= 980) {
+            // Desktop: toggle collapse
+            shell.classList.toggle('pos-shell--collapsed');
+            // Persist preference
+            localStorage.setItem('pos_sidebar_collapsed', shell.classList.contains('pos-shell--collapsed'));
+        } else {
+            // Mobile: toggle drawer
+            setOpen(!shell.classList.contains('pos-shell--open'));
+        }
     }
 
     window.__posToggleSidebar = toggle;
+
+    // Restore state on load
+    if (window.innerWidth >= 980) {
+        var collapsed = localStorage.getItem('pos_sidebar_collapsed') === 'true';
+        var shell = document.getElementById('posShell');
+        if (shell && collapsed) shell.classList.add('pos-shell--collapsed');
+    }
 
     var overlay = document.getElementById('posOverlay');
     if (overlay) {
@@ -231,7 +347,7 @@ $activeClass = function (string $key) use ($activeNav): string {
     function toast(opts) {
         opts = opts || {};
         var type = opts.type || 'info';
-        var title = opts.title || (type === 'danger' ? 'Error' : type === 'warning' ? 'Warning' : type === 'success' ? 'Success' : 'Info');
+        var title = opts.title || (type === 'danger' ? '<?php echo __('error'); ?>' : type === 'warning' ? '<?php echo __('warning'); ?>' : type === 'success' ? '<?php echo __('success'); ?>' : '<?php echo __('info'); ?>');
         var message = opts.message || '';
         var timeout = typeof opts.timeout === 'number' ? opts.timeout : 2800;
 
@@ -254,11 +370,11 @@ $activeClass = function (string $key) use ($activeNav): string {
     function buildModal(opts, isConfirm) {
         opts = opts || {};
         var type = opts.type || 'info';
-        var title = opts.title || (isConfirm ? 'Please confirm' : 'Message');
+        var title = opts.title || (isConfirm ? '<?php echo __('please_confirm'); ?>' : '<?php echo __('message'); ?>');
         var subtitle = opts.subtitle || '';
         var message = opts.message || '';
-        var okText = opts.okText || (isConfirm ? 'Yes' : 'OK');
-        var cancelText = opts.cancelText || 'Cancel';
+        var okText = opts.okText || (isConfirm ? '<?php echo __('yes'); ?>' : '<?php echo __('ok'); ?>');
+        var cancelText = opts.cancelText || '<?php echo __('cancel'); ?>';
 
         var existing = document.querySelector('.pos-modal-overlay');
         if (existing) existing.remove();
@@ -353,12 +469,23 @@ $activeClass = function (string $key) use ($activeNav): string {
         e.preventDefault();
         confirmModal({
             type: 'warning',
-            title: 'Confirm action',
+            title: '<?php echo __('confirm_action'); ?>',
             message: msg,
-            okText: 'Yes',
-            cancelText: 'Cancel',
+            okText: '<?php echo __('yes'); ?>',
+            cancelText: '<?php echo __('cancel'); ?>',
             onOk: function() { window.location.href = href; }
         });
     });
 })();
+</script>
+<script>
+    function togglePosLang(e) {
+        e.stopPropagation();
+        var s = document.getElementById('posLangSwitcher');
+        if (s) s.classList.toggle('active');
+    }
+    document.addEventListener('click', function(e) {
+        var s = document.getElementById('posLangSwitcher');
+        if (s && !s.contains(e.target)) s.classList.remove('active');
+    });
 </script>

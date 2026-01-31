@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
+    <title><?php echo __('customers'); ?> - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         .search-container { position: relative; margin-bottom: 24px; }
         .search-container i { position: absolute; left: 20px; top: 16px; color: var(--pos-primary); font-size: 18px; }
@@ -24,22 +24,22 @@
     <div class="fade-in">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
             <div class="pos-title">
-                <h1>Customer Relations</h1>
-                <p>Manage your clientele, contact details and purchase history.</p>
+                <h1><?php echo __('customer_relations'); ?></h1>
+                <p><?php echo __('customer_management_msg'); ?></p>
             </div>
             <a href="<?php echo htmlspecialchars($posUrl('customers/create')); ?>" class="btn btn-primary">
-                <i class="fas fa-user-plus"></i> Add Customer
+                <i class="fas fa-user-plus"></i> <?php echo __('add_customer'); ?>
             </a>
         </div>
 
         <div class="pos-grid cols-4" style="margin-bottom: 32px;">
             <div class="pos-stat">
-                <span class="k">Total Clients</span>
+                <span class="k"><?php echo __('total_clients'); ?></span>
                 <p class="v"><?php echo count($customers); ?></p>
                 <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: var(--pos-primary);"><i class="fas fa-users"></i></div>
             </div>
             <div class="pos-stat">
-                <span class="k">Active This Month</span>
+                <span class="k"><?php echo __('active_this_month'); ?></span>
                 <p class="v"><?php echo count($customers); ?></p>
                 <div class="chip" style="background: rgba(16, 185, 129, 0.1); color: var(--pos-success);"><i class="fas fa-user-check"></i></div>
             </div>
@@ -47,17 +47,17 @@
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by name, email or phone number..." onkeyup="searchCustomers()">
+            <input type="text" id="searchInput" placeholder="<?php echo __('search_customers_placeholder'); ?>" onkeyup="searchCustomers()">
         </div>
 
         <div class="pos-table-container">
             <table class="pos-table" id="customersTable">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">Profile</th>
-                        <th>Display Name</th>
-                        <th>Contact info</th>
-                        <th>Location / Address</th>
+                        <th style="width: 60px;"><?php echo __('profile'); ?></th>
+                        <th><?php echo __('display_name'); ?></th>
+                        <th><?php echo __('contact_info'); ?></th>
+                        <th><?php echo __('location_address'); ?></th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
@@ -68,8 +68,8 @@
                                 <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px;">
                                     <i class="fas fa-users" style="font-size: 32px; color: #cbd5e1;"></i>
                                 </div>
-                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;">No customers yet</h3>
-                                <p style="color: var(--pos-text-muted); margin-top: 8px;">Your client database will appear here.</p>
+                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;"><?php echo __('no_customers_yet'); ?></h3>
+                                <p style="color: var(--pos-text-muted); margin-top: 8px;"><?php echo __('client_database_msg'); ?></p>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -101,7 +101,7 @@
                                 <td>
                                     <span style="font-size: 13px; font-weight: 600; color: var(--pos-text-muted);">
                                         <i class="fas fa-map-marker-alt" style="margin-right: 6px; font-size: 11px;"></i>
-                                        <?php echo !empty($c['address']) ? htmlspecialchars($c['address']) : 'Not provided'; ?>
+                                        <?php echo !empty($c['address']) ? htmlspecialchars($c['address']) : __('not_provided'); ?>
                                     </span>
                                 </td>
                                 <td>
@@ -109,7 +109,7 @@
                                         <a href="<?php echo htmlspecialchars($posUrl('customers/' . $c['id'] . '/edit')); ?>" class="pos-icon-btn" title="Edit">
                                             <i class="fas fa-pencil-alt" style="font-size: 14px;"></i>
                                         </a>
-                                        <a href="<?php echo htmlspecialchars($posUrl('customers/' . $c['id'] . '/delete')); ?>" class="pos-icon-btn" style="color: var(--pos-danger);" data-pos-confirm="Are you sure you want to delete this customer?" title="Delete">
+                                        <a href="<?php echo htmlspecialchars($posUrl('customers/' . $c['id'] . '/delete')); ?>" class="pos-icon-btn" style="color: var(--pos-danger);" data-pos-confirm="<?php echo __('confirm_delete_customer'); ?>" title="Delete">
                                             <i class="fas fa-trash-alt" style="font-size: 14px;"></i>
                                         </a>
                                     </div>

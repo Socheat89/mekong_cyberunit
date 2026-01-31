@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
+    <title><?php echo __('orders'); ?> - <?php echo htmlspecialchars($tenantName ?? 'POS'); ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         .search-container { position: relative; margin-bottom: 24px; }
         .search-container i { position: absolute; left: 20px; top: 16px; color: var(--pos-primary); font-size: 18px; }
@@ -24,22 +24,22 @@
     <div class="fade-in">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px;">
             <div class="pos-title">
-                <h1>Transaction History</h1>
-                <p>Review and manage all order records, payments and invoices.</p>
+                <h1><?php echo __('transaction_history'); ?></h1>
+                <p><?php echo __('orders_management_msg'); ?></p>
             </div>
             <a href="<?php echo htmlspecialchars($posUrl('pos')); ?>" class="btn btn-primary">
-                <i class="fas fa-desktop"></i> Open terminal
+                <i class="fas fa-desktop"></i> <?php echo __('open_terminal'); ?>
             </a>
         </div>
 
         <div class="pos-grid cols-4" style="margin-bottom: 32px;">
             <div class="pos-stat">
-                <span class="k">Total Orders</span>
+                <span class="k"><?php echo __('total_orders'); ?></span>
                 <p class="v"><?php echo count($orders); ?></p>
                 <div class="chip" style="background: rgba(99, 102, 241, 0.1); color: var(--pos-primary);"><i class="fas fa-receipt"></i></div>
             </div>
             <div class="pos-stat">
-                <span class="k">Success Rate</span>
+                <span class="k"><?php echo __('success_rate'); ?></span>
                 <?php 
                 $completed = count(array_filter($orders, fn($o) => $o['status'] === 'completed'));
                 $total = count($orders) ?: 1;
@@ -52,18 +52,18 @@
 
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search by Order ID, Customer Name or Status..." onkeyup="searchOrders()">
+            <input type="text" id="searchInput" placeholder="<?php echo __('search_orders_placeholder'); ?>" onkeyup="searchOrders()">
         </div>
 
         <div class="pos-table-container">
             <table class="pos-table" id="ordersTable">
                 <thead>
                     <tr>
-                        <th style="width: 100px;">Reference</th>
-                        <th>Customer</th>
-                        <th>Date & Time</th>
-                        <th>Amount</th>
-                        <th>Status</th>
+                        <th style="width: 100px;"><?php echo __('reference'); ?></th>
+                        <th><?php echo __('customer'); ?></th>
+                        <th><?php echo __('date_time'); ?></th>
+                        <th><?php echo __('amount'); ?></th>
+                        <th><?php echo __('status'); ?></th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
@@ -74,8 +74,8 @@
                                 <div style="width: 80px; height: 80px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 20px;">
                                     <i class="fas fa-history" style="font-size: 32px; color: #cbd5e1;"></i>
                                 </div>
-                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;">No transactions found</h3>
-                                <p style="color: var(--pos-text-muted); margin-top: 8px;">Completed sales will appear in this history.</p>
+                                <h3 style="color: var(--pos-text); font-weight: 800; margin: 0;"><?php echo __('no_transactions_found'); ?></h3>
+                                <p style="color: var(--pos-text-muted); margin-top: 8px;"><?php echo __('sales_history_msg'); ?></p>
                             </td>
                         </tr>
                     <?php else: ?>

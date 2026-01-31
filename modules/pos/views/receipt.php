@@ -18,11 +18,11 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS Receipt - Order #<?php echo $order['id']; ?></title>
+    <title><?php echo __('pos_receipt_title'); ?> <?php echo $order['id']; ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Courier New', monospace; margin: 0; padding: 0; background: #f8f9fa; }
+        body { font-family: 'Battambang', 'Courier New', monospace; margin: 0; padding: 0; background: #f8f9fa; }
         .receipt-wrap { padding: 20px; }
         .receipt { max-width: <?php echo $paperWidth; ?>px; margin: 0 auto; background: white; padding: 20px; border: 1px solid #ddd; font-size: <?php echo $fontSize; ?>px; line-height: 1.4; }
         .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
@@ -76,7 +76,7 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
             <?php endif; ?>
             <h1><?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></h1>
             <p><?php echo htmlspecialchars($headerText); ?></p>
-            <p>Order #<?php echo $order['id']; ?></p>
+            <p><?php echo __('receipt_order_label'); ?><?php echo $order['id']; ?></p>
         </div>
 
         <?php
@@ -92,13 +92,13 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
                 <div><?php echo htmlspecialchars($companyAddress); ?></div>
             <?php endif; ?>
             <?php if (!empty($companyPhone)): ?>
-                <div>Phone: <?php echo htmlspecialchars($companyPhone); ?></div>
+                <div><?php echo __('phone'); ?>: <?php echo htmlspecialchars($companyPhone); ?></div>
             <?php endif; ?>
             <?php if (!empty($companyEmail)): ?>
-                <div>Email: <?php echo htmlspecialchars($companyEmail); ?></div>
+                <div><?php echo __('email'); ?>: <?php echo htmlspecialchars($companyEmail); ?></div>
             <?php endif; ?>
             <?php if (!empty($companyTaxId)): ?>
-                <div>Tax ID: <?php echo htmlspecialchars($companyTaxId); ?></div>
+                <div><?php echo __('tax_id'); ?>: <?php echo htmlspecialchars($companyTaxId); ?></div>
             <?php endif; ?>
             <?php if (!empty($companyWebsite)): ?>
                 <div><?php echo htmlspecialchars($companyWebsite); ?></div>
@@ -108,12 +108,12 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 
         <div class="order-info">
             <div class="info-row">
-                <span>Date:</span>
+                <span><?php echo __('date'); ?>:</span>
                 <span><?php echo date('M j, Y H:i', strtotime($order['created_at'])); ?></span>
             </div>
             <div class="info-row">
-                <span>Customer:</span>
-                <span><?php echo htmlspecialchars($order['customer_name'] ?? 'Walk-in Customer'); ?></span>
+                <span><?php echo __('customer'); ?>:</span>
+                <span><?php echo htmlspecialchars($order['customer_name'] ?? __('walk_in_customer')); ?></span>
             </div>
             <?php if ($order['email']): ?>
             <div class="info-row">
@@ -131,9 +131,9 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 
         <div class="items">
             <div class="item" style="font-weight: bold; border-bottom: 1px solid #000;">
-                <span class="item-name">Item</span>
-                <span class="item-qty">Qty</span>
-                <span class="item-price">Total</span>
+                <span class="item-name"><?php echo __('item'); ?></span>
+                <span class="item-qty"><?php echo __('qty'); ?></span>
+                <span class="item-price"><?php echo __('total'); ?></span>
             </div>
             <?php foreach ($order['items'] as $item): ?>
                 <div class="item">
@@ -146,30 +146,30 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 
         <div class="total">
             <div class="info-row">
-                <span>Subtotal:</span>
+                <span><?php echo __('subtotal'); ?>:</span>
                 <span>$<?php echo number_format($order['total'] - ($order['tax'] ?? 0) - ($order['discount'] ?? 0), 2); ?></span>
             </div>
             <?php if ($order['tax'] ?? 0 > 0): ?>
             <div class="info-row">
-                <span>Tax:</span>
+                <span><?php echo __('tax'); ?>:</span>
                 <span>$<?php echo number_format($order['tax'], 2); ?></span>
             </div>
             <?php endif; ?>
             <?php if ($order['discount'] ?? 0 > 0): ?>
             <div class="info-row">
-                <span>Discount:</span>
+                <span><?php echo __('discount'); ?>:</span>
                 <span>-$<?php echo number_format($order['discount'], 2); ?></span>
             </div>
             <?php endif; ?>
             <div class="info-row" style="font-size: 14px;">
-                <span>TOTAL:</span>
+                <span><?php echo __('total_all_caps', ['default' => 'TOTAL']); ?>:</span>
                 <span>$<?php echo number_format($order['total'], 2); ?></span>
             </div>
         </div>
 
         <?php if (!empty($order['payments'])): ?>
         <div style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;">
-            <div style="font-weight: bold; margin-bottom: 5px;">Payment:</div>
+            <div style="font-weight: bold; margin-bottom: 5px;"><?php echo __('payment'); ?>:</div>
             <?php foreach ($order['payments'] as $payment): ?>
                 <div class="info-row">
                     <span><?php echo ucfirst($payment['method']); ?>:</span>
@@ -187,10 +187,10 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 
     <div style="text-align: center; margin-top: 20px;">
         <a href="javascript:window.print()" class="btn" style="background: var(--pos-gradient-primary); border: none; font-weight: 800; padding: 14px 28px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);">
-            <i class="fas fa-print"></i> Print Receipt
+            <i class="fas fa-print"></i> <?php echo __('print_receipt'); ?>
         </a>
         <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos" class="btn" style="background: #f8fafc; color: var(--pos-text); border: 1.5px solid var(--pos-border); font-weight: 700; padding: 14px 28px; border-radius: 12px;">
-            <i class="fas fa-arrow-left"></i> Back to Terminal
+            <i class="fas fa-arrow-left"></i> <?php echo __('back_to_terminal'); ?>
         </a>
     </div>
 

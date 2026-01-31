@@ -7,11 +7,13 @@ $moduleDefinition = [
     'pos' => [
         'label' => 'Point of Sale (POS)',
         'features' => [
-            'core' => 'Basic Ordering & Payment',
+            'core' => 'Basic Ordering & Payment (Dashboard, POS)',
+            'orders' => 'Order History & Management',
             'inventory' => 'Product & Stock List',
             'customers' => 'Customer Management',
-            'reports' => 'Sales Reporting',
+            'reports' => 'Sales Reporting & Analytics',
             'holds' => 'Hold Orders (Suspends)',
+            'digital_menu' => 'Digital Menu (QR)',
             'settings' => 'POS General Settings'
         ]
     ],

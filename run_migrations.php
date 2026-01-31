@@ -84,6 +84,23 @@ try {
         $db->query("ALTER TABLE orders ADD COLUMN notes TEXT NULL AFTER status");
     }
 
+    // 4. Create 'tenant_features' table for overrides
+    echo "Ensuring 'tenant_features' table exists...<br>";
+    $tableExists = $db->fetchAll("SHOW TABLES LIKE 'tenant_features'");
+    if (empty($tableExists)) {
+        $db->query("CREATE TABLE tenant_features (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            tenant_id INT NOT NULL,
+            module_name VARCHAR(50) NOT NULL,
+            feature_key VARCHAR(50) NOT NULL,
+            action ENUM('grant', 'deny') NOT NULL DEFAULT 'grant',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_tenant_feature (tenant_id, module_name, feature_key)
+        )");
+        echo "'tenant_features' table created.<br>";
+    }
+
     echo "Migrations completed successfully!";
 } catch (Exception $e) {
     echo "Migration failed: " . $e->getMessage();

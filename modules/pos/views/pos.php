@@ -15,7 +15,7 @@ $urlPrefix = '/Mekong_CyberUnit';
     <script src="<?php echo $urlPrefix; ?>/public/js/bakong-khqr.js?v=<?php echo time(); ?>"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --pos-terminal-sidebar: 420px;
@@ -23,7 +23,7 @@ $urlPrefix = '/Mekong_CyberUnit';
 
         body.pos-app {
             background-color: var(--pos-bg);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Battambang', 'Inter', sans-serif;
             color: var(--pos-text);
             margin: 0;
             overflow: hidden;
@@ -401,16 +401,16 @@ $urlPrefix = '/Mekong_CyberUnit';
             <div class="pos-terminal-header">
                 <div class="pos-search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" id="search" placeholder="Search products, SKUs, or scan barcodes..." autocomplete="off">
+                    <input type="text" id="search" placeholder="<?php echo __('search_placeholder'); ?>" autocomplete="off">
                 </div>
                 <select id="category" class="pos-form-control pos-form-select" style="max-width: 220px; background-color: white;">
-                    <option value="">All Categories</option>
+                    <option value=""><?php echo __('all_categories'); ?></option>
                 </select>
 
                 <!-- Menu Orders Button -->
                 <button class="pos-icon-btn" style="position: relative; width: auto; padding: 0 20px; gap: 8px; border-color: var(--pos-primary); color: var(--pos-primary);" onclick="toggleMenuOrders()">
                     <i class="fas fa-list-check"></i>
-                    <span style="font-weight: 800;">Menu Orders</span>
+                    <span style="font-weight: 800;"><?php echo __('pending_orders'); ?></span>
                     <?php if (count($pendingMenuOrders) > 0): ?>
                         <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 99px; font-size: 11px; margin-left: 4px;"><?php echo count($pendingMenuOrders); ?></span>
                     <?php endif; ?>
@@ -434,8 +434,8 @@ $urlPrefix = '/Mekong_CyberUnit';
 
         <div class="pos-terminal__cart">
             <div class="pos-cart-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Billing Cart</h2>
-                <span id="cartCount" class="badge badge-primary" style="font-size: 12px; font-weight: 800; padding: 6px 14px;">0 Items</span>
+                <h2><?php echo __('billing_cart'); ?></h2>
+                <span id="cartCount" class="badge badge-primary" style="font-size: 12px; font-weight: 800; padding: 6px 14px;">0 <?php echo __('items'); ?></span>
             </div>
 
             <div id="cart" class="pos-cart-items">
@@ -445,8 +445,8 @@ $urlPrefix = '/Mekong_CyberUnit';
                         <div style="width: 100px; height: 100px; background: #f1f5f9; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 24px;">
                             <i class="fas fa-shopping-basket" style="font-size: 40px; color: #cbd5e1;"></i>
                         </div>
-                        <h3 style="font-weight: 800; color: var(--pos-text);">Your cart is empty</h3>
-                        <p style="font-size: 14px; color: var(--pos-text-muted); margin-top: 8px;">Select products from the left to start</p>
+                        <h3 style="font-weight: 800; color: var(--pos-text);"><?php echo __('cart_empty'); ?></h3>
+                        <p style="font-size: 14px; color: var(--pos-text-muted); margin-top: 8px;"><?php echo __('select_products'); ?></p>
                     </div>
                  </div>
             </div>
@@ -463,44 +463,44 @@ $urlPrefix = '/Mekong_CyberUnit';
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
                         <div class="pos-form-group" style="margin: 0;">
-                            <label class="pos-form-label" style="font-size: 11px;">Customer</label>
+                            <label class="pos-form-label" style="font-size: 11px;"><?php echo __('customer'); ?></label>
                             <select name="customer_id" id="customer" class="pos-form-control pos-form-select" style="background-color: white; padding: 12px 16px;">
-                                <option value="">Walk-in Customer</option>
+                                <option value=""><?php echo __('walk_in_customer'); ?></option>
                                 <?php foreach ($customers as $customer1): ?>
                                     <option value="<?php echo (int)$customer1['id']; ?>"><?php echo htmlspecialchars($customer1['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="pos-form-group" style="margin: 0;">
-                            <label class="pos-form-label" style="font-size: 11px;">Order Type</label>
+                            <label class="pos-form-label" style="font-size: 11px;"><?php echo __('order_type'); ?></label>
                             <select id="terminal_order_status" class="pos-form-control pos-form-select" style="background-color: white; padding: 12px 16px;">
-                                <option value="completed">Sale</option>
-                                <option value="pending">Hold</option>
+                                <option value="completed"><?php echo __('sale'); ?></option>
+                                <option value="pending"><?php echo __('hold'); ?></option>
                             </select>
                         </div>
                     </div>
 
                     <div class="pos-totals">
                         <div class="total-row">
-                            <span>Subtotal Items</span>
+                            <span><?php echo __('subtotal'); ?></span>
                             <span id="subtotal_pre">$0.00</span>
                         </div>
                         <div class="total-row">
-                            <span>Platform Tax</span>
+                            <span><?php echo __('tax'); ?></span>
                             <span>$0.00</span>
                         </div>
                         <div class="total-row grand">
-                            <span>Grand Total</span>
+                            <span><?php echo __('grand_total'); ?></span>
                             <span id="subtotal">$0.00</span>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 12px;">
-                        <button class="pos-icon-btn" type="button" style="width: 64px; height: 64px; border-radius: 20px; color: var(--pos-danger); border-color: #fee2e2; background: #fef2f2;" onclick="clearCart()" title="Clear Cart">
+                        <button class="pos-icon-btn" type="button" style="width: 64px; height: 64px; border-radius: 20px; color: var(--pos-danger); border-color: #fee2e2; background: #fef2f2;" onclick="clearCart()" title="<?php echo __('cancel'); ?>">
                             <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
                         </button>
                         <button class="btn-pay" type="button" id="btnPay">
-                             Complete Checkout <i class="fas fa-arrow-right"></i>
+                             <?php echo __('complete_checkout'); ?> <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                 </form>
@@ -517,8 +517,8 @@ $urlPrefix = '/Mekong_CyberUnit';
                         <i class="fas fa-receipt"></i>
                     </div>
                     <div>
-                        <h3 style="font-weight: 900; letter-spacing: -0.5px;">Checkout Summary</h3>
-                        <p style="font-weight: 600;">Securely finalize your transaction</p>
+                        <h3 style="font-weight: 900; letter-spacing: -0.5px;"><?php echo __('checkout_summary'); ?></h3>
+                        <p style="font-weight: 600;"><?php echo __('secure_checkout_msg'); ?></p>
                     </div>
                 </div>
                 <button class="pos-modal__close" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
@@ -527,7 +527,7 @@ $urlPrefix = '/Mekong_CyberUnit';
             <div class="pos-modal__body" style="padding: 0 32px 32px;">
                 <div style="background: rgba(255,255,255,0.5); border-radius: 24px; padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; border: 1.5px solid rgba(255,255,255,0.6); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
                     <div>
-                        <div style="font-size: 11px; font-weight: 900; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Total Payable</div>
+                        <div style="font-size: 11px; font-weight: 900; color: var(--pos-text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;"><?php echo __('total_payable'); ?></div>
                         <div id="modal_subtotal" style="font-size: 32px; font-weight: 950; color: var(--pos-text);">$0.00</div>
                     </div>
                     <div style="text-align: right;">
@@ -536,26 +536,26 @@ $urlPrefix = '/Mekong_CyberUnit';
                 </div>
 
                 <div class="pos-form-group">
-                    <label class="pos-form-label" style="font-size: 11px;">Payment Instrument</label>
+                    <label class="pos-form-label" style="font-size: 11px;"><?php echo __('payment_instrument'); ?></label>
                     <div class="payment-method-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px;">
                         <?php if ($settings['pos_method_cash_enabled'] == '1'): ?>
                         <div class="payment-method-item active" data-method="cash" onclick="selectPaymentMethod('cash')" style="padding: 12px; border-radius: 16px;">
                             <i class="fas fa-wallet" style="font-size: 18px;"></i>
-                            <span style="font-size: 12px;">Cash</span>
+                            <span style="font-size: 12px;"><?php echo __('cash'); ?></span>
                         </div>
                         <?php endif; ?>
                         
                         <?php if ($settings['pos_method_khqr_enabled'] == '1'): ?>
                         <div class="payment-method-item" data-method="khqr" onclick="selectPaymentMethod('khqr')" style="padding: 12px; border-radius: 16px;">
                             <i class="fas fa-qrcode" style="font-size: 18px;"></i>
-                            <span style="font-size: 12px;">KHQR</span>
+                            <span style="font-size: 12px;"><?php echo __('khqr'); ?></span>
                         </div>
                         <?php endif; ?>
                         
                         <?php if ($settings['pos_method_card_enabled'] == '1'): ?>
                         <div class="payment-method-item" data-method="card" onclick="selectPaymentMethod('card')" style="padding: 12px; border-radius: 16px;">
                             <i class="fas fa-credit-card" style="font-size: 18px;"></i>
-                            <span style="font-size: 12px;">Card</span>
+                            <span style="font-size: 12px;"><?php echo __('card'); ?></span>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -563,7 +563,7 @@ $urlPrefix = '/Mekong_CyberUnit';
 
                 <div id="cashAmountGroup">
                     <div class="pos-form-group">
-                        <label class="pos-form-label" style="font-size: 11px;">Cash Received</label>
+                        <label class="pos-form-label" style="font-size: 11px;"><?php echo __('cash_received'); ?></label>
                         <div style="position: relative;">
                             <span style="position: absolute; left: 16px; top: 16px; font-weight: 900; color: var(--pos-text-muted); font-size: 18px;">$</span>
                             <input id="modal_cash_given" class="pos-form-control" type="number" step="0.01" min="0" placeholder="0.00" style="padding: 16px 16px 16px 36px; font-size: 20px; font-weight: 900; background: white; border-radius: 16px;">
@@ -571,7 +571,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                     </div>
                     
                     <div id="changeGroup" style="margin-top: 16px; background: #f0fdf4; padding: 16px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #dcfce7;">
-                        <span style="font-weight: 800; color: #166534; font-size: 13px; text-transform: uppercase;">Balance Change</span>
+                        <span style="font-weight: 800; color: #166534; font-size: 13px; text-transform: uppercase;"><?php echo __('balance_change'); ?></span>
                         <span id="modal_change" style="font-size: 24px; font-weight: 950; color: #15803d;">$0.00</span>
                     </div>
                 </div>
@@ -579,21 +579,21 @@ $urlPrefix = '/Mekong_CyberUnit';
                 <div id="khqrGroup" style="display: none; text-align: center; background: white; padding: 24px; border-radius: 20px; border: 1.5px solid var(--pos-border);">
                     <div id="qrcode_container" style="background: white; padding: 12px; border-radius: 16px; border: 1px solid var(--pos-border); display: inline-block;"></div>
                     <div style="margin-top: 20px;">
-                        <div style="font-weight: 900; color: #b91c1c; font-size: 14px; letter-spacing: 1px;">WAITING FOR SCAN</div>
+                        <div style="font-weight: 900; color: #b91c1c; font-size: 14px; letter-spacing: 1px;"><?php echo __('waiting_for_scan'); ?></div>
                     </div>
                 </div>
 
                 <div id="cardGroup" style="display: none; text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1.5px solid var(--pos-border);">
                     <i class="fas fa-terminal" style="font-size: 32px; color: var(--pos-primary); margin-bottom: 16px;"></i>
-                    <p style="font-weight: 800; color: var(--pos-text); font-size: 14px; margin: 0;">Connect External Terminal</p>
+                    <p style="font-weight: 800; color: var(--pos-text); font-size: 14px; margin: 0;"><?php echo __('connect_terminal_msg'); ?></p>
                 </div>
             </div>
 
             <div class="pos-modal__actions" style="padding: 0 32px 32px; background: transparent; border: none; flex-direction: column; gap: 12px;">
                 <button class="btn btn-primary" onclick="confirmPayment()" style="width: 100%; padding: 18px; border-radius: 18px; font-size: 16px; font-weight: 900;">
-                    Complete Payment <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    <?php echo __('complete_payment'); ?> <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
                 </button>
-                <button class="btn btn-outline" onclick="closePaymentModal()" style="width: 100%; padding: 14px; border-radius: 18px; border: none; color: var(--pos-text-muted); font-size: 13px; font-weight: 700;">Discard Checkout</button>
+                <button class="btn btn-outline" onclick="closePaymentModal()" style="width: 100%; padding: 14px; border-radius: 18px; border: none; color: var(--pos-text-muted); font-size: 13px; font-weight: 700;"><?php echo __('discard_checkout'); ?></button>
             </div>
         </div>
     </div>
@@ -602,7 +602,7 @@ $urlPrefix = '/Mekong_CyberUnit';
     <div id="menuOrdersPanel" class="pos-modal-overlay" style="justify-content: flex-end; padding: 0;">
         <div style="width: 100%; max-width: 450px; height: 100%; background: white; animation: slideInRight 0.4s ease; display: flex; flex-direction: column;">
             <div class="pos-modal__header" style="padding: 32px;">
-                <h3 style="font-weight: 900; margin: 0;">Pending Orders</h3>
+                <h3 style="font-weight: 900; margin: 0;"><?php echo __('pending_orders'); ?></h3>
                 <button class="qty-btn" onclick="toggleMenuOrders()"><i class="fas fa-times"></i></button>
             </div>
             
@@ -761,7 +761,7 @@ $urlPrefix = '/Mekong_CyberUnit';
 
                 div.innerHTML = `
                     <div class="pos-prod-card__stock" style="${disabled ? 'color: #ef4444;' : ''}">
-                        ${disabled ? 'OUT OF STOCK' : p.stock + ' IN STOCK'}
+                        ${disabled ? '<?php echo __('out_of_stock'); ?>' : p.stock + ' <?php echo __('in_stock'); ?>'}
                     </div>
                     <div class="pos-prod-card__img">
                         ${p.image && !p.image.includes('no-image.svg') ? `<img src="${p.image}" alt="${escapeHtml(p.name)}">` : `<i class="fas fa-image" style="font-size: 32px; color: #cbd5e1;"></i>`}
@@ -790,7 +790,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                     <div style="height: 100%; display: grid; place-items: center; text-align: center; color: var(--pos-muted);">
                         <div>
                             <i class="fas fa-shopping-cart" style="font-size: 40px; opacity: 0.1; margin-bottom: 16px;"></i>
-                            <p style="font-weight: 700; font-size: 14px;">Cart is empty</p>
+                            <p style="font-weight: 700; font-size: 14px;"><?php echo __('cart_empty'); ?></p>
                         </div>
                     </div>
                 `;
@@ -832,7 +832,7 @@ $urlPrefix = '/Mekong_CyberUnit';
             if (els.subtotalPre) els.subtotalPre.textContent = money(subtotal);
 
             const itemCount = Array.from(cart.values()).reduce((acc, x) => acc + x.qty, 0);
-            if (els.cartCount) els.cartCount.textContent = itemCount + ' Items';
+            if (els.cartCount) els.cartCount.textContent = itemCount + ' <?php echo __('items'); ?>';
 
             syncFormItems();
         }
@@ -847,7 +847,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                 const maxQty = Math.max(0, p.stock);
                 if (qty > maxQty) {
                     if (window.POSUI && window.POSUI.toast) {
-                        window.POSUI.toast({ type: 'warning', title: 'Low Stock', message: 'Only ' + maxQty + ' available.' });
+                        window.POSUI.toast({ type: 'warning', title: '<?php echo __('low_stock'); ?>', message: 'Only ' + maxQty + ' available.' });
                     }
                     qty = maxQty;
                 }
@@ -866,7 +866,7 @@ $urlPrefix = '/Mekong_CyberUnit';
 
         function clearCart() {
             if (cart.size === 0) return;
-            if (confirm('Are you sure you want to clear the cart?')) {
+            if (confirm('<?php echo __('confirm_clear_cart', ['default' => 'Are you sure you want to clear the cart?']); ?>')) {
                 cart.clear();
                 renderCart();
             }
@@ -1070,9 +1070,9 @@ $urlPrefix = '/Mekong_CyberUnit';
                 if (!cart.size) {
                     e.preventDefault();
                     if (window.POSUI && window.POSUI.toast) {
-                        window.POSUI.toast({ type: 'warning', title: 'Cart Empty', message: 'Please add items to your cart before completing the sale.' });
+                        window.POSUI.toast({ type: 'warning', title: '<?php echo __('cart_empty'); ?>', message: '<?php echo __('add_items_msg', ['default' => 'Please add items to your cart before completing the sale.']); ?>' });
                     } else {
-                        alert('Cart is empty.');
+                        alert('<?php echo __('cart_empty'); ?>');
                     }
                 }
             });

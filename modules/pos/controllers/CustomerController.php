@@ -13,8 +13,8 @@ class CustomerController {
             die('POS system not subscribed for your plan');
         }
 
-        if (Tenant::getPosLevel() < 2) {
-             die('Upgrade to POS Standard or Premium to manage customers.');
+        if (!Tenant::hasFeature('pos', 'customers')) {
+            die('Upgrade to POS Standard or Premium to manage customers.');
         }
 
         if (!Auth::hasPermission('pos', 'read')) {

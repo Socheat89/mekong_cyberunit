@@ -101,9 +101,21 @@ class Tenant {
     public static function hasFeature($moduleName, $featureKey) {
         if (!self::$currentTenant) return false;
 
+        $db = Database::getInstance();
+        
+        // 1. Check for Overrides (tenant_features)
+        $override = $db->fetchOne(
+            "SELECT action FROM tenant_features WHERE tenant_id = ? AND module_name = ? AND feature_key = ?",
+            [self::getId(), $moduleName, $featureKey]
+        );
+
+        if ($override) {
+            return $override['action'] === 'grant';
+        }
+
+        // 2. Standard Plan Check
         self::checkExpirations();
 
-        $db = Database::getInstance();
         $count = $db->fetchOne(
             "SELECT COUNT(*) as count FROM tenant_systems ts 
              JOIN system_modules sm ON sm.system_id = ts.system_id

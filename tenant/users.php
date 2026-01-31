@@ -1,6 +1,6 @@
 <?php
 // tenant/users.php
-session_start();
+
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Tenant.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
@@ -14,7 +14,7 @@ AuthMiddleware::handle();
 
 // Check if user has permission to manage users
 if (!Auth::isTenantAdmin()) {
-    header('Location: /Mekong_CyberUnit/tenant/dashboard.php?error=' . urlencode('Access denied'));
+    header('Location: /Mekong_CyberUnit/' . Tenant::getCurrent()['subdomain'] . '/dashboard?error=' . urlencode('Access denied'));
     exit;
 }
 
@@ -342,9 +342,9 @@ $currentUserCount = User::countUsers($tenantId);
                 <i class="fas fa-cube"></i> <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?> Admin
             </div>
             <ul class="nav-links">
-                <li><a href="/Mekong_CyberUnit/tenant/dashboard.php"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/users.php" class="active"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="/Mekong_CyberUnit/tenant/settings.php"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/users" class="active"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/settings"><i class="fas fa-cog"></i> Settings</a></li>
                 <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -356,7 +356,7 @@ $currentUserCount = User::countUsers($tenantId);
                 <h1>User Management</h1>
                 <p>Manage access levels and permissions for your team members</p>
             </div>
-            <a href="/Mekong_CyberUnit/tenant/dashboard.php" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>

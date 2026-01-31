@@ -19,8 +19,12 @@ try {
     require_once $baseDir . '/core/classes/Database.php';
     require_once $baseDir . '/core/classes/Tenant.php';
     require_once $baseDir . '/core/classes/Auth.php';
+    require_once $baseDir . '/core/classes/Language.php';
     require_once $baseDir . '/middleware/AuthMiddleware.php';
     require_once $baseDir . '/middleware/TenantMiddleware.php';
+
+    // Initialize Language
+    Language::init();
 
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
@@ -60,6 +64,14 @@ try {
             
             if ($module === 'dashboard') {
                 include $baseDir . '/tenant/dashboard.php';
+                exit;
+            }
+            if ($module === 'users') {
+                include $baseDir . '/tenant/users.php';
+                exit;
+            }
+            if ($module === 'settings') {
+                include $baseDir . '/tenant/settings.php';
                 exit;
             }
             if ($module === 'logout') {

@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upgrade Required - Mekong CyberUnit</title>
+    <title><?php echo __('upgrade_required_title'); ?> - Mekong CyberUnit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        body, h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea {
+            font-family: 'Battambang', sans-serif !important;
+        }
         .upgrade-bg {
             min-height: calc(100vh - 120px);
             display: flex;
@@ -153,18 +157,18 @@
             
             <div class="plan-badge">
                 <i class="fas fa-shield-halved"></i> 
-                Professional Feature
+                <?php echo __('pro_feature'); ?>
             </div>
 
-            <h2>Level Up Your Business</h2>
-            <p>Customer management is available in our <b>Standard</b> and <b>Premium</b> plans. Upgrade today to start building lasting relationships with your customers!</p>
+            <h2><?php echo __('level_up_business'); ?></h2>
+            <p><?php echo __('customer_management_upgrade_msg'); ?></p>
 
             <div class="upgrade-footer">
                 <a href="/Mekong_CyberUnit/tenant/settings.php?section=subscription" class="btn-upgrade">
-                    <i class="fas fa-rocket"></i> Upgrade to Standard ($50)
+                    <i class="fas fa-rocket"></i> <?php echo __('upgrade_to_standard'); ?>
                 </a>
                 <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" class="btn-secondary">
-                    Maybe Later
+                    <?php echo __('maybe_later'); ?>
                 </a>
             </div>
         </div>

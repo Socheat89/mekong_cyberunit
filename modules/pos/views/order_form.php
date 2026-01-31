@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS - Create Order</title>
+    <title><?php echo __('pos_create_order'); ?></title>
     <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Battambang:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
+        body, h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea {
+            font-family: 'Battambang', 'Inter', 'Segoe UI', sans-serif !important;
+        }
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1038,14 +1040,14 @@
     <?php $activeNav = 'orders'; include __DIR__ . '/partials/navbar.php'; ?>
     <div class="container">
         <div class="header">
-            <h1>Point of Sale</h1>
+            <h1><?php echo __('order_creation'); ?></h1>
             <p><?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></p>
         </div>
 
         <div class="main-content">
             <div class="products-section">
                 <div class="search-box">
-                    <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
+                    <input type="text" id="productSearch" placeholder="<?php echo __('search_products'); ?>" onkeyup="filterProducts()">
                 </div>
 
                 <div class="products-grid" id="productsGrid">
@@ -1054,18 +1056,18 @@
                             <img src="<?php echo $product['image'] ? '/Mekong_CyberUnit/uploads/products/' . htmlspecialchars($product['image']) : '/Mekong_CyberUnit/public/images/no-image.svg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image">
                             <div class="product-name"><?php echo htmlspecialchars($product['name']); ?></div>
                             <div class="product-price">$<?php echo number_format($product['price'], 2); ?></div>
-                            <div class="product-stock">Stock: <?php echo $product['stock_quantity']; ?></div>
+                            <div class="product-stock"><?php echo __('stock'); ?>: <?php echo $product['stock_quantity']; ?></div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
 
             <div class="cart-section">
-                <h2>Shopping Cart</h2>
+                <h2><?php echo __('items_in_cart'); ?></h2>
 
                 <div class="customer-select">
                     <select id="customerSelect" name="customer_id">
-                        <option value="">Walk-in Customer</option>
+                        <option value=""><?php echo __('walk_in_customer'); ?></option>
                         <?php foreach ($customers as $customer): ?>
                             <option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name']); ?></option>
                         <?php endforeach; ?>
@@ -1074,27 +1076,27 @@
 
                 <form id="orderForm" method="POST" action="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/create">
                     <div id="cartItems" class="empty-cart">
-                        No items in cart
+                        <?php echo __('cart_empty_msg'); ?>
                     </div>
 
                     <div class="cart-total" id="cartTotal" style="display: none;">
                         <div class="total-row">
-                            <span>Total:</span>
+                            <span><?php echo __('total'); ?>:</span>
                             <span id="totalAmount">$0.00</span>
                         </div>
                     </div>
 
                     <div class="payment-options" id="paymentOptions" style="display: none;">
-                        <h3>Payment Method</h3>
-                        <label><input type="radio" name="payment_method" value="cash" checked> Cash</label>
-                        <label><input type="radio" name="payment_method" value="qr"> QR Payment</label>
-                        <label><input type="radio" name="payment_method" value="card"> Card</label>
+                        <h3><?php echo __('payment_method'); ?></h3>
+                        <label><input type="radio" name="payment_method" value="cash" checked> <?php echo __('cash'); ?></label>
+                        <label><input type="radio" name="payment_method" value="qr"> <?php echo __('qr_payment', ['default' => 'QR Payment']); ?></label>
+                        <label><input type="radio" name="payment_method" value="card"> <?php echo __('card'); ?></label>
                     </div>
 
                     <input type="hidden" name="order_status" id="orderStatus" value="completed">
 
-                    <button type="submit" class="checkout-btn" id="checkoutBtn" disabled>Complete Order</button>
-                    <button type="button" class="btn" id="saveDraftBtn" disabled>Save as Draft</button>
+                    <button type="submit" class="checkout-btn" id="checkoutBtn" disabled><?php echo __('complete_order'); ?></button>
+                    <button type="button" class="btn" id="saveDraftBtn" disabled><?php echo __('save_as_draft'); ?></button>
                 </form>
             </div>
         </div>
