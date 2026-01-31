@@ -2,13 +2,10 @@
 Options -Indexes
 
 RewriteEngine On
-RewriteBase /Mekong_CyberUnit/
+# RewriteBase /Mekong_CyberUnit/
 
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
-
-# Force root to public/
-RewriteRule ^$ public/ [L,R=301]
 
 # Handle images, CSS, JS directly
 RewriteCond %{REQUEST_FILENAME} -f

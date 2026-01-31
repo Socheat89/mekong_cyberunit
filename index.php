@@ -31,15 +31,24 @@ try {
     // Initialize Language
     Language::init();
 
+    // Dynamic Base Path Detection
+    $scriptName = $_SERVER['SCRIPT_NAME'];
+    $projectFolder = rtrim(dirname($scriptName), '/\\');
+    
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Normalize path: Always strip the project folder name if it's present at the start
-    $projectFolder = '/Mekong_CyberUnit';
-    if (strpos($path, $projectFolder) === 0) {
+    // Normalize path by stripping the project folder
+    if (!empty($projectFolder) && strpos($path, $projectFolder) === 0) {
         $path = substr($path, strlen($projectFolder));
     }
     if (empty($path)) $path = '/';
+
+    // Force hide "/public" or "/public/" from the URL bar
+    if ($path === '/public' || $path === '/public/') {
+        header("Location: " . ($projectFolder ?: "/") . "/", true, 301);
+        exit;
+    }
 
     // 1. Clean URLs Routing Table
     $cleanRoutes = [
@@ -192,7 +201,7 @@ try {
     }
 
     // 3. Root/Home Page
-    if ($path === '/' || $path === '') {
+    if ($path === '/' || $path === '' || $path === '/public' || $path === '/public/') {
         include $baseDir . '/public/index.php';
         exit;
     }

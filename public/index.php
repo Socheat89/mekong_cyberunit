@@ -14,7 +14,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="public/css/landing.css">
     
     <style>
         /* Modal Styles */
@@ -344,7 +344,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
         </div>
     </div>
 
-    <script src="js/khqr-1.0.2.min.js"></script>
+    <script src="public/js/khqr-1.0.2.min.js"></script>
     <!-- Icons (Phosphor Icons for a premium look) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -366,8 +366,8 @@ require_once __DIR__ . '/../core/classes/Database.php';
             </nav>
             
             <div class="flex items-center gap-4">
-                <a href="/Mekong_CyberUnit/login" onclick="openAuthModal()" class="nav-item">Sign In</a>
-                <a href="/Mekong_CyberUnit/register" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
+                <a href="login" onclick="openAuthModal()" class="nav-item">Sign In</a>
+                <a href="register" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
             </div>
         </div>
     </header>
@@ -386,7 +386,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                 Stop juggling multiple disjointed subscriptions. Access POS, Inventory, HR, and Accounting in a single, seamless operating system designed for modern growth.
             </p>
             <div class="btn-group">
-                <a href="/Mekong_CyberUnit/register" class="btn btn-primary">
+                <a href="register" class="btn btn-primary">
                     Start Free Trial <i class="ph-bold ph-arrow-right" style="margin-left: 8px;"></i>
                 </a>
             </div>
@@ -479,7 +479,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                         </li>
                     </ul>
                     
-                    <a href="/Mekong_CyberUnit/register?plan=<?php echo $planCode; ?>" class="btn <?php echo $isPopular ? 'btn-primary' : 'btn-outline'; ?>" style="width: 100%; text-align: center; text-decoration: none; display: block;">
+                    <a href="register?plan=<?php echo $planCode; ?>" class="btn <?php echo $isPopular ? 'btn-primary' : 'btn-outline'; ?>" style="width: 100%; text-align: center; text-decoration: none; display: block;">
                         Choose <?php echo htmlspecialchars($plan['name']); ?>
                     </a>
                 </div>
@@ -502,7 +502,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                 <h2>Ready to transform your business?</h2>
                 <p>Join hundreds of businesses using Mekong CyberUnit to streamline operations.</p>
                 <div class="btn-group">
-                     <a href="/Mekong_CyberUnit/register" class="btn" style="background: white; color: var(--text-main);">
+                     <a href="register" class="btn" style="background: white; color: var(--text-main);">
                         Create Free Account
                     </a>
                     <a href="#" class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
@@ -766,7 +766,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                         `;
                         
                         setTimeout(() => {
-                            window.location.href = `/Mekong_CyberUnit/setup?plan=${currentPlan}&paid=true&ref=${ref}`;
+                            window.location.href = `setup?plan=${currentPlan}&paid=true&ref=${ref}`;
                         }, 2000);
                     } else if (result.success && result.status === 'rejected') {
                         clearInterval(pollingInterval);
@@ -846,7 +846,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                             closeModal();
                             document.getElementById('successModal').classList.add('active');
                             setTimeout(() => {
-                                window.location.href = `/Mekong_CyberUnit/setup?plan=${currentPlan}&paid=true&md5=${md5}`;
+                                window.location.href = `setup?plan=${currentPlan}&paid=true&md5=${md5}`;
                             }, 1000);
                         }, 500);
                     } else if (result.success === false) {

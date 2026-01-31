@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="public/css/landing.css">
     
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
