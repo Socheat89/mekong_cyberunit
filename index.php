@@ -45,9 +45,9 @@ try {
     
     reset_stripping:
     foreach ($unwanted as $prefix) {
-        if (!empty($prefix) && stripos($path, $prefix) === 0) {
-            $path = substr($path, strlen($prefix));
-            goto reset_stripping; // Repeat to catch composite paths like /Mekong_CyberUnit/public
+        if (!empty($prefix) && $prefix !== '/' && stripos($path, $prefix) === 0) {
+            $path = '/' . ltrim(substr($path, strlen($prefix)), '/');
+            goto reset_stripping; 
         }
     }
     if (empty($path)) $path = '/';
