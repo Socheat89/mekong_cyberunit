@@ -31,14 +31,23 @@ try {
     // Initialize Language
     Language::init();
 
-    $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
-    $path = parse_url($requestUri, PHP_URL_PATH);
-
-    // Normalize path: Always strip the project folder name if it's present at the start
-    $projectFolder = '/Mekong_CyberUnit';
-    if (strpos($path, $projectFolder) === 0) {
-        $path = substr($path, strlen($projectFolder));
+    // Dynamic Base Path Detection
+    // This allows the app to run in root, /Mekong_CyberUnit, or any other subfolder
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+    $requestUri = $_SERVER['REQUEST_URI'];
+    
+    // Remove query string
+    if (strpos($requestUri, '?') !== false) {
+        $requestUri = explode('?', $requestUri)[0];
     }
+    
+    // If we are in a subfolder, strip it from the request URI to get the relative path
+    if ($scriptDir !== '/' && strpos($requestUri, $scriptDir) === 0) {
+        $path = substr($requestUri, strlen($scriptDir));
+    } else {
+        $path = $requestUri;
+    }
+
     if (empty($path)) $path = '/';
 
     // 1. Static/Public Routing (Explicit /public or /admin)
