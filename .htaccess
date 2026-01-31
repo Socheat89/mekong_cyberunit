@@ -2,31 +2,20 @@
 # Options -Indexes
 
 RewriteEngine On
-# RewriteBase /Mekong_CyberUnit/
 RewriteBase /
 
 # Security: Block direct access to core system folders
-RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/.*$ - [F,L]
+RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/(.*)$ - [F,L]
 
-# Force root to public/ - DISABLED (Handled by index.php)
-# RewriteCond %{REQUEST_URI} !^/public/
-# RewriteRule ^$ public/ [L]
-
-# Handle PHP files directly
+# Handle PHP files directly - Allow specific access to existing PHP files
 RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule . - [L]
 
-# 1. Check if file exists in public/ and rewrite to it internally
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
-RewriteRule ^(.+)$ public/$1 [L]
-
-# 2. Existing files check (at root)
+# Allow access to existing files and directories (images, css, js)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule . - [L]
 
-# 3. Fallback to index.php
-RewriteRule . index.php [L]
+# Route EVERYTHING else to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
