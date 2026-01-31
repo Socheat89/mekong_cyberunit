@@ -2,7 +2,11 @@
 // middleware/AuthMiddleware.php
 class AuthMiddleware {
     public static function handle($requiredLevel = 1) {
-        $urlPrefix = '/Mekong_CyberUnit';
+        $urlPrefix = '';
+        if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+            $urlPrefix = '/Mekong_CyberUnit';
+        }
+
 
         if (!Auth::check()) {
             header("Location: $urlPrefix/public/login.php");

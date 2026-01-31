@@ -3,7 +3,12 @@
 session_start();
 require_once __DIR__ . '/../core/classes/Database.php';
 
-$urlPrefix = '/Mekong_CyberUnit';
+        // Dynamic URL Prefix
+        $urlPrefix = '';
+        if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+            $urlPrefix = '/Mekong_CyberUnit';
+        }
+
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: login.php");

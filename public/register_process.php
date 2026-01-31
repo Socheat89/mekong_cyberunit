@@ -3,7 +3,11 @@
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
 
-$urlPrefix = '/Mekong_CyberUnit';
+$urlPrefix = '';
+if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+    $urlPrefix = '/Mekong_CyberUnit';
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: register.php');

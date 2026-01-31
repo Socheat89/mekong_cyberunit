@@ -13,7 +13,11 @@ $db = Database::getInstance();
 $tenantId = Tenant::getId();
 $user = Auth::user();
 
-$urlPrefix = '/Mekong_CyberUnit';
+$urlPrefix = '';
+if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+    $urlPrefix = '/Mekong_CyberUnit';
+}
+
 $subdomain = Tenant::getCurrent()['subdomain'];
 
 // Get subscribed systems

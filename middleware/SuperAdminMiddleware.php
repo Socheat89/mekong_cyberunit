@@ -8,7 +8,11 @@ class SuperAdminMiddleware {
             session_start();
         }
 
-        $urlPrefix = '/Mekong_CyberUnit';
+        $urlPrefix = '';
+        if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+            $urlPrefix = '/Mekong_CyberUnit';
+        }
+
 
         if (!Auth::check() || !Auth::isSuperAdmin()) {
             // Store the attempted URL to redirect back after login
