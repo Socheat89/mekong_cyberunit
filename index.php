@@ -44,16 +44,25 @@ try {
     $requestUri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
     $path = parse_url($requestUri, PHP_URL_PATH);
 
-    // Normalize path by stripping the project folder (case-insensitive)
+    // Normalize path by stripping the project folder if it exists at the start
+    // On production, we also want to strip '/Mekong_CyberUnit' if someone types it manually
+    $legacyFolder = '/Mekong_CyberUnit';
+    if (stripos($path, $legacyFolder) === 0) {
+        $path = substr($path, strlen($legacyFolder));
+    }
+    
+    // Also strip the detected project folder if different
     if (!empty($projectFolder) && stripos($path, $projectFolder) === 0) {
         $path = substr($path, strlen($projectFolder));
     }
+
     if (empty($path)) $path = '/';
 
     // Force hide "/public" or "/public/" from the URL bar
-    if ($path === '/public' || $path === '/public/') {
+    if ($path === '/public' || $path === '/public/' || strpos($path, '/public/') === 0) {
+        $cleanPath = str_replace(['/public/', '/public'], ['', ''], $path);
         $target = ($projectFolder ?: "");
-        header("Location: " . ($target ?: "/") . "/", true, 301);
+        header("Location: " . ($target ?: "/") . ($cleanPath ?: "/"), true, 301);
         exit;
     }
 
