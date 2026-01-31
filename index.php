@@ -41,7 +41,7 @@ try {
     }
     if (empty($path)) $path = '/';
 
-    // 1. Static/Public Routing
+    // 1. Static/Public Routing (Explicit /public or /admin)
     if (strpos($path, '/public/') === 0 || strpos($path, '/admin/') === 0) {
         $cleanPath = str_replace('/', DIRECTORY_SEPARATOR, $path);
         $file = $baseDir . $cleanPath;
@@ -49,6 +49,15 @@ try {
             include $file;
             exit;
         }
+    }
+
+    // 1.1 "Hidden" Public Routing (Serve /login.php from /public/login.php)
+    // This allows cleaner URLs without redirecting to /public/
+    $publicPath = $baseDir . '/public' . str_replace('/', DIRECTORY_SEPARATOR, $path);
+    if ($path !== '/' && file_exists($publicPath) && !is_dir($publicPath)) {
+        // Security check: Don't allow accessing PHP files that shouldn't be public if any (though public folder is meant to be public)
+        include $publicPath;
+        exit;
     }
 
     // 2. Tenant Routing (e.g. /socheatcofe/dashboard)
