@@ -5,7 +5,7 @@ RewriteEngine On
 RewriteBase /
 
 # Redirect to public folder
-RewriteRule ^$ Mekong_CyberUnit/public/ [L,R=301]
+RewriteRule ^$ public/ [L,R=301]
 
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/(.*)$ - [F,L]
