@@ -4,8 +4,11 @@
 RewriteEngine On
 RewriteBase /
 
-# Redirect to public folder
-RewriteRule ^$ public/ [L,R=301]
+# 1. Virtual Path: Map /Mekong_CyberUnit/public/... to /public/...
+RewriteRule ^Mekong_CyberUnit/public/(.*)$ public/$1 [L]
+
+# 2. Redirect Root to the Virtual Path (as requested)
+RewriteRule ^$ Mekong_CyberUnit/public/ [L,R=301]
 
 # Security: Block direct access to core system folders
 RewriteRule ^(config|core|middleware|database|logs|vendor|modules)/(.*)$ - [F,L]
