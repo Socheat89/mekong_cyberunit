@@ -727,7 +727,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                      <a href="register.php" class="btn" style="background: white; color: var(--text-main);">
                         Create Free Account
                     </a>
-                    <a href="#" class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                    <a href="https://t.me/SOCHEAT_DOEM" target="_blank" rel="noopener" class="btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
                         Contact Sales
                     </a>
                 </div>
