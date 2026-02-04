@@ -203,6 +203,54 @@ $workspaceDisplayUrl = $workspaceBase . $subdomain;
             background-color: #f00;
             opacity: 0;
         }
+
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .stepper-item {
+            display: flex;
+            gap: 0.6rem;
+            padding: 0.85rem;
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 0.85rem;
+            background: #f8fafc;
+            align-items: center;
+        }
+
+        .stepper-item .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .stepper-item.completed {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .stepper-item.completed .step-number {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .stepper-item small {
+            display: block;
+            color: #64748b;
+            font-size: 0.75rem;
+            margin-top: 0.15rem;
+        }
     </style>
 </head>
 <body>
@@ -213,6 +261,30 @@ $workspaceDisplayUrl = $workspaceBase . $subdomain;
         
         <h1>Workspace is Ready!</h1>
         <p class="subtitle">Congratulations! Your business platform has been provisioned and is ready for use.</p>
+
+        <div class="stepper">
+            <div class="stepper-item completed">
+                <div class="step-number">1</div>
+                <div>
+                    <strong>Payment Verified</strong>
+                    <small>Bakong transfer confirmed</small>
+                </div>
+            </div>
+            <div class="stepper-item completed">
+                <div class="step-number">2</div>
+                <div>
+                    <strong>Workspace Setup</strong>
+                    <small>Business profile locked</small>
+                </div>
+            </div>
+            <div class="stepper-item completed">
+                <div class="step-number">3</div>
+                <div>
+                    <strong>Launch</strong>
+                    <small>Portal ready for login</small>
+                </div>
+            </div>
+        </div>
         
         <div class="workspace-info">
             <span class="info-label">Business Name</span>

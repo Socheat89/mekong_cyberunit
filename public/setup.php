@@ -124,6 +124,65 @@ $workspaceBasePreview = $displayHost . ($setupBase ? '/' . $setupBase : '') . '/
             display: block;
         }
 
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stepper-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 0.85rem;
+            background: #f8fafc;
+            align-items: center;
+        }
+
+        .stepper-item .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .stepper-item.active {
+            border-style: solid;
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .stepper-item.active .step-number {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .stepper-item.completed {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .stepper-item.completed .step-number {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .stepper-item small {
+            display: block;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+
         .badge-success {
             display: inline-flex;
             align-items: center;
@@ -220,6 +279,29 @@ $workspaceBasePreview = $displayHost . ($setupBase ? '/' . $setupBase : '') . '/
         </div>
 
         <form method="POST" action="<?php echo mc_url('public/register_process.php'); ?>" id="setupForm">
+            <div class="stepper">
+                <div class="stepper-item completed">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Payment Verified</strong>
+                        <small>Bakong transfer confirmed</small>
+                    </div>
+                </div>
+                <div class="stepper-item active">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Workspace Setup</strong>
+                        <small>Provide business details</small>
+                    </div>
+                </div>
+                <div class="stepper-item">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Launch Portal</strong>
+                        <small>Auto deploy dashboard</small>
+                    </div>
+                </div>
+            </div>
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label for="business_name"><i class="ph-bold ph-storefront" style="color: var(--primary);"></i> Business Name</label>
