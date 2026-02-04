@@ -9,6 +9,8 @@ function debugLog($msg) {
     @file_put_contents(__DIR__ . '/debug_hits.txt', "[" . date("Y-m-d H:i:s") . "] " . $msg . "\n", FILE_APPEND);
 }
 
+$token = '';
+
 try {
     $content = file_get_contents("php://input");
     if (!$content) exit;
@@ -58,10 +60,26 @@ try {
 
     // Update Message and Answer UI
     $token = '';
-    $configPath = realpath(__DIR__ . '/../../config/telegram.php');
-    if ($configPath && file_exists($configPath)) {
-        $tgConfig = require $configPath;
-        $token = $tgConfig['bot_token'] ?? '';
+    $root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2);
+    $configCandidates = [
+        __DIR__ . '/../../config/telegram.php',
+        dirname(__DIR__, 2) . '/config/telegram.php',
+        $root . '/config/telegram.php',
+        $root . '/Mekong_CyberUnit/config/telegram.php'
+    ];
+
+    foreach ($configCandidates as $path) {
+        if ($path && file_exists($path)) {
+            $tgConfig = require $path;
+            $token = $tgConfig['bot_token'] ?? '';
+            if (!empty($token)) {
+                break;
+            }
+        }
+    }
+
+    if (empty($token)) {
+        throw new Exception('Telegram token missing or config not found');
     }
 
     if (!empty($token)) {
@@ -70,12 +88,22 @@ try {
     }
 
     debugLog("DONE: $ref -> $statusText");
+    echo json_encode(['ok' => true]);
 
 } catch (Exception $e) {
     debugLog("ERROR: " . $e->getMessage());
+    try {
+        if (!empty($token) && !empty($callbackId)) {
+            answerCallback($callbackId, 'Approval failed: ' . $e->getMessage(), $token);
+        }
+    } catch (Throwable $inner) {
+        debugLog('ERROR (callback reply): ' . $inner->getMessage());
+    }
+    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
 }
 
 function answerCallback($id, $text, $token) {
+    if (empty($id) || empty($token)) return;
     $url = "https://api.telegram.org/bot$token/answerCallbackQuery";
     $postData = ['callback_query_id' => $id, 'text' => $text];
     $options = ['http' => ['header' => "Content-type: application/x-www-form-urlencoded\r\n", 'method' => 'POST', 'content' => http_build_query($postData), 'ignore_errors' => true]];
@@ -83,6 +111,7 @@ function answerCallback($id, $text, $token) {
 }
 
 function editMessage($chatId, $messageId, $text, $token) {
+    if (empty($chatId) || empty($messageId) || empty($token)) return;
     $url = "https://api.telegram.org/bot$token/editMessageText";
     $postData = ['chat_id' => $chatId, 'message_id' => $messageId, 'text' => $text, 'parse_mode' => 'HTML'];
     $options = ['http' => ['header' => "Content-type: application/x-www-form-urlencoded\r\n", 'method' => 'POST', 'content' => http_build_query($postData), 'ignore_errors' => true]];
