@@ -4,13 +4,25 @@ $recentOrders = $recentOrders ?? [];
 $salesByMonth = $salesByMonth ?? [];
 $topProducts = $topProducts ?? [];
 $lowStockItems = $lowStockItems ?? [];
+$subscriptionPlans = $subscriptionPlans ?? [];
+$subscriptionExpiringSoon = $subscriptionExpiringSoon ?? false;
 
 $tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
 $tenantName = is_array($tenant) && !empty($tenant['name']) ? $tenant['name'] : 'Tenant';
+$tenantSlug = is_array($tenant) && !empty($tenant['subdomain']) ? $tenant['subdomain'] : '';
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
 $isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$urlPrefix = '/Mekong_CyberUnit';
+$urlPrefix = '';
+if ($host === 'localhost' || strpos($host, '127.0.0.1') !== false) {
+    $urlPrefix = '/Mekong_CyberUnit';
+}
+
+$subscriptionManageUrl = $tenantSlug
+    ? $urlPrefix . '/' . $tenantSlug . '/settings'
+    : $urlPrefix . '/tenant/settings.php';
+$subscriptionManageUrl .= (strpos($subscriptionManageUrl, '?') === false ? '?' : '&') . 'section=subscription';
+$subscriptionPricingUrl = $urlPrefix . '/public/pricing.php';
 
 $fmtMoney = function($value): string {
     return '$' . number_format((float)$value, 2);
@@ -77,6 +89,24 @@ foreach ($labels as $ym) {
         .leaderboard-item { display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 20px; background: #f8fafc; border: 1.5px solid var(--pos-border); transition: all 0.2s; }
         .leaderboard-item:hover { background: white; border-color: var(--pos-primary); transform: translateX(8px); }
         .rank-number { width: 40px; height: 40px; border-radius: 12px; background: white; border: 1px solid var(--pos-border); display: grid; place-items: center; font-weight: 900; color: var(--pos-primary); font-size: 15px; box-shadow: var(--pos-shadow-sm); }
+        .subscription-card .subscription-helper { color: var(--pos-text-muted); font-size: 13px; margin-top: 6px; font-weight: 600; }
+        .subscription-card .subscription-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .subscription-list { display: flex; flex-direction: column; gap: 18px; margin-bottom: 16px; }
+        .subscription-plan { border: 1.5px solid var(--pos-border); border-radius: 22px; padding: 20px; background: #f8fafc; transition: all 0.2s ease; }
+        .subscription-plan:hover { border-color: var(--pos-primary); background: #fff; box-shadow: var(--pos-shadow-sm); }
+        .subscription-plan .plan-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .plan-name { font-weight: 850; font-size: 16px; margin: 0; color: var(--pos-text); }
+        .plan-meta { font-size: 12px; color: var(--pos-text-muted); font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .plan-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .plan-stats .stat { background: #fff; border: 1px dashed var(--pos-border); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+        .plan-stats .stat span { font-size: 11px; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; }
+        .plan-stats .stat strong { font-size: 18px; font-weight: 900; color: var(--pos-text); }
+        .subscription-empty { border: 1.5px dashed var(--pos-border); border-radius: 20px; padding: 32px 20px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+        .subscription-empty i { font-size: 36px; color: var(--pos-border); }
+        .subscription-empty p { margin: 0; }
+        .subscription-empty-hint { font-size: 13px; color: var(--pos-text-muted); font-weight: 600; }
+        .subscription-cta { padding: 12px 28px; font-size: 13px; font-weight: 800; border-radius: 999px; }
+        .subscription-manage-btn { width: 100%; justify-content: center; border-radius: 18px; font-weight: 800; padding: 14px 24px; }
     </style>
 </head>
 <body class="pos-app">
@@ -175,6 +205,89 @@ foreach ($labels as $ym) {
 
             <!-- Intelligence Hub -->
             <div style="display: grid; gap: 32px; align-content: start;">
+                <!-- Subscription Intelligence -->
+                <div class="pos-card pad subscription-card">
+                    <div class="subscription-header">
+                        <div>
+                            <h3 class="pos-card-title" style="margin-bottom: 4px;"><?php echo __('subscription_overview'); ?></h3>
+                            <p class="subscription-helper"><?php echo __('subscription_helper_text'); ?></p>
+                        </div>
+                        <?php if ($subscriptionExpiringSoon): ?>
+                            <span class="badge badge-warning" style="font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">
+                                <?php echo __('expiring_soon'); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php if (empty($subscriptionPlans)): ?>
+                        <div class="subscription-empty">
+                            <i class="fas fa-bell-slash"></i>
+                            <p style="font-weight: 800; color: var(--pos-text);"><?php echo __('no_subscriptions'); ?></p>
+                            <p class="subscription-empty-hint"><?php echo __('subscription_empty_hint'); ?></p>
+                            <a href="<?php echo htmlspecialchars($subscriptionPricingUrl); ?>" class="btn btn-primary subscription-cta">
+                                <i class="fas fa-rocket"></i> <?php echo __('subscribe_now'); ?>
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="subscription-list">
+                            <?php foreach ($subscriptionPlans as $plan): 
+                                $statusKey = strtolower($plan['status'] ?? 'inactive');
+                                $badgeClass = 'badge';
+                                if ($statusKey === 'active') {
+                                    $badgeClass .= ' badge-success';
+                                } elseif ($statusKey === 'expired') {
+                                    $badgeClass .= ' badge-danger';
+                                } else {
+                                    $badgeClass .= ' badge-warning';
+                                }
+
+                                $expiresLabel = __('no_expiration');
+                                if (!empty($plan['expires_at'])) {
+                                    $dt = DateTime::createFromFormat('Y-m-d H:i:s', $plan['expires_at']);
+                                    if (!$dt) {
+                                        $dt = date_create($plan['expires_at']);
+                                    }
+                                    if ($dt) {
+                                        $expiresLabel = $dt->format('M d, Y');
+                                    }
+                                }
+
+                                $daysRemaining = $plan['days_remaining'];
+                                $isExpired = !empty($plan['is_expired']);
+                            ?>
+                                <div class="subscription-plan">
+                                    <div class="plan-row">
+                                        <div>
+                                            <p class="plan-name"><?php echo htmlspecialchars($plan['system_name'] ?? $plan['name'] ?? ''); ?></p>
+                                            <span class="plan-meta"><?php echo __('status'); ?> · <?php echo __($statusKey); ?></span>
+                                        </div>
+                                        <span class="<?php echo $badgeClass; ?>"><?php echo __($statusKey); ?></span>
+                                    </div>
+                                    <div class="plan-stats">
+                                        <div class="stat">
+                                            <span><?php echo __('expires_on'); ?></span>
+                                            <strong><?php echo htmlspecialchars($expiresLabel); ?></strong>
+                                        </div>
+                                        <div class="stat">
+                                            <span><?php echo __('days_remaining'); ?></span>
+                                            <?php if ($daysRemaining === null): ?>
+                                                <strong>—</strong>
+                                            <?php elseif ($isExpired): ?>
+                                                <strong style="color: var(--pos-danger);"><?php echo __('expired'); ?></strong>
+                                            <?php else: ?>
+                                                <strong><?php echo (int) $daysRemaining; ?></strong>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <a href="<?php echo htmlspecialchars($subscriptionManageUrl); ?>" class="btn btn-outline subscription-manage-btn">
+                            <i class="fas fa-credit-card"></i> <?php echo __('manage_subscription'); ?>
+                        </a>
+                    <?php endif; ?>
+                </div>
+
                 <!-- Inventory Intelligence -->
                 <div class="pos-card pad">
                     <h3 class="pos-card-title" style="margin-bottom: 24px;"><?php echo __('intelligence_alerts'); ?></h3>

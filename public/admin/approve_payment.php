@@ -3,6 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require_once __DIR__ . '/../../core/classes/Database.php';
+
 $ref = $_GET['ref'] ?? '';
 $action = $_GET['action'] ?? 'approve'; // Default to approve for backward compatibility
 
@@ -51,6 +53,12 @@ $transactions[$ref]['status'] = $status;
 $transactions[$ref]['processed_at'] = time();
 
 if (file_put_contents($logFile, json_encode($transactions, JSON_PRETTY_PRINT))) {
+    try {
+        $db = Database::getInstance();
+        $db->update('payment_approvals', ['status' => strtolower($status)], 'reference_id = ?', [$ref]);
+    } catch (Exception $e) {
+        // Silently ignore DB sync issues to keep manual approvals responsive
+    }
     // Show success page
     $color = ($action === 'reject') ? '#dc2626' : '#16a34a';
     $bg = ($action === 'reject') ? '#fef2f2' : '#f0fdf4';

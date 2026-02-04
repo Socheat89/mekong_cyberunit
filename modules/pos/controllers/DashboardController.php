@@ -87,6 +87,50 @@ class DashboardController {
             [$tenantId]
         );
 
+        // Subscription intelligence
+        $subscriptionRows = $db->fetchAll(
+            "SELECT s.name AS system_name, ts.status, ts.subscribed_at, ts.expires_at
+             FROM tenant_systems ts
+             INNER JOIN systems s ON ts.system_id = s.id
+             WHERE ts.tenant_id = ?
+             ORDER BY (ts.status = 'active') DESC, ts.expires_at IS NULL DESC, ts.expires_at ASC, s.name ASC",
+            [$tenantId]
+        );
+
+        $subscriptionPlans = [];
+        $subscriptionExpiringSoon = false;
+        $now = new DateTimeImmutable('now');
+
+        foreach ($subscriptionRows as $row) {
+            $plan = $row;
+            $plan['days_remaining'] = null;
+            $plan['is_expired'] = false;
+
+            $expiresAt = null;
+            if (!empty($plan['expires_at'])) {
+                try {
+                    $expiresAt = new DateTimeImmutable($plan['expires_at']);
+                } catch (Exception $e) {
+                    $expiresAt = null;
+                }
+            }
+
+            if ($expiresAt instanceof DateTimeImmutable) {
+                $plan['days_remaining'] = (int) floor(($expiresAt->getTimestamp() - $now->getTimestamp()) / 86400);
+                if ($plan['days_remaining'] < 0) {
+                    $plan['is_expired'] = true;
+                } elseif ($plan['days_remaining'] <= 7) {
+                    $subscriptionExpiringSoon = true;
+                }
+            }
+
+            if ((string) ($plan['status'] ?? '') === 'expired') {
+                $plan['is_expired'] = true;
+            }
+
+            $subscriptionPlans[] = $plan;
+        }
+
         include __DIR__ . '/../views/dashboard.php';
     }
 }

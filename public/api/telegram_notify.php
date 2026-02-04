@@ -33,6 +33,20 @@ $tgConfig = require $configPath;
 
 $TELEGRAM_BOT_TOKEN = $tgConfig['bot_token'] ?? '';
 $TELEGRAM_CHAT_ID = $tgConfig['chat_id'] ?? '';
+$approvalEndpointBase = $tgConfig['approval_url'] ?? '';
+
+if (empty($approvalEndpointBase)) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+    $publicBase = preg_replace('#/api$#', '', rtrim($scriptDir, '/'));
+    $approvalEndpointBase = $scheme . '://' . $host . $publicBase . '/admin/approve_payment.php';
+}
+
+$approvalEndpointBase = rtrim($approvalEndpointBase, '/');
+if (!str_ends_with($approvalEndpointBase, '.php')) {
+    $approvalEndpointBase .= '/approve_payment.php';
+}
 // ---------------------
 
 // Determine log path robustly
@@ -79,6 +93,15 @@ if (empty($md5)) {
     exit;
 }
 
+$buildApprovalLink = function(string $action) use ($approvalEndpointBase, $md5) {
+    $query = http_build_query(['ref' => $md5, 'action' => $action]);
+    $separator = str_contains($approvalEndpointBase, '?') ? '&' : '?';
+    return $approvalEndpointBase . $separator . $query;
+};
+
+$approveLink = $buildApprovalLink('approve');
+$rejectLink = $buildApprovalLink('reject');
+
 // 2. Save Transaction as PENDING (Main Log)
 require_once __DIR__ . '/TransactionLogger.php';
 
@@ -123,14 +146,14 @@ $message .= "<b>📦 Plan:</b> " . htmlspecialchars(ucfirst($plan)) . "\n";
 $message .= "<b>💳 Method:</b> " . htmlspecialchars(ucfirst($method)) . "\n";
 $message .= "<b>🔑 Ref:</b> <code>" . htmlspecialchars($md5) . "</code>\n";
 $message .= "<b>⏰ Time:</b> " . date('Y-m-d H:i:s') . "\n\n";
-$message .= "Please verify and approve this transaction.";
+$message .= "Please verify and approve this transaction. Use the buttons below if inline actions are unavailable.";
 
-// FORCE DIRECT ACTIONS (CALLBACK)
+// Direct approval links ensure admins can act without Telegram callback webhooks
 $keyboard = [
     'inline_keyboard' => [
         [
-            ['text' => '✅ Approve', 'callback_data' => "approve::$md5"],
-            ['text' => '❌ Reject', 'callback_data' => "reject::$md5"]
+            ['text' => '✅ Approve Payment', 'url' => $approveLink],
+            ['text' => '❌ Reject Payment', 'url' => $rejectLink]
         ]
     ]
 ];
