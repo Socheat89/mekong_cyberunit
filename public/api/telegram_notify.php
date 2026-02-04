@@ -33,6 +33,14 @@ $tgConfig = require $configPath;
 
 $TELEGRAM_BOT_TOKEN = $tgConfig['bot_token'] ?? '';
 $TELEGRAM_CHAT_ID = $tgConfig['chat_id'] ?? '';
+$callbackUrl = $tgConfig['callback_url'] ?? '';
+
+if (empty($callbackUrl)) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/public/api/telegram_notify.php'));
+    $callbackUrl = $scheme . '://' . $host . rtrim($scriptDir, '/') . '/telegram_callback.php';
+}
 // ---------------------
 
 // Determine log path robustly
@@ -114,6 +122,10 @@ if ($TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE' || empty($TELEGRAM_BOT_TOKEN))
     exit;
 }
 
+if (stripos($callbackUrl, 'https://') === 0) {
+    ensureWebhookRegistered($TELEGRAM_BOT_TOKEN, $callbackUrl);
+}
+
 $title = ($type === 'renewal') ? "🔄 Subscription Renewal Request" : "🔔 New Registration Payment";
 
 $message = "<b>$title</b>\n\n";
@@ -135,37 +147,51 @@ $keyboard = [
     ]
 ];
 
-$url = "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage";
-$postData = [
+$response = telegramApiRequest($TELEGRAM_BOT_TOKEN, 'sendMessage', [
     'chat_id' => $TELEGRAM_CHAT_ID,
     'text' => $message,
     'parse_mode' => 'HTML',
     'reply_markup' => json_encode($keyboard)
-];
+]);
 
-// Send using file_get_contents (simple POST)
-$options = [
-    'http' => [
-        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-        'method'  => 'POST',
-        'content' => http_build_query($postData),
-        'ignore_errors' => true 
-    ]
-];
-$context  = stream_context_create($options);
-$result = file_get_contents($url, false, $context);
-
-if ($result === FALSE) {
-    $error = error_get_last();
-    $errorMsg = $error['message'] ?? 'Unknown socket error';
-    echo json_encode(['success' => false, 'error' => "Telegram Send Failed: $errorMsg"]);
+if (isset($response['ok']) && $response['ok']) {
+    echo json_encode(['success' => true, 'status' => 'WAITING_APPROVAL']);
 } else {
-    $response = json_decode($result, true);
-    if (isset($response['ok']) && $response['ok']) {
-        echo json_encode(['success' => true, 'status' => 'WAITING_APPROVAL']);
-    } else {
-        $apiErr = $response['description'] ?? 'Unknown API error';
-        echo json_encode(['success' => false, 'error' => "Telegram API Error: $apiErr"]);
+    $apiErr = $response['description'] ?? ($response['error'] ?? 'Unknown API error');
+    echo json_encode(['success' => false, 'error' => "Telegram API Error: $apiErr"]);
+}
+
+function telegramApiRequest(string $token, string $method, array $params = []): array {
+    $url = "https://api.telegram.org/bot$token/$method";
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($params),
+            'ignore_errors' => true
+        ]
+    ];
+    $response = @file_get_contents($url, false, stream_context_create($options));
+    if ($response === false) {
+        $error = error_get_last();
+        return ['ok' => false, 'error' => $error['message'] ?? 'Network error'];
     }
+    return json_decode($response, true) ?: ['ok' => false, 'error' => 'Invalid JSON response'];
+}
+
+function ensureWebhookRegistered(string $token, string $expectedUrl): void {
+    static $checked = false;
+    if ($checked || empty($token) || empty($expectedUrl)) {
+        return;
+    }
+
+    $checked = true;
+    $info = telegramApiRequest($token, 'getWebhookInfo');
+    $currentUrl = $info['result']['url'] ?? '';
+    if (!empty($currentUrl) && rtrim($currentUrl, '/') === rtrim($expectedUrl, '/')) {
+        return;
+    }
+
+    telegramApiRequest($token, 'setWebhook', ['url' => $expectedUrl]);
 }
 ?>
