@@ -19,7 +19,7 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo __('pos_receipt_title'); ?> <?php echo $order['id']; ?></title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Battambang', 'Courier New', monospace; margin: 0; padding: 0; background: #f8f9fa; }

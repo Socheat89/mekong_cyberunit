@@ -8,7 +8,7 @@ $pageTitle = 'POS Settings';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POS Settings - <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></title>
-    <link href="/Mekong_CyberUnit/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
+    <link href="/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Modernized Styles for Premium POS Settings */
