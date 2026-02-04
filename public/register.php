@@ -668,6 +668,7 @@
         const bonusMonths = document.getElementById('bonus_months');
         const totalPriceDisplay = document.getElementById('total_price_display');
         let currentMd5 = null;
+        const basePublicUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
 
         // Plan Selection
         window.selectPlan = function(planId, price, planCode) {
@@ -760,10 +761,9 @@
             paymentModal.classList.add('active');
 
             try {
-                const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                console.log('Fetching QR from:', baseUrl + 'api/final_qr.php');
+                console.log('Fetching QR from:', basePublicUrl + 'api/final_qr.php');
                 
-                const response = await fetch(`${baseUrl}api/final_qr.php?plan=${selectedPlan}&method=${selectedMethod}&amount=${totalPrice}&t=${Date.now()}`);
+                const response = await fetch(`${basePublicUrl}api/final_qr.php?plan=${selectedPlan}&method=${selectedMethod}&amount=${totalPrice}&t=${Date.now()}`);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -809,9 +809,7 @@
             confirmBtn.disabled = true;
 
             try {
-                const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                
-                const response = await fetch(`${baseUrl}api/telegram_notify.php`, {
+                const response = await fetch(`${basePublicUrl}api/telegram_notify.php`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -881,8 +879,7 @@
             
             pollingInterval = setInterval(async () => {
                 try {
-                    const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-                    const response = await fetch(`${baseUrl}api/check_approval.php?md5=${md5}&t=${Date.now()}`);
+                    const response = await fetch(`${basePublicUrl}api/check_approval.php?md5=${md5}&t=${Date.now()}`);
                     const result = await response.json();
 
                     // Debug Status for dev
@@ -905,7 +902,7 @@
                         `;
                         
                         setTimeout(() => {
-                            window.location.href = `/Mekong_CyberUnit/public/setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
+                            window.location.href = `${basePublicUrl}setup.php?plan=${selectedPlan}&paid=true&ref=${md5}`;
                         }, 2000);
                         return;
                     }
