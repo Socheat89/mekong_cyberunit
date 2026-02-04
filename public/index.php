@@ -12,6 +12,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/landing.css">
@@ -247,6 +248,157 @@ require_once __DIR__ . '/../core/classes/Database.php';
             display: none;
             border: 1px solid #fecaca;
         }
+
+        /* About Section */
+        .about-section {
+            background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.35), transparent 55%),
+                        radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.25), transparent 45%),
+                        #020617;
+            color: #e2e8f0;
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-section::after {
+            content: '';
+            position: absolute;
+            inset: 20% auto auto -60px;
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+            filter: blur(0);
+            transform: rotate(25deg);
+            border-radius: 30px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            opacity: 0.6;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-intro h2 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin: 1rem 0 1.5rem;
+            color: #f8fafc;
+        }
+
+        .about-intro p {
+            color: #cbd5f5;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.15);
+            color: #93c5fd;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .about-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .about-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            color: #cbd5f5;
+        }
+
+        .about-profile {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 40px 60px -35px rgba(15, 23, 42, 0.9);
+        }
+
+        .profile-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 1.25rem;
+        }
+
+        .profile-meta span:last-child {
+            color: #67e8f9;
+        }
+
+        .profile-name {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.5rem;
+            color: #e2e8f0;
+        }
+
+        .profile-role {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .profile-bio {
+            color: #cbd5f5;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(120px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .stat-card {
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #f4faff;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .signature {
+            margin-top: 2rem;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1rem;
+            color: #cbd5f5;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
     </style>
     
     <!-- Payment Success Modal -->
@@ -361,6 +513,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
             </a>
             
             <nav class="nav-links">
+                <a href="#about" class="nav-item">About Me</a>
                 <a href="#features" class="nav-item">Features</a>
                 <a href="#pricing" class="nav-item">Pricing</a>
             </nav>
@@ -415,6 +568,75 @@ require_once __DIR__ . '/../core/classes/Database.php';
                                  </div>
                              </div>
                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-intro">
+                    <span class="about-pill">
+                        <i class="ph-bold ph-user-focus"></i>
+                        Meet the Builder
+                    </span>
+                    <h2>Human-centered systems for Cambodian operators</h2>
+                    <p>
+                        I design Mekong CyberUnit the way I run my own businesses: fast iterations, transparent pricing,
+                        and obsessive care for local workflows. Every release blends field interviews with rapid prototyping,
+                        so features feel like a teammate instead of another SaaS chore.
+                    </p>
+                    <ul class="about-list">
+                        <li>
+                            <i class="ph-bold ph-lightning"></i>
+                            Built the first unified POS, HR, and inventory stack tailored for Khmer + English crews.
+                        </li>
+                        <li>
+                            <i class="ph-bold ph-flask"></i>
+                            Ship weekly experiments to keep menus, tax rules, and subscription rails effortless.
+                        </li>
+                        <li>
+                            <i class="ph-bold ph-handshake"></i>
+                            Partner with cafés, clinics, and franchise brands to co-create playbooks that scale.
+                        </li>
+                    </ul>
+                    <div class="signature">
+                        <strong>— The Mekong CyberUnit maker</strong>
+                        <span>Product, engineering, and customer success in one desk.</span>
+                    </div>
+                </div>
+                <div class="about-profile">
+                    <div class="profile-meta">
+                        <span>Independent Founder</span>
+                        <span>Est. 2020</span>
+                    </div>
+                    <h3 class="profile-name">Your operator-in-residence</h3>
+                    <div class="profile-role">Builder · Systems Thinker · Customer Partner</div>
+                    <p class="profile-bio">
+                        I grew up between restaurant back offices and dusty warehouses, so I obsess over practical UX:
+                        offline-friendly flows, bilingual interfaces, and automations your team trusts after one shift.
+                        If something feels clunky, ping me—I'm the one answering support chats too.
+                    </p>
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <span class="stat-value">120+</span>
+                            <span class="stat-label">SMEs onboarded</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">9.4/10</span>
+                            <span class="stat-label">Support CSAT</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">3</span>
+                            <span class="stat-label">Languages shipped</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">24 hr</span>
+                            <span class="stat-label">Average rollout</span>
+                        </div>
                     </div>
                 </div>
             </div>
