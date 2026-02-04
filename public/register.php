@@ -173,6 +173,67 @@
             color: var(--primary);
             font-weight: 600;
         }
+
+        /* Stepper */
+        .stepper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stepper-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 0.85rem;
+            background: #f8fafc;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .stepper-item .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .stepper-item.active {
+            border-style: solid;
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .stepper-item.active .step-number {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .stepper-item.completed {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .stepper-item.completed .step-number {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .stepper-item small {
+            display: block;
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
         
         @media (max-width: 640px) {
             .form-grid { grid-template-columns: 1fr; }
@@ -451,6 +512,29 @@
         <?php endif; ?>
 
         <form method="POST" action="register_process.php" id="registerForm">
+            <div class="stepper" id="register_stepper">
+                <div class="stepper-item active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Choose Plan</strong>
+                        <small>Pick the stack that fits your team</small>
+                    </div>
+                </div>
+                <div class="stepper-item" data-step="2">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>Duration & Payment</strong>
+                        <small>Lock months and method</small>
+                    </div>
+                </div>
+                <div class="stepper-item" data-step="3">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Scan & Launch</strong>
+                        <small>Pay via Bakong, auto setup</small>
+                    </div>
+                </div>
+            </div>
             <!-- Plan Selection (Visible First) -->
             <div class="system-selection" id="plan_section">
                 <h3>1. Select Plan to Pay</h3>
@@ -467,7 +551,7 @@
                     <label class="checkbox-card" onclick="selectPlan(<?php echo $plan['id']; ?>, <?php echo $plan['price']; ?>, '<?php echo $planCode; ?>')" style="flex-direction: column; align-items: flex-start; gap: 10px;">
                         <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <input type="radio" name="plan_select" value="<?php echo $plan['id']; ?>" class="plan-radio">
+                                <input type="radio" name="plan_select" value="<?php echo $plan['id']; ?>" class="plan-radio" data-plan-code="<?php echo $planCode; ?>" data-plan-price="<?php echo number_format($plan['price'], 2, '.', ''); ?>">
                                 <span><?php echo htmlspecialchars($plan['name']); ?></span>
                             </div>
                             <div class="checkbox-price" style="margin: 0;">$<?php echo number_format($plan['price'], 2); ?>/mo</div>
@@ -654,6 +738,7 @@
         const paymentMethodSection = document.getElementById('payment_method_section');
         const payBtnText = document.getElementById('pay_btn_text');
         const paymentCta = document.getElementById('payment_cta');
+        const stepperItems = document.querySelectorAll('.stepper-item');
         
         let selectedPlan = null;
         let selectedPrice = 0;
@@ -669,6 +754,20 @@
         const totalPriceDisplay = document.getElementById('total_price_display');
         let currentMd5 = null;
         const basePublicUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+
+        function updateStepper(activeStep) {
+            if (!stepperItems.length) return;
+            stepperItems.forEach(item => {
+                const step = parseInt(item.dataset.step, 10);
+                const isActive = step === activeStep;
+                const isCompleted = step < activeStep;
+                item.classList.toggle('active', isActive);
+                item.classList.toggle('completed', isCompleted);
+                if (!isActive && !isCompleted) {
+                    item.classList.remove('active');
+                }
+            });
+        }
 
         // Plan Selection
         window.selectPlan = function(planId, price, planCode) {
@@ -688,6 +787,7 @@
             durationSection.style.display = 'block';
             paymentMethodSection.style.display = 'block';
             paymentCta.style.display = 'flex';
+            updateStepper(2);
             
             updateTotalPrice();
         };
@@ -732,6 +832,7 @@
 
         window.showModal = async function() {
             if (!selectedPlan) return;
+            updateStepper(3);
             document.getElementById('modalAmount').textContent = '$' + totalPrice.toFixed(2);
             
             // Branding
@@ -928,11 +1029,30 @@
         window.closeModal = function() {
             paymentModal.classList.remove('active');
             if (pollingInterval) clearInterval(pollingInterval);
+            if (selectedPlan) {
+                updateStepper(2);
+            }
         };
 
         // Initialize
         function init() {
             const urlParams = new URLSearchParams(window.location.search);
+            updateStepper(1);
+
+            const planParam = urlParams.get('plan');
+            if (planParam) {
+                const normalized = planParam.toLowerCase();
+                const targetRadio = document.querySelector(`.plan-radio[data-plan-code="${normalized}"]`);
+                if (targetRadio) {
+                    const planId = parseInt(targetRadio.value, 10);
+                    const planPrice = parseFloat(targetRadio.dataset.planPrice);
+                    const planCode = targetRadio.dataset.planCode;
+                    selectPlan(planId, planPrice, planCode);
+                    setTimeout(() => {
+                        durationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 300);
+                }
+            }
         }
         
         init();
