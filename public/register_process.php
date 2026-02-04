@@ -2,11 +2,9 @@
 // public/register_process.php
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 
-$urlPrefix = '';
-if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
-    $urlPrefix = '/Mekong_CyberUnit';
-}
+$urlPrefix = mc_base_path();
 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

@@ -1,6 +1,7 @@
 <?php
 // modules/pos/views/receipt.php
 require_once __DIR__ . '/../../../core/classes/Settings.php';
+require_once __DIR__ . '/../../../core/helpers/url.php';
 
 // Get receipt settings
 $receiptSettings = Settings::getAll();
@@ -10,6 +11,9 @@ $headerText = $receiptSettings['receipt_header_text'] ?? 'Point of Sale Receipt'
 $footerText = $receiptSettings['receipt_footer_text'] ?? 'Thank you for your business!';
 $fontSize = (int) ($receiptSettings['receipt_font_size'] ?? 12);
 $paperWidth = (int) ($receiptSettings['receipt_paper_width'] ?? 400);
+
+$currentTenant = Tenant::getCurrent();
+$subdomain = $currentTenant['subdomain'] ?? '';
 
 $autoPrint = (($_GET['autoprint'] ?? '') === '1');
 ?>
@@ -70,11 +74,11 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
                          style="max-width: 150px; max-height: 80px; object-fit: contain;" 
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
                     <div style="display: none; font-size: <?php echo $fontSize + 4; ?>px; font-weight: bold;">
-                        <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?>
+                        <?php echo htmlspecialchars($currentTenant['name'] ?? ''); ?>
                     </div>
                 </div>
             <?php endif; ?>
-            <h1><?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></h1>
+            <h1><?php echo htmlspecialchars($currentTenant['name'] ?? ''); ?></h1>
             <p><?php echo htmlspecialchars($headerText); ?></p>
             <p><?php echo __('receipt_order_label'); ?><?php echo $order['id']; ?></p>
         </div>
@@ -189,7 +193,7 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
         <a href="javascript:window.print()" class="btn" style="background: var(--pos-gradient-primary); border: none; font-weight: 800; padding: 14px 28px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);">
             <i class="fas fa-print"></i> <?php echo __('print_receipt'); ?>
         </a>
-        <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos" class="btn" style="background: #f8fafc; color: var(--pos-text); border: 1.5px solid var(--pos-border); font-weight: 700; padding: 14px 28px; border-radius: 12px;">
+        <a href="<?php echo mc_url($subdomain . '/pos/pos'); ?>" class="btn" style="background: #f8fafc; color: var(--pos-text); border: 1.5px solid var(--pos-border); font-weight: 700; padding: 14px 28px; border-radius: 12px;">
             <i class="fas fa-arrow-left"></i> <?php echo __('back_to_terminal'); ?>
         </a>
     </div>
@@ -198,7 +202,7 @@ $autoPrint = (($_GET['autoprint'] ?? '') === '1');
         window.onafterprint = function() {
             // Redirect back to POS terminal after printing or canceling the dialog
             setTimeout(function() {
-                window.location.href = "/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/pos";
+                window.location.href = "<?php echo mc_url($subdomain . '/pos/pos'); ?>";
             }, 500);
         };
 

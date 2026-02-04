@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../../core/classes/Settings.php';
 require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Product.php';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
 
 class MenuController {
     public function index() {
@@ -49,8 +50,7 @@ class MenuController {
         $host = $_SERVER['HTTP_HOST'];
         
         // Base project URL
-        $projectPath = '/Mekong_CyberUnit';
-        $menuUrl = "$protocol://$host$projectPath/$tenantSlug/pos/menu";
+        $menuUrl = $protocol . '://' . $host . mc_url($tenantSlug . '/pos/menu');
 
         include __DIR__ . '/../views/menu_admin.php';
     }

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/helpers/url.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -497,7 +498,7 @@
                         <div class="product-card" data-name="<?php echo htmlspecialchars(strtolower($product['name'])); ?>">
                             <div class="product-image-wrapper">
                                 <?php if (!empty($product['image'])): ?>
-                                    <img src="/Mekong_CyberUnit/uploads/products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image">
+                                    <img src="<?php echo htmlspecialchars(mc_url('uploads/products/' . $product['image'])); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image">
                                 <?php else: ?>
                                     <div class="no-image-placeholder">
                                         <i class="fas fa-utensils"></i>
@@ -517,7 +518,7 @@
                                             'id' => $product['id'],
                                             'name' => $product['name'],
                                             'price' => (float)$product['price'],
-                                            'image' => $product['image'] ? '/Mekong_CyberUnit/uploads/products/' . $product['image'] : null
+                                            'image' => $product['image'] ? mc_url('uploads/products/' . $product['image']) : null
                                         ])); ?>)">
                                             <i class="fas fa-plus"></i>
                                         </button>
@@ -703,7 +704,7 @@
         btn.innerText = '<?php echo __('submitting'); ?>';
 
         try {
-            const response = await fetch('<?php echo $protocol . "://" . $host . "/Mekong_CyberUnit/" . $tenant["subdomain"] . "/pos/menu/place_order"; ?>', {
+            const response = await fetch('<?php echo mc_url(($tenant['subdomain'] ?? '') . '/pos/menu/place_order', true); ?>', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

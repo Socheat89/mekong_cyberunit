@@ -1,6 +1,7 @@
 <?php
 // middleware/SuperAdminMiddleware.php
 require_once __DIR__ . '/../core/classes/Auth.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 
 class SuperAdminMiddleware {
     public static function handle() {
@@ -8,10 +9,7 @@ class SuperAdminMiddleware {
             session_start();
         }
 
-        $urlPrefix = '';
-        if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
-            $urlPrefix = '/Mekong_CyberUnit';
-        }
+        $urlPrefix = mc_base_path();
 
 
         if (!Auth::check() || !Auth::isSuperAdmin()) {

@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../../../core/helpers/url.php';
+$subdomain = Tenant::getCurrent()['subdomain'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1053,7 +1057,7 @@
                 <div class="products-grid" id="productsGrid">
                     <?php foreach ($products as $product): ?>
                         <div class="product-card" onclick="addToCart(<?php echo $product['id']; ?>, '<?php echo htmlspecialchars(addslashes($product['name'])); ?>', <?php echo $product['price']; ?>, <?php echo $product['stock_quantity']; ?>)">
-                            <img src="<?php echo $product['image'] ? '/Mekong_CyberUnit/uploads/products/' . htmlspecialchars($product['image']) : '/Mekong_CyberUnit/public/images/no-image.svg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image">
+                            <img src="<?php echo $product['image'] ? htmlspecialchars(mc_url('uploads/products/' . $product['image'])) : htmlspecialchars(mc_url('public/images/no-image.svg')); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image">
                             <div class="product-name"><?php echo htmlspecialchars($product['name']); ?></div>
                             <div class="product-price">$<?php echo number_format($product['price'], 2); ?></div>
                             <div class="product-stock"><?php echo __('stock'); ?>: <?php echo $product['stock_quantity']; ?></div>
@@ -1074,7 +1078,7 @@
                     </select>
                 </div>
 
-                <form id="orderForm" method="POST" action="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/create">
+                <form id="orderForm" method="POST" action="<?php echo mc_url($subdomain . '/pos/orders/create'); ?>">
                     <div id="cartItems" class="empty-cart">
                         <?php echo __('cart_empty_msg'); ?>
                     </div>
@@ -1105,6 +1109,8 @@
     <script>
         let cart = [];
         let allProducts = <?php echo json_encode($products); ?>;
+        const PRODUCT_IMAGE_BASE = '<?php echo mc_url('uploads/products/'); ?>';
+        const PRODUCT_FALLBACK_IMAGE = '<?php echo mc_url('public/images/no-image.svg'); ?>';
 
         function filterProducts() {
             const searchTerm = document.getElementById('productSearch').value.toLowerCase();
@@ -1117,8 +1123,9 @@
                     const productCard = document.createElement('div');
                     productCard.className = 'product-card';
                     productCard.onclick = () => addToCart(product.id, product.name, product.price, product.stock_quantity);
+                    const imageSrc = product.image ? (PRODUCT_IMAGE_BASE + product.image) : PRODUCT_FALLBACK_IMAGE;
                     productCard.innerHTML = `
-                        <img src="${product.image ? '/Mekong_CyberUnit/uploads/products/' + product.image : '/Mekong_CyberUnit/public/images/no-image.svg'}" alt="${product.name}" class="product-image">
+                        <img src="${imageSrc}" alt="${product.name}" class="product-image">
                         <div class="product-name">${product.name}</div>
                         <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
                         <div class="product-stock">Stock: ${product.stock_quantity}</div>

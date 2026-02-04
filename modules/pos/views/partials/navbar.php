@@ -4,7 +4,8 @@
 //   - $activeNav: one of dashboard|pos|holds|products|orders|customers|reports
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$basePath = '/Mekong_CyberUnit';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
+$basePath = mc_base_path();
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
 
 $tenantSlug = null;
@@ -243,13 +244,13 @@ $activeClass = function (string $key) use ($activeNav): string {
                     </button>
                     <div class="pos-lang-dropdown">
                         <div class="pos-lang-dropdown-inner">
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="pos-lang-item <?php echo $curr == 'en' ? 'active' : ''; ?>">
+                                <a href="<?php echo mc_url('public/set_lang.php?lang=en'); ?>" class="pos-lang-item <?php echo $curr == 'en' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="pos-lang-item <?php echo $curr == 'km' ? 'active' : ''; ?>">
+                                <a href="<?php echo mc_url('public/set_lang.php?lang=km'); ?>" class="pos-lang-item <?php echo $curr == 'km' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="pos-lang-item <?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                                <a href="<?php echo mc_url('public/set_lang.php?lang=zh'); ?>" class="pos-lang-item <?php echo $curr == 'zh' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
                             </a>
                         </div>

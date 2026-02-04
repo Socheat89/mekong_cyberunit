@@ -23,13 +23,14 @@ class BakongFinal {
 
     public function __construct() {
         $root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2);
+        $projectRoot = dirname(__DIR__, 2);
+        $normalizedRoot = rtrim(str_replace('\\', '/', $root), '/');
         
-        $possiblePaths = [
-            $root . '/Mekong_CyberUnit/config/bakong.php',
-            $root . '/config/bakong.php',
-            dirname(__DIR__, 2) . '/config/bakong.php',
-            __DIR__ . '/../../config/bakong.php'
-        ];
+        $possiblePaths = array_unique(array_filter([
+            $projectRoot . '/config/bakong.php',
+            __DIR__ . '/../../config/bakong.php',
+            $normalizedRoot ? ($normalizedRoot . '/config/bakong.php') : null
+        ]));
 
         $configPath = null;
         foreach ($possiblePaths as $path) {
@@ -59,12 +60,13 @@ class BakongFinal {
     public function generateQR($amount, $currency = 'USD') {
         try {
             $root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2);
-            $possibleAutoloads = [
-                $root . '/Mekong_CyberUnit/vendor/autoload.php',
-                $root . '/vendor/autoload.php',
-                dirname(__DIR__, 2) . '/vendor/autoload.php',
-                __DIR__ . '/../../vendor/autoload.php'
-            ];
+            $projectRoot = dirname(__DIR__, 2);
+            $normalizedRoot = rtrim(str_replace('\\', '/', $root), '/');
+            $possibleAutoloads = array_unique(array_filter([
+                $projectRoot . '/vendor/autoload.php',
+                __DIR__ . '/../../vendor/autoload.php',
+                $normalizedRoot ? ($normalizedRoot . '/vendor/autoload.php') : null
+            ]));
 
             $autoloadPath = null;
             foreach ($possibleAutoloads as $path) {

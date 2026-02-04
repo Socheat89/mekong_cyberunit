@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../core/helpers/url.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +15,7 @@ session_start();
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="/Mekong_CyberUnit/public/css/landing.css">
+    <link rel="stylesheet" href="<?php echo mc_url('public/css/landing.css'); ?>">
     
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -34,7 +35,7 @@ session_start();
     <!-- Header -->
     <header class="main-header">
         <div class="container nav-container">
-            <a href="/Mekong_CyberUnit/public/index.php" class="logo">
+            <a href="<?php echo mc_url('public/index.php'); ?>" class="logo">
                 <div class="logo-icon">
                     <i class="ph-bold ph-cube"></i>
                 </div>
@@ -42,14 +43,14 @@ session_start();
             </a>
             
             <nav class="nav-links">
-                <a href="/Mekong_CyberUnit/public/index.php#systems" class="nav-item">Solutions</a>
-                <a href="/Mekong_CyberUnit/public/index.php#features" class="nav-item">Features</a>
+                <a href="<?php echo mc_url('public/index.php#systems'); ?>" class="nav-item">Solutions</a>
+                <a href="<?php echo mc_url('public/index.php#features'); ?>" class="nav-item">Features</a>
                 <a href="#" class="nav-item active">Pricing</a>
             </nav>
             
             <div class="flex items-center gap-4">
-                <a href="/Mekong_CyberUnit/public/login.php" class="nav-item">Sign In</a>
-                <a href="/Mekong_CyberUnit/public/register.php" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
+                <a href="<?php echo mc_url('public/login.php'); ?>" class="nav-item">Sign In</a>
+                <a href="<?php echo mc_url('public/register.php'); ?>" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
             </div>
         </div>
     </header>
@@ -89,7 +90,7 @@ session_start();
                         </li>
                     </ul>
                     
-                    <a href="/Mekong_CyberUnit/public/register.php?plan=starter" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Starter</a>
+                    <a href="<?php echo mc_url('public/register.php?plan=starter'); ?>" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Starter</a>
                 </div>
 
                 <!-- Professional Plan -->
@@ -114,7 +115,7 @@ session_start();
                         </li>
                     </ul>
                     
-                    <a href="/Mekong_CyberUnit/public/register.php?plan=professional" class="btn btn-primary" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Professional</a>
+                    <a href="<?php echo mc_url('public/register.php?plan=professional'); ?>" class="btn btn-primary" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Professional</a>
                 </div>
 
                 <!-- Enterprise Plan -->
@@ -138,7 +139,7 @@ session_start();
                         </li>
                     </ul>
                     
-                    <a href="/Mekong_CyberUnit/public/register.php?plan=enterprise" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Enterprise</a>
+                    <a href="<?php echo mc_url('public/register.php?plan=enterprise'); ?>" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; display: block;">Choose Enterprise</a>
                 </div>
             </div>
         </div>

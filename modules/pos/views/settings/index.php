@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/../../../core/helpers/url.php';
 // modules/pos/views/settings/index.php
 $pageTitle = 'POS Settings';
+$subdomain = Tenant::getCurrent()['subdomain'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +126,7 @@ $pageTitle = 'POS Settings';
        </script>
     <?php endif; ?>
 
-    <form action="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/settings/update" method="POST" enctype="multipart/form-data">
+    <form action="<?php echo mc_url($subdomain . '/pos/settings/update'); ?>" method="POST" enctype="multipart/form-data">
         
         <div class="pos-card pad" style="margin-bottom: 40px; border-radius: 28px;">
             <div class="pos-tabs">
@@ -451,7 +453,7 @@ $pageTitle = 'POS Settings';
             </div>
 
             <div class="pos-row" style="margin-top: 32px; justify-content: flex-end; gap: 16px;">
-                 <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" style="text-decoration: none; color: var(--pos-text-muted); font-weight: 700; font-size: 14px;">Cancel Operation</a>
+                 <a href="<?php echo mc_url($subdomain . '/pos/dashboard'); ?>" style="text-decoration: none; color: var(--pos-text-muted); font-weight: 700; font-size: 14px;">Cancel Operation</a>
                  <button type="submit" class="btn btn-primary" style="padding: 14px 32px; border-radius: 16px; font-size: 15px; font-weight: 800; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);">
                     <i class="fas fa-cloud-upload-alt"></i> Commit Changes
                  </button>

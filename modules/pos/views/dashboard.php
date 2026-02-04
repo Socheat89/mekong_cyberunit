@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../../core/helpers/url.php';
 $stats = $stats ?? [];
 $recentOrders = $recentOrders ?? [];
 $salesByMonth = $salesByMonth ?? [];
@@ -11,12 +12,7 @@ $tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
 $tenantName = is_array($tenant) && !empty($tenant['name']) ? $tenant['name'] : 'Tenant';
 $tenantSlug = is_array($tenant) && !empty($tenant['subdomain']) ? $tenant['subdomain'] : '';
 
-$host = $_SERVER['HTTP_HOST'] ?? '';
-$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$urlPrefix = '';
-if ($host === 'localhost' || strpos($host, '127.0.0.1') !== false) {
-    $urlPrefix = '/Mekong_CyberUnit';
-}
+$urlPrefix = mc_base_path();
 
 $subscriptionManageUrl = $tenantSlug
     ? $urlPrefix . '/' . $tenantSlug . '/settings'
@@ -41,19 +37,15 @@ foreach ($labels as $ym) {
         $friendlyLabels[] = $ym;
     }
 }
-?>
-<style>
-    body, h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea {
-        font-family: 'Battambang', 'Outfit', 'Inter', sans-serif !important;
-    }
-</style>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intelligence Dashboard - <?php echo htmlspecialchars($tenantName); ?></title>
-    <link href="/public/css/pos_template.css?v=<?php echo time(); ?>" rel="stylesheet">
+<?php
+require_once __DIR__ . '/../../../core/helpers/url.php';
+$stats = $stats ?? [];
+...
+$subscriptionExpiringSoon = $subscriptionExpiringSoon ?? false;
+
+$tenant = class_exists('Tenant') ? (Tenant::getCurrent() ?? []) : [];
+...
+$urlPrefix = mc_base_path();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

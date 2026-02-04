@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Order.php';
 require_once __DIR__ . '/../models/Product.php';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
 
 class OrderController {
     public function create() {
@@ -102,8 +103,7 @@ class OrderController {
         $result = $db->update('orders', ['status' => 'completed'], 'id = ? AND tenant_id = ? AND status = ?', [$id, $tenantId, 'pending']);
 
         if ($result) {
-            $host = $_SERVER['HTTP_HOST'] ?? '';
-            $prefix = '/Mekong_CyberUnit';
+            $prefix = mc_base_path();
             header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/orders");
             exit;
         } else {
@@ -226,8 +226,7 @@ class OrderController {
 
                 $db->getConnection()->commit();
 
-                $host = $_SERVER['HTTP_HOST'] ?? '';
-                $prefix = '/Mekong_CyberUnit';
+                $prefix = mc_base_path();
 
                 if ($status === 'completed') {
                     header("Location: " . $prefix . "/" . Tenant::getCurrent()['subdomain'] . "/pos/orders/{$resumeOrderId}/receipt?autoprint=1");
@@ -314,8 +313,7 @@ class OrderController {
 
             $db->getConnection()->commit();
 
-            $host = $_SERVER['HTTP_HOST'] ?? '';
-            $prefix = '/Mekong_CyberUnit';
+            $prefix = mc_base_path();
 
             // Redirect to receipt if completed, else to orders
             if ($status === 'completed') {

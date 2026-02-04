@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../../core/classes/Tenant.php';
 require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Product.php';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
 
 class ProductController {
     public function index() {
@@ -75,8 +76,7 @@ class ProductController {
         }
 
         Product::delete($id);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }
@@ -99,8 +99,7 @@ class ProductController {
         }
 
         Product::create($data);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }
@@ -123,8 +122,7 @@ class ProductController {
         }
 
         Product::update($id, $data);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/products');
         exit;
     }

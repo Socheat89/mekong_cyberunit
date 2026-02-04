@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Customer.php';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
 
 class CustomerController {
     public function index() {
@@ -70,8 +71,7 @@ class CustomerController {
         }
 
         Customer::delete($id);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/customers');
         exit;
     }
@@ -85,8 +85,7 @@ class CustomerController {
         ];
 
         Customer::create($data);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/customers');
         exit;
     }
@@ -100,8 +99,7 @@ class CustomerController {
         ];
 
         Customer::update($id, $data);
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        $prefix = '/Mekong_CyberUnit';
+        $prefix = mc_base_path();
         header('Location: ' . $prefix . '/' . Tenant::getCurrent()['subdomain'] . '/pos/customers');
         exit;
     }

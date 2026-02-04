@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../../../core/helpers/url.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,7 +112,7 @@
                             </div>
                             <div id="image-preview-container" style="<?php echo (isset($product) && $product['image']) ? '' : 'display:none;'; ?>">
                                 <?php if (isset($product) && $product['image']): ?>
-                                    <img src="/Mekong_CyberUnit/uploads/products/<?php echo htmlspecialchars($product['image']); ?>" class="preview-img">
+                                    <img src="<?php echo htmlspecialchars(mc_url('uploads/products/' . $product['image'])); ?>" class="preview-img">
                                     <p style="margin-top: 12px; font-size: 12px; color: var(--pos-text-muted); font-weight: 700;"><?php echo __('click_different_image'); ?></p>
                                 <?php endif; ?>
                             </div>

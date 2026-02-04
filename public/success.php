@@ -1,8 +1,15 @@
 <?php
 // public/success.php
+require_once __DIR__ . '/../core/helpers/url.php';
+
 $subdomain = $_GET['subdomain'] ?? '';
 $businessName = $_GET['name'] ?? 'Your Business';
-$workspaceUrl = "https://mekongcyberunit.app/Mekong_CyberUnit/" . urlencode($subdomain) . "/pos/dashboard";
+$host = $_SERVER['HTTP_HOST'] ?? 'mekongcyberunit.app';
+$host = preg_replace('/^www\./', '', $host);
+$pathSegment = trim(mc_base_path(), '/');
+$workspaceBase = rtrim($host . ($pathSegment ? '/' . $pathSegment : ''), '/') . '/';
+$workspaceUrl = 'https://' . $workspaceBase . rawurlencode($subdomain) . '/pos/dashboard';
+$workspaceDisplayUrl = $workspaceBase . $subdomain;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -214,7 +221,7 @@ $workspaceUrl = "https://mekongcyberunit.app/Mekong_CyberUnit/" . urlencode($sub
             <span class="info-label" style="margin-top: 1.5rem;">Access URL</span>
             <div class="workspace-url">
                 <i class="ph-bold ph-globe"></i>
-                <span class="url-text" id="urlText">mekongcyberunit.app/Mekong_CyberUnit/<?php echo htmlspecialchars($subdomain); ?></span>
+                <span class="url-text" id="urlText"><?php echo htmlspecialchars($workspaceDisplayUrl); ?></span>
                 <button class="copy-btn" onclick="copyUrl()" title="Copy URL">
                     <i class="ph-bold ph-copy"></i>
                 </button>

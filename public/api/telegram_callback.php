@@ -61,12 +61,13 @@ try {
     // Update Message and Answer UI
     $token = '';
     $root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2);
-    $configCandidates = [
+    $projectRoot = dirname(__DIR__, 2);
+    $normalizedRoot = rtrim(str_replace('\\', '/', $root), '/');
+    $configCandidates = array_unique(array_filter([
         __DIR__ . '/../../config/telegram.php',
-        dirname(__DIR__, 2) . '/config/telegram.php',
-        $root . '/config/telegram.php',
-        $root . '/Mekong_CyberUnit/config/telegram.php'
-    ];
+        $projectRoot . '/config/telegram.php',
+        $normalizedRoot ? ($normalizedRoot . '/config/telegram.php') : null
+    ]));
 
     foreach ($configCandidates as $path) {
         if ($path && file_exists($path)) {

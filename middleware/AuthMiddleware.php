@@ -1,11 +1,10 @@
 <?php
 // middleware/AuthMiddleware.php
+require_once __DIR__ . '/../core/helpers/url.php';
+
 class AuthMiddleware {
     public static function handle($requiredLevel = 1) {
-        $urlPrefix = '';
-        if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
-            $urlPrefix = '/Mekong_CyberUnit';
-        }
+        $urlPrefix = mc_base_path();
 
 
         if (!Auth::check()) {

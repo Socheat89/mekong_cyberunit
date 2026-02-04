@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../../../core/helpers/url.php';
+$subdomain = Tenant::getCurrent()['subdomain'] ?? '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,10 +168,10 @@
             <p><?php echo __('customer_management_upgrade_msg'); ?></p>
 
             <div class="upgrade-footer">
-                <a href="/Mekong_CyberUnit/tenant/settings.php?section=subscription" class="btn-upgrade">
+                <a href="<?php echo mc_url('tenant/settings.php?section=subscription'); ?>" class="btn-upgrade">
                     <i class="fas fa-rocket"></i> <?php echo __('upgrade_to_standard'); ?>
                 </a>
-                <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/dashboard" class="btn-secondary">
+                <a href="<?php echo mc_url($subdomain . '/pos/dashboard'); ?>" class="btn-secondary">
                     <?php echo __('maybe_later'); ?>
                 </a>
             </div>

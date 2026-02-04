@@ -1,7 +1,7 @@
 <?php
-$host = $_SERVER['HTTP_HOST'] ?? '';
-$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$urlPrefix = '/Mekong_CyberUnit';
+require_once __DIR__ . '/../../../core/helpers/url.php';
+$urlPrefix = mc_base_path();
+$subdomain = Tenant::getCurrent()['subdomain'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -452,7 +452,7 @@ $urlPrefix = '/Mekong_CyberUnit';
             </div>
 
             <div class="pos-cart-footer">
-                <form id="checkoutForm" method="POST" action="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/pos/orders/create">
+                <form id="checkoutForm" method="POST" action="<?php echo mc_url($subdomain . '/pos/orders/create'); ?>">
                     <?php if (isset($resumeOrder) && $resumeOrder): ?>
                         <input type="hidden" name="resume_order_id" value="<?php echo (int)$resumeOrder['id']; ?>">
                     <?php endif; ?>
@@ -656,6 +656,9 @@ $urlPrefix = '/Mekong_CyberUnit';
 
     <script>
         const PRODUCTS = <?php echo json_encode(array_map(function($p) {
+            $image = !empty($p['image'])
+                ? mc_url('uploads/products/' . $p['image'])
+                : mc_url('public/images/no-image.svg');
             return [
                 'id' => (int)$p['id'],
                 'name' => $p['name'],
@@ -664,7 +667,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                 'price' => (float)$p['price'],
                 'stock' => (int)$p['stock_quantity'],
                 'category' => $p['category_name'] ?? 'No Category',
-                'image' => $p['image'] ? ('/Mekong_CyberUnit/uploads/products/' . $p['image']) : '/Mekong_CyberUnit/public/images/no-image.svg'
+                'image' => $image
             ];
         }, $products)); ?>;
 

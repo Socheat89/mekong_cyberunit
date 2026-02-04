@@ -5,15 +5,20 @@ require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Tenant.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 require_once __DIR__ . '/../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
 TenantMiddleware::handle();
 AuthMiddleware::handle();
 
+$currentTenant = Tenant::getCurrent();
+$subdomain = $currentTenant['subdomain'];
+$urlPrefix = mc_base_path();
+
 // Check if user has permission to manage settings
 if (!Auth::isTenantAdmin()) {
-    header('Location: /Mekong_CyberUnit/' . Tenant::getCurrent()['subdomain'] . '/dashboard?error=' . urlencode('Access denied'));
+    header('Location: ' . mc_url($subdomain . '/dashboard?error=' . urlencode('Access denied')));
     exit;
 }
 
@@ -75,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if (imagewebp($sourceImage, $targetPath, 80)) {
                         imagedestroy($sourceImage);
                         // Save new path to settings (relative URL)
-                        Settings::set('receipt_logo_path', '/Mekong_CyberUnit/public/uploads/logos/' . $filename, $tenantId);
+                        Settings::set('receipt_logo_path', mc_url('public/uploads/logos/' . $filename), $tenantId);
                     } else {
                         $error = "Failed to save WebP image.";
                     }
@@ -121,7 +126,7 @@ $settings = Settings::getAll($tenantId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></title>
+    <title>Settings - <?php echo htmlspecialchars($currentTenant['name']); ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -577,13 +582,13 @@ $settings = Settings::getAll($tenantId);
     <nav class="navbar">
         <div class="navbar-container">
             <div class="nav-brand">
-                <i class="fas fa-cube"></i> <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?> Admin
+                <i class="fas fa-cube"></i> <?php echo htmlspecialchars($currentTenant['name']); ?> Admin
             </div>
             <ul class="nav-links">
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard"><i class="fas fa-chart-line"></i> <?php echo __('dashboard'); ?></a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/users"><i class="fas fa-users"></i> <?php echo __('profile'); ?></a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/settings" class="active"><i class="fas fa-cog"></i> <?php echo __('settings'); ?></a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <?php echo __('logout'); ?></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/dashboard"><i class="fas fa-chart-line"></i> <?php echo __('dashboard'); ?></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/users"><i class="fas fa-users"></i> <?php echo __('profile'); ?></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/settings" class="active"><i class="fas fa-cog"></i> <?php echo __('settings'); ?></a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <?php echo __('logout'); ?></a></li>
                 <li class="lang-switcher" id="langSwitcher">
                     <button class="lang-btn" onclick="toggleLangDropdown(event)">
                         <i class="fas fa-globe"></i>
@@ -595,13 +600,13 @@ $settings = Settings::getAll($tenantId);
                     </button>
                     <div class="lang-dropdown">
                         <div class="lang-dropdown-inner">
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=en'); ?>" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=km'); ?>" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=zh'); ?>" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
                             </a>
                         </div>
@@ -617,7 +622,7 @@ $settings = Settings::getAll($tenantId);
                 <h1><?php echo __('system_settings'); ?></h1>
                 <p>Configure your tenant details and system preferences</p>
             </div>
-            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+            <a href="<?php echo $urlPrefix; ?>/<?php echo $subdomain; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
                 <i class="fas fa-arrow-left"></i> <?php echo __('back_to_dashboard'); ?>
             </a>
         </div>
@@ -738,7 +743,7 @@ $settings = Settings::getAll($tenantId);
                                             <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 5px;"><i class="fas fa-store"></i> [LOGO]</div>
                                         <?php endif; ?>
                                     <?php endif; ?>
-                                    <div style="font-weight: bold; font-size: 1.1em;"><?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?></div>
+                                    <div style="font-weight: bold; font-size: 1.1em;"><?php echo htmlspecialchars($currentTenant['name']); ?></div>
                                     <div style="margin: 5px 0;"><?php echo htmlspecialchars($settings['receipt_header_text'] ?? 'Point of Sale Receipt'); ?></div>
                                     <div>Order #12345</div>
                                 </div>

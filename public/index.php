@@ -766,7 +766,7 @@ require_once __DIR__ . '/../core/classes/Database.php';
                         `;
                         
                         setTimeout(() => {
-                            window.location.href = `/Mekong_CyberUnit/public/setup.php?plan=${currentPlan}&paid=true&ref=${ref}`;
+                            window.location.href = `${projectPath}setup.php?plan=${currentPlan}&paid=true&ref=${ref}`;
                         }, 2000);
                     } else if (result.success && result.status === 'rejected') {
                         clearInterval(pollingInterval);

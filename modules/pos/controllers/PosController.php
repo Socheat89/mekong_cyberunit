@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../models/Product.php';
 require_once __DIR__ . '/../models/Order.php';
+require_once dirname(__DIR__, 3) . '/core/helpers/url.php';
 
 class PosController {
     public function index() {
@@ -43,7 +44,7 @@ class PosController {
         $defaults = [
             'pos_method_cash_enabled' => '1',
             'pos_method_khqr_enabled' => '1',
-            'pos_method_khqr_image' => '/Mekong_CyberUnit/public/images/khqr_preview.png',
+            'pos_method_khqr_image' => mc_url('public/images/khqr_preview.png'),
             'pos_method_card_enabled' => '1',
             'pos_method_transfer_enabled' => '1'
         ];

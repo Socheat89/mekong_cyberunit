@@ -3,12 +3,10 @@
 session_start();
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 
 // Dynamic URL Prefix
-$urlPrefix = '';
-if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
-    $urlPrefix = '/Mekong_CyberUnit';
-}
+$urlPrefix = mc_base_path();
 
 
 $isAjax = isset($_POST['ajax']);

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../../core/classes/Settings.php';
 require_once __DIR__ . '/../../../core/classes/User.php';
 require_once __DIR__ . '/../../../core/classes/Tenant.php';
+require_once __DIR__ . '/../../../core/helpers/url.php';
 
 class SettingsController {
     public function index() {
@@ -40,7 +41,7 @@ class SettingsController {
             'company_website' => '',
             'pos_method_cash_enabled' => '1',
             'pos_method_khqr_enabled' => '1',
-            'pos_method_khqr_image' => '/Mekong_CyberUnit/public/images/khqr_preview.png',
+            'pos_method_khqr_image' => mc_url('public/images/khqr_preview.png'),
             'pos_method_card_enabled' => '1',
             'pos_method_transfer_enabled' => '1'
         ];
@@ -124,7 +125,7 @@ class SettingsController {
                  $targetPath = $uploadDir . $fileName;
                  
                  if (move_uploaded_file($_FILES['logo_upload']['tmp_name'], $targetPath)) {
-                     $webPath = '/Mekong_CyberUnit/public/uploads/tenants/' . $tenantId . '/' . $fileName;
+                     $webPath = mc_url('public/uploads/tenants/' . $tenantId . '/' . $fileName);
                      Settings::set('receipt_logo_path', $webPath, $tenantId);
                  }
              }
@@ -140,14 +141,14 @@ class SettingsController {
                  $targetPath = $uploadDir . $fileName;
                  
                  if (move_uploaded_file($_FILES['khqr_upload']['tmp_name'], $targetPath)) {
-                     $webPath = '/Mekong_CyberUnit/public/uploads/tenants/' . $tenantId . '/' . $fileName;
+                     $webPath = mc_url('public/uploads/tenants/' . $tenantId . '/' . $fileName);
                      Settings::set('pos_method_khqr_image', $webPath, $tenantId);
                  }
              }
 
              // Redirect back
              $subdomain = $_SESSION['tenant_subdomain'] ?? 'default';
-             header("Location: /Mekong_CyberUnit/$subdomain/pos/settings?success=1");
+             header('Location: ' . mc_url($subdomain . '/pos/settings?success=1'));
              exit;
         }
     }

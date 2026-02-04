@@ -3,10 +3,11 @@
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
 require_once __DIR__ . '/../core/classes/Tenant.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 
 session_start();
 
-$urlPrefix = '/Mekong_CyberUnit';
+$urlPrefix = mc_base_path();
 
 if (!Auth::check()) {
     header("Location: $urlPrefix/public/login.php");

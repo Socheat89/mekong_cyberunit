@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../core/classes/Database.php';
 require_once __DIR__ . '/../core/classes/Tenant.php';
 require_once __DIR__ . '/../core/classes/Auth.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 require_once __DIR__ . '/../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
@@ -13,10 +14,7 @@ $db = Database::getInstance();
 $tenantId = Tenant::getId();
 $user = Auth::user();
 
-$urlPrefix = '';
-if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
-    $urlPrefix = '/Mekong_CyberUnit';
-}
+$urlPrefix = mc_base_path();
 
 $subdomain = Tenant::getCurrent()['subdomain'];
 
@@ -669,13 +667,13 @@ if ($hasPOS) {
                     </button>
                     <div class="lang-dropdown">
                         <div class="lang-dropdown-inner">
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=en" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=en'); ?>" class="<?php echo $curr == 'en' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/gb.png" width="20" alt="English"> English
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=km" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=km'); ?>" class="<?php echo $curr == 'km' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/kh.png" width="20" alt="Khmer"> ភាសាខ្មែរ
                             </a>
-                            <a href="/Mekong_CyberUnit/public/set_lang.php?lang=zh" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
+                            <a href="<?php echo mc_url('public/set_lang.php?lang=zh'); ?>" class="<?php echo $curr == 'zh' ? 'active' : ''; ?>">
                                 <img src="https://flagcdn.com/w20/cn.png" width="20" alt="Chinese"> 中文
                             </a>
                         </div>

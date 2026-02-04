@@ -8,12 +8,13 @@ ini_set('display_errors', 0); // Suppress errors in JSON output
 
 // --- CONFIGURATION ---
 $root = $_SERVER['DOCUMENT_ROOT'] ?? dirname(__DIR__, 2);
-$possiblePaths = [
-    $root . '/Mekong_CyberUnit/config/telegram.php',
-    $root . '/config/telegram.php',
-    dirname(__DIR__, 2) . '/config/telegram.php',
-    __DIR__ . '/../../config/telegram.php'
-];
+$projectRoot = dirname(__DIR__, 2);
+$normalizedRoot = rtrim(str_replace('\\', '/', $root), '/');
+$possiblePaths = array_unique(array_filter([
+    $projectRoot . '/config/telegram.php',
+    __DIR__ . '/../../config/telegram.php',
+    $normalizedRoot ? ($normalizedRoot . '/config/telegram.php') : null
+]));
 
 $configPath = null;
 foreach ($possiblePaths as $path) {
@@ -42,29 +43,6 @@ if (empty($callbackUrl)) {
     $callbackUrl = $scheme . '://' . $host . rtrim($scriptDir, '/') . '/telegram_callback.php';
 }
 // ---------------------
-
-// Determine log path robustly
-$logPathCandidates = [
-    dirname($configPath) . '/../logs/transactions.json',
-    $root . '/Mekong_CyberUnit/logs/transactions.json',
-    __DIR__ . '/../../logs/transactions.json'
-];
-
-$logFile = $logPathCandidates[2]; // Default relative
-foreach ($logPathCandidates as $path) {
-    // We want the directory to exist or be creatable
-    $dir = dirname($path);
-    if (is_dir($dir) || @mkdir($dir, 0777, true)) {
-        $logFile = $path;
-        break;
-    }
-}
-
-
-// Ensure log directory exists one last time explicitly
-if (!is_dir(dirname($logFile))) {
-    @mkdir(dirname($logFile), 0777, true);
-}
 
 // 1. Get POST Data
 $data = json_decode(file_get_contents('php://input'), true);

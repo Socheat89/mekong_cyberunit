@@ -8,15 +8,18 @@ require_once __DIR__ . '/../core/classes/User.php';
 require_once __DIR__ . '/../core/classes/Settings.php';
 require_once __DIR__ . '/../middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../core/helpers/url.php';
 
 TenantMiddleware::handle();
 AuthMiddleware::handle();
 
 // Check if user has permission to manage users
 if (!Auth::isTenantAdmin()) {
-    header('Location: /Mekong_CyberUnit/' . Tenant::getCurrent()['subdomain'] . '/dashboard?error=' . urlencode('Access denied'));
+    header('Location: ' . mc_url(Tenant::getCurrent()['subdomain'] . '/dashboard?error=' . urlencode('Access denied')));
     exit;
 }
+
+$urlPrefix = mc_base_path();
 
 $db = Database::getInstance();
 $tenantId = Tenant::getId();
@@ -342,10 +345,10 @@ $currentUserCount = User::countUsers($tenantId);
                 <i class="fas fa-cube"></i> <?php echo htmlspecialchars(Tenant::getCurrent()['name']); ?> Admin
             </div>
             <ul class="nav-links">
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/users" class="active"><i class="fas fa-users"></i> Users</a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/settings"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/users" class="active"><i class="fas fa-users"></i> Users</a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/settings"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -356,7 +359,7 @@ $currentUserCount = User::countUsers($tenantId);
                 <h1>User Management</h1>
                 <p>Manage access levels and permissions for your team members</p>
             </div>
-            <a href="/Mekong_CyberUnit/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+            <a href="<?php echo $urlPrefix; ?>/<?php echo Tenant::getCurrent()['subdomain']; ?>/dashboard" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>

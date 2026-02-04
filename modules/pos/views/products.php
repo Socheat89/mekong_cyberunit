@@ -1,7 +1,6 @@
 <?php
-$host = $_SERVER['HTTP_HOST'] ?? '';
-$isProduction = (strpos($host, 'mekongcyberunit.app') !== false || strpos($host, 'mekongcy') !== false);
-$urlPrefix = '/Mekong_CyberUnit';
+require_once __DIR__ . '/../../../core/helpers/url.php';
+$urlPrefix = mc_base_path();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,7 +90,7 @@ $urlPrefix = '/Mekong_CyberUnit';
                                 <td>
                                     <div class="product-img">
                                         <?php if (!empty($p['image'])): ?>
-                                            <img src="/Mekong_CyberUnit/uploads/products/<?php echo htmlspecialchars($p['image']); ?>" style="width:100%; height:100%; object-fit:cover;">
+                                            <img src="<?php echo htmlspecialchars(mc_url('uploads/products/' . $p['image'])); ?>" style="width:100%; height:100%; object-fit:cover;">
                                         <?php else: ?>
                                             <i class="fas fa-image" style="color: #cbd5e1; font-size: 18px;"></i>
                                         <?php endif; ?>
