@@ -4,7 +4,21 @@
 //   - $activeNav: one of dashboard|pos|holds|products|orders|customers|reports
 
 $host = $_SERVER['HTTP_HOST'] ?? '';
-require_once dirname(__DIR__, 4) . '/core/helpers/url.php';
+$helperCandidates = [
+    dirname(__DIR__, 4) . '/core/helpers/url.php',
+    dirname(__DIR__, 5) . '/core/helpers/url.php',
+    dirname(__DIR__, 3) . '/core/helpers/url.php',
+    __DIR__ . '/../../../core/helpers/url.php'
+];
+foreach ($helperCandidates as $helperPath) {
+    if (is_file($helperPath)) {
+        require_once $helperPath;
+        break;
+    }
+}
+if (!function_exists('mc_base_path')) {
+    throw new RuntimeException('Unable to load core/helpers/url.php');
+}
 $basePath = mc_base_path();
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? '';
 
