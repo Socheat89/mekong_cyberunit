@@ -71,6 +71,10 @@ $plans = $db->fetchAll("SELECT * FROM systems WHERE status = 'active' ORDER BY p
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     <div class="auth-card">
         <div class="auth-header">
             <a href="/" class="auth-logo">
@@ -234,5 +238,6 @@ $plans = $db->fetchAll("SELECT * FROM systems WHERE status = 'active' ORDER BY p
         const firstActive = document.querySelector('.plan-item.active');
         if (firstActive) firstActive.click();
     </script>
+    <script src="<?php echo mc_url('public/js/loader.js'); ?>"></script>
 </body>
 </html>

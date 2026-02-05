@@ -257,6 +257,10 @@ $workspaceBasePreview = $displayHost . ($setupBase ? '/' . $setupBase : '') . '/
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     <div class="auth-card">
         <div class="auth-header">
             <a href="/" class="auth-logo">
@@ -447,5 +451,6 @@ $workspaceBasePreview = $displayHost . ($setupBase ? '/' . $setupBase : '') . '/
             }, 800);
         });
     </script>
+    <script src="<?php echo mc_url('public/js/loader.js'); ?>"></script>
 </body>
 </html>

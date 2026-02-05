@@ -1,5 +1,39 @@
 <?php 
 require_once __DIR__ . '/../core/classes/Database.php'; 
+require_once __DIR__ . '/../core/helpers/url.php';
+
+$canonicalUrl = rtrim(mc_url('', true), '/') . '/';
+$ogImage = mc_url('public/images/logo.png', true);
+$structuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'SoftwareApplication',
+    'name' => 'Mekong CyberUnit',
+    'applicationCategory' => 'PointOfSaleApplication',
+    'operatingSystem' => 'Web, Android, iOS',
+    'url' => $canonicalUrl,
+    'image' => $ogImage,
+    'author' => [
+        '@type' => 'Organization',
+        'name' => 'Mekong CyberUnit'
+    ],
+    'publisher' => [
+        '@type' => 'Organization',
+        'name' => 'Mekong CyberUnit',
+        'logo' => $ogImage
+    ],
+    'description' => 'Khmer-first POS system that unifies sales, inventory, and subscription management for Cambodian SMEs.',
+    'offers' => [
+        '@type' => 'Offer',
+        'priceCurrency' => 'USD',
+        'price' => '10.00',
+        'availability' => 'https://schema.org/InStock'
+    ],
+    'inLanguage' => ['en', 'km', 'zh'],
+    'areaServed' => ['Cambodia', 'Laos', 'Vietnam'],
+    'sameAs' => [
+        'https://t.me/SOCHEAT_DOEM'
+    ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +41,21 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mekong CyberUnit | Unified Business Platform</title>
+    <meta name="description" content="Mekong CyberUnit is a Khmer-first POS system for Cambodia that unifies POS, inventory, HR, and subscription billing into one secure cloud dashboard.">
+    <meta name="keywords" content="Mekong CyberUnit, POS Khmer, POS system Cambodia, Khmer POS software, cloud POS for SMEs">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="en, km">
+    <link rel="canonical" href="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mekong CyberUnit | Khmer POS System">
+    <meta property="og:description" content="Bilingual cloud POS software built in Cambodia for Khmer retailers and franchises.">
+    <meta property="og:url" content="<?php echo htmlspecialchars($canonicalUrl, ENT_QUOTES); ?>">
+    <meta property="og:image" content="<?php echo htmlspecialchars($ogImage, ENT_QUOTES); ?>">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mekong CyberUnit | Khmer POS">
+    <meta name="twitter:description" content="POS Khmer system that manages orders, inventory, subscriptions, and HR in one dashboard.">
+    <meta name="twitter:image" content="<?php echo htmlspecialchars($ogImage, ENT_QUOTES); ?>">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +69,10 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <!-- Favicon -->
     <link rel="icon" href="images/logo.png" type="image/png">
     <link rel="shortcut icon" href="images/logo.png" type="image/png">
+    
+    <script type="application/ld+json">
+<?php echo json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT); ?>
+    </script>
     
     <style>
         /* Modal Styles */
@@ -505,6 +558,10 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     
     <!-- Header -->
     <header class="main-header">
@@ -522,12 +579,28 @@ require_once __DIR__ . '/../core/classes/Database.php';
                 <a href="#pricing" class="nav-item">Pricing</a>
             </nav>
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 nav-actions">
                 <a href="login.php" onclick="openAuthModal()" class="nav-item">Sign In</a>
                 <a href="register.php" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem;">Get Started</a>
             </div>
+
+            <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileNavDrawer">
+                <i class="ph-bold ph-list"></i>
+            </button>
         </div>
     </header>
+
+    <div class="mobile-drawer" id="mobileNavDrawer" role="navigation">
+        <nav>
+            <a href="#about" class="nav-item" onclick="closeMobileDrawer()">About Me</a>
+            <a href="#features" class="nav-item" onclick="closeMobileDrawer()">Features</a>
+            <a href="#pricing" class="nav-item" onclick="closeMobileDrawer()">Pricing</a>
+        </nav>
+        <div class="mobile-cta">
+            <a href="login.php" class="btn btn-outline" onclick="closeMobileDrawer(); openAuthModal();">Sign In</a>
+            <a href="register.php" class="btn btn-primary" onclick="closeMobileDrawer()">Get Started</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -537,10 +610,10 @@ require_once __DIR__ . '/../core/classes/Database.php';
             </div>
             <h1>
                 Run your entire business on <br>
-                <span class="gradient-text">One Unified Platform</span>
+                <span class="gradient-text">Cambodia’s Unified POS Platform</span>
             </h1>
             <p>
-                Stop juggling multiple disjointed subscriptions. Access POS, Inventory, HR, and Accounting in a single, seamless operating system designed for modern growth.
+                Stop juggling multiple disjointed subscriptions. Mekong CyberUnit is a Khmer POS system built for Cambodia so anyone searching “POS Khmer” or “POS system” discovers a bilingual suite that merges POS, Inventory, HR, and Accounting in one secure cloud workspace.
             </p>
             <div class="btn-group">
                 <a href="register.php" class="btn btn-primary">
@@ -587,11 +660,11 @@ require_once __DIR__ . '/../core/classes/Database.php';
                         <i class="ph-bold ph-user-focus"></i>
                         Meet the Builder
                     </span>
-                    <h2>Human-centered systems for Cambodian operators</h2>
+                    <h2>Human-centered Khmer POS systems for Cambodian operators</h2>
                     <p>
                         I design Mekong CyberUnit the way I run my own businesses: fast iterations, transparent pricing,
                         and obsessive care for local workflows. Every release blends field interviews with rapid prototyping,
-                        so features feel like a teammate instead of another SaaS chore.
+                        so features feel like a teammate instead of another SaaS chore—and keeps us ranking whenever teams search for POS Khmer or modern POS systems in the Mekong.
                     </p>
                     <ul class="about-list">
                         <li>
@@ -600,11 +673,11 @@ require_once __DIR__ . '/../core/classes/Database.php';
                         </li>
                         <li>
                             <i class="ph-bold ph-flask"></i>
-                            Ship weekly experiments to keep menus, tax rules, and subscription rails effortless.
+                            Ship weekly experiments so the Khmer POS experience stays fast across menus, tax rules, and subscription rails.
                         </li>
                         <li>
                             <i class="ph-bold ph-handshake"></i>
-                            Partner with cafés, clinics, and franchise brands to co-create playbooks that scale.
+                            Partner with cafés, clinics, and franchise brands to co-create playbooks that scale and boost search visibility for Cambodian POS system keywords.
                         </li>
                     </ul>
                     <div class="signature">
@@ -842,7 +915,47 @@ require_once __DIR__ . '/../core/classes/Database.php';
         </div>
     </div>
 
+    <script src="js/loader.js"></script>
     <script>
+        const mobileToggle = document.getElementById('mobileNavToggle');
+        const mobileDrawer = document.getElementById('mobileNavDrawer');
+
+        function closeMobileDrawer() {
+            if (mobileDrawer) {
+                mobileDrawer.classList.remove('active');
+            }
+            document.body.classList.remove('mobile-nav-open');
+            if (mobileToggle) {
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function toggleMobileDrawer() {
+            if (!mobileDrawer || !mobileToggle) return;
+            const willOpen = !mobileDrawer.classList.contains('active');
+            mobileDrawer.classList.toggle('active', willOpen);
+            document.body.classList.toggle('mobile-nav-open', willOpen);
+            mobileToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', toggleMobileDrawer);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMobileDrawer();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileDrawer();
+            }
+        });
+
+        window.closeMobileDrawer = closeMobileDrawer;
+
         let currentPlan = '';
         let currentAmount = 0;
         let pollingInterval = null;

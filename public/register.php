@@ -496,6 +496,10 @@
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     <div class="auth-card">
         <div class="auth-header">
             <a href="index.php" class="auth-logo">
@@ -1061,5 +1065,6 @@
         
         init();
     </script>
+    <script src="js/loader.js"></script>
 </body>
 </html>

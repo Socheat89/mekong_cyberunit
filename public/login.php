@@ -118,6 +118,10 @@
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     <div class="auth-card">
         <div class="auth-header">
             <a href="/" class="auth-logo">
@@ -165,5 +169,6 @@
             Don't have an account? <a href="register.php">Sign up</a>
         </div>
     </div>
+    <script src="js/loader.js"></script>
 </body>
 </html>

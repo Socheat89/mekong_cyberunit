@@ -35,6 +35,10 @@ require_once __DIR__ . '/../core/helpers/url.php';
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <p>Loading</p>
+    </div>
     
     <!-- Header -->
     <header class="main-header">
@@ -162,5 +166,6 @@ require_once __DIR__ . '/../core/helpers/url.php';
         </div>
     </footer>
 
+    <script src="<?php echo mc_url('public/js/loader.js'); ?>"></script>
 </body>
 </html>
