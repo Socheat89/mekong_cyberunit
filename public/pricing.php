@@ -17,6 +17,10 @@ require_once __DIR__ . '/../core/helpers/url.php';
     <!-- Styles -->
     <link rel="stylesheet" href="<?php echo mc_url('public/css/landing.css'); ?>">
     
+    <!-- Favicon -->
+    <link rel="icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
+    <link rel="shortcut icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
+    
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     

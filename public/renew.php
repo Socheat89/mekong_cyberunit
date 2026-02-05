@@ -43,6 +43,10 @@ $plans = $db->fetchAll("SELECT * FROM systems WHERE status = 'active' ORDER BY p
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/landing.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
+    <link rel="shortcut icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         body { background: #f8fafc; padding: 40px 20px; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }

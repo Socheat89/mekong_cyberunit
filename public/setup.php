@@ -31,6 +31,10 @@ $workspaceBasePreview = $displayHost . ($setupBase ? '/' . $setupBase : '') . '/
     <!-- Styles -->
     <link rel="stylesheet" href="css/landing.css">
     
+    <!-- Favicon -->
+    <link rel="icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
+    <link rel="shortcut icon" href="<?php echo mc_url('public/images/logo.png'); ?>" type="image/png">
+    
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     

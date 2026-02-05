@@ -13,6 +13,10 @@
     <!-- Styles -->
     <link rel="stylesheet" href="css/landing.css">
     
+    <!-- Favicon -->
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="shortcut icon" href="images/logo.png" type="image/png">
+    
     <!-- Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 

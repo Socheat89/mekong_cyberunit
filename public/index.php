@@ -17,6 +17,10 @@ require_once __DIR__ . '/../core/classes/Database.php';
     <!-- Styles -->
     <link rel="stylesheet" href="css/landing.css">
     
+    <!-- Favicon -->
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="shortcut icon" href="images/logo.png" type="image/png">
+    
     <style>
         /* Modal Styles */
         .modal {
