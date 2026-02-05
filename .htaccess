@@ -4,6 +4,10 @@
 RewriteEngine On
 RewriteBase /
 
+# SEO endpoints
+RewriteRule ^sitemap\.xml$ public/sitemap.php [L]
+RewriteRule ^robots\.txt$ public/robots.php [L]
+
 # Redirect root to public folder
 RewriteRule ^$ public/ [L,R=301]
 
