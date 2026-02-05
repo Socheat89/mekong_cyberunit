@@ -166,7 +166,7 @@ a {
 .page-loader {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.25), rgba(10, 12, 20, 0.98));
+    background: linear-gradient(135deg, rgba(4, 7, 18, 0.95), rgba(9, 21, 45, 0.92));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,7 +174,7 @@ a {
     color: white;
     z-index: 9999;
     transition: opacity 0.35s ease, visibility 0.35s ease;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
 }
 
 .page-loader.hidden {
@@ -183,46 +183,72 @@ a {
     pointer-events: none;
 }
 
+.page-loader::before,
 .page-loader::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 80% 0%, rgba(124, 58, 237, 0.15), transparent 45%);
-    pointer-events: none;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.45;
+}
+
+.page-loader::before {
+    top: 8%;
+    left: 5%;
+    background: rgba(37, 99, 235, 0.8);
+}
+
+.page-loader::after {
+    bottom: 12%;
+    right: 10%;
+    background: rgba(124, 58, 237, 0.7);
 }
 
 .loader-card {
     position: relative;
     width: min(320px, 90vw);
-    background: rgba(6, 10, 24, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1.25rem;
-    padding: 2rem 1.5rem;
+    background: rgba(11, 14, 30, 0.8);
+    border-radius: 1.4rem;
+    padding: 2.25rem 1.75rem;
     text-align: center;
-    box-shadow: 0 25px 45px rgba(8, 11, 26, 0.55);
+    box-shadow: 0 35px 60px rgba(5, 8, 25, 0.65);
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
 }
 
 .loader-card::before {
     content: '';
     position: absolute;
-    inset: -30% auto auto -10%;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(37, 99, 235, 0.35), transparent 60%);
-    opacity: 0.6;
+    inset: -25% auto auto -5%;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.4), transparent 65%);
+    opacity: 0.5;
 }
 
 .loader-logo {
     width: 56px;
     height: 56px;
-    margin: 0 auto 1rem;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    margin: 0 auto 1.25rem;
+    border-radius: 16px;
+    background: linear-gradient(145deg, var(--primary), var(--secondary));
     display: grid;
     place-items: center;
     font-size: 1.75rem;
-    box-shadow: 0 12px 20px rgba(37, 99, 235, 0.35);
+    box-shadow: 0 20px 35px rgba(37, 99, 235, 0.35);
+    position: relative;
+}
+
+.loader-logo::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    opacity: 0.6;
 }
 
 .loader-title {
@@ -234,38 +260,48 @@ a {
 
 .loader-caption {
     margin: 0 0 1.5rem;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .page-loader .loader-spinner {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     margin: 0 auto;
     border-radius: 50%;
-    border: 4px solid rgba(255, 255, 255, 0.15);
-    border-top-color: #ffffff;
-    animation: spin 0.9s linear infinite;
+    background: conic-gradient(from 0deg, rgba(255,255,255,0.05), rgba(255,255,255,0.9), rgba(255,255,255,0.05));
+    animation: spin 1s linear infinite;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1), 0 10px 25px rgba(0, 0, 0, 0.35);
+}
+
+.page-loader .loader-spinner::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: rgba(2, 4, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .loader-progress {
-    margin-top: 1.5rem;
-    height: 4px;
+    margin-top: 1.8rem;
+    height: 3px;
     width: 100%;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     overflow: hidden;
 }
 
 .loader-progress span {
     display: block;
     height: 100%;
-    width: 60%;
+    width: 50%;
     border-radius: inherit;
-    background: linear-gradient(90deg, var(--secondary), var(--primary));
-    animation: shimmer 1.2s ease-in-out infinite;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9), rgba(255,255,255,0));
+    animation: shimmer 1.5s ease-in-out infinite;
 }
 
 @keyframes shimmer {
