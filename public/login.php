@@ -119,8 +119,15 @@
 </head>
 <body>
     <div class="page-loader" id="pageLoader">
-        <div class="loader-spinner"></div>
-        <p>Loading</p>
+        <div class="loader-card">
+            <div class="loader-logo">
+                <i class="ph-bold ph-cube"></i>
+            </div>
+            <p class="loader-title">Mekong CyberUnit</p>
+            <p class="loader-caption">Loading secure session</p>
+            <div class="loader-spinner"></div>
+            <div class="loader-progress"><span></span></div>
+        </div>
     </div>
     <div class="auth-card">
         <div class="auth-header">
