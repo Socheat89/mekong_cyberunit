@@ -1,5 +1,5 @@
 <?php
-// admin/login.php
+// admin/register.php
 session_start();
 require_once __DIR__ . '/../core/classes/Auth.php';
 
@@ -17,7 +17,7 @@ $success = $_GET['success'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Master Login - Mekong CyberUnit</title>
+    <title>SaaS Master Register - Mekong CyberUnit</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -45,7 +45,7 @@ $success = $_GET['success'] ?? '';
             background: white;
             color: var(--text);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             padding: 2.5rem;
             border-radius: 1.5rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -99,98 +99,140 @@ $success = $_GET['success'] ?? '';
         .input-wrapper input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .btn {
+        .btn-primary {
             width: 100%;
             padding: 0.875rem;
-            border-radius: 0.75rem;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
             background: var(--primary);
             color: white;
-            font-size: 1rem;
-        }
-
-        .btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
-        .alert {
-            background: #fef2f2;
-            color: #b91c1c;
-            padding: 0.75rem;
+            border: none;
             border-radius: 0.75rem;
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #fecaca;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            border: 1px solid #fee2e2;
         }
 
         .alert-success {
             background: #f0fdf4;
-            color: #15803d;
-            border-color: #bbf7d0;
+            color: #16a34a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            border: 1px solid #dcfce7;
         }
 
-        .footer-note {
-            margin-top: 2rem;
+        .back-link {
             text-align: center;
-            font-size: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        
+        .back-link a {
             color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+        
+        .back-link a:hover {
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
+
     <div class="login-card">
         <div class="header">
             <div class="logo-box">
-                <i class="ph-bold ph-shield-check"></i>
+                <i class="ph-bold ph-cube"></i>
             </div>
-            <h1>System Master</h1>
-            <p>SaaS Control Center Authentication</p>
+            <h1>Admin Register</h1>
+            <p>Create a new master administrator account</p>
         </div>
 
         <?php if ($error): ?>
-            <div class="alert">
-                <i class="ph-bold ph-warning-circle"></i>
+            <div class="alert-error">
                 <?php echo htmlspecialchars($error); ?>
             </div>
         <?php endif; ?>
 
         <?php if ($success): ?>
-            <div class="alert alert-success">
-                <i class="ph-bold ph-check-circle"></i>
+            <div class="alert-success">
                 <?php echo htmlspecialchars($success); ?>
             </div>
         <?php endif; ?>
 
-        <form action="login_process.php" method="POST">
+        <form action="register_process.php" method="POST">
             <div class="form-group">
                 <label>Username</label>
                 <div class="input-wrapper">
-                    <i class="ph-bold ph-user-circle"></i>
-                    <input type="text" name="username" required placeholder="Enter master username">
+                    <i class="ph-bold ph-user"></i>
+                    <input type="text" name="username" placeholder="admin_username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                    <i class="ph-bold ph-envelope"></i>
+                    <input type="email" name="email" placeholder="admin@example.com" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
                 <div class="input-wrapper">
-                    <i class="ph-bold ph-key"></i>
-                    <input type="password" name="password" required placeholder="••••••••">
+                    <i class="ph-bold ph-lock-key"></i>
+                    <input type="password" name="password" placeholder="••••••••" required>
                 </div>
             </div>
 
-            <button type="submit" class="btn">Authorize Access</button>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="input-wrapper">
+                    <i class="ph-bold ph-lock-key"></i>
+                    <input type="password" name="confirm_password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Admin Secret Key</label>
+                <div class="input-wrapper">
+                    <i class="ph-bold ph-key"></i>
+                    <input type="password" name="secret_key" placeholder="System secret for creation" required>
+                </div>
+                <small style="color: #64748b; font-size: 0.75rem; margin-top: 5px; display: block;">Required for security verification</small>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Create Account <i class="ph-bold ph-arrow-right"></i>
+            </button>
         </form>
 
-        <div class="footer-note">
-            &copy; <?php echo date('Y'); ?> Mekong CyberUnit Master Admin System
+        <div class="back-link">
+            <a href="login.php">Already have an account? Sign In</a>
         </div>
     </div>
+
 </body>
 </html>
